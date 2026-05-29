@@ -252,6 +252,7 @@ vis.binds.materialdesign.calendar =
                         mdc.ripple.MDCRipple.attachTo(controlButtons.get(i));
                     }
 
+                    setTimeout(() => { window.dispatchEvent(new Event('resize')); }, 1000);
                     // vis2: initial delayed load after calendar is mounted
                     setTimeout(function () { const jsonData = parseJson(); if (jsonData && vueCalendar.$refs.calendar) { vueCalendar.events = [...jsonData]; } }, 1000);
 
@@ -294,15 +295,14 @@ vis.binds.materialdesign.calendar =
                     vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
                         jsonData = parseJson();
                                                 
-                        const applyEvents = () => { 
-                            if (vueCalendar.$refs.calendar) { 
-                                vueCalendar.events = [...jsonData]; 
-                            } else { 
-                                setTimeout(applyEvents, 100); 
-                            } 
-                        }; 
+                        vueCalendar.events = [...jsonData]; 
                         
-                        applyEvents();
+                        vueCalendar.$nextTick(() => { 
+                            if (vueCalendar.$refs.calendar) { 
+                                // force vue-cal to recalculate layout 
+                                window.dispatchEvent(new Event('resize')); 
+                            } 
+                        });
 
                         // force complete remount for vis2 async init 
                         vueCalendar.renderKey++;
