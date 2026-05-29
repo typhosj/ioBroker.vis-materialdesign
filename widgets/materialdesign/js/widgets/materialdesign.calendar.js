@@ -284,31 +284,27 @@ vis.binds.materialdesign.calendar =
                     }).on('tapstart', function (e) {
                         myMdwHelper.hapticFeedback(data);
                     });
-
-                    vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
-                        jsonData = parseJson();
+                
+                    function updateCalendar(retries = 20) { 
+                        const jsonData = parseJson(); 
                         
-                        function updateCalendar(retries = 20) { 
-                            const jsonData = parseJson(); 
-                            
-                            if (Array.isArray(jsonData) && jsonData.length >= 0) { 
-                                vueCalendar.events = [...jsonData]; 
-                                return; 
-                            } 
-                            
-                            // vis2 reload race condition workaround 
-                            if (retries > 0) { 
-                                setTimeout(() => updateCalendar(retries - 1), 250); 
-                            } 
+                        if (Array.isArray(jsonData) && jsonData.length >= 0) { 
+                            vueCalendar.events = [...jsonData]; 
+                            return; 
                         } 
                         
-                        vis.states.bind(data.oid + '.val', function () { 
-                            updateCalendar(); 
-                        }); 
-                        
-                        // initial load 
-                        updateCalendar();
-                    });
+                        // vis2 reload race condition workaround 
+                        if (retries > 0) { 
+                            setTimeout(() => updateCalendar(retries - 1), 250); 
+                        } 
+                    } 
+                    
+                    vis.states.bind(data.oid + '.val', function () { 
+                        updateCalendar(); 
+                    }); 
+                    
+                    // initial load 
+                    updateCalendar();
 
                     $(document).on("mdwSubscribe", function (e, oids) {
                         if (myMdwHelper.isLayoutRefreshNeeded(widgetName, data, oids, data.debug)) {
