@@ -306,7 +306,7 @@ vis.binds.materialdesign.calendar =
                                 vueCalendar.events = [...jsonData]; 
                             } 
                         }, 1000);
-                        
+
                         vueCalendar.$nextTick(() => { 
                             if (vueCalendar.$refs.calendar) { 
                                 // force vue-cal to recalculate layout 
@@ -326,7 +326,7 @@ vis.binds.materialdesign.calendar =
                         vueCalendar.$nextTick(function () { 
                             vueCalendar.renderCalendar = true; 
                         }); 
-                    }, 300);
+                    }, 1000);
 
                     $(document).on("mdwSubscribe", function (e, oids) {
                         if (myMdwHelper.isLayoutRefreshNeeded(widgetName, data, oids, data.debug)) {
