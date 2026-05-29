@@ -291,8 +291,17 @@ vis.binds.materialdesign.calendar =
 
                     vis.states.bind(data.oid + '.val', function (e, newVal, oldVal) {
                         jsonData = parseJson();
-                        vueCalendar.events = jsonData;
-                        vueCalendar.events = [...jsonData]; 
+                                                
+                        const applyEvents = () => { 
+                            if (vueCalendar.$refs.calendar) { 
+                                vueCalendar.events = [...jsonData]; 
+                            } else { 
+                                setTimeout(applyEvents, 100); 
+                            } 
+                        }; 
+                        
+                        applyEvents();
+
                         // force complete remount for vis2 async init 
                         vueCalendar.renderKey++;
                     });
