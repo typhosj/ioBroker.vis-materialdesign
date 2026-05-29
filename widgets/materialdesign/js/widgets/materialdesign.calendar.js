@@ -297,6 +297,16 @@ vis.binds.materialdesign.calendar =
                                                 
                         vueCalendar.events = [...jsonData]; 
                         
+                        // vis2: trigger initial render with current state value 
+                        setTimeout(function () { 
+                            const currentVal = vis.states.attr(data.oid + '.val'); 
+                            
+                            if (currentVal) { 
+                                jsonData = parseJson(); 
+                                vueCalendar.events = [...jsonData]; 
+                            } 
+                        }, 1000);
+                        
                         vueCalendar.$nextTick(() => { 
                             if (vueCalendar.$refs.calendar) { 
                                 // force vue-cal to recalculate layout 
