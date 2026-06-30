@@ -195,7 +195,7 @@ async function initializeSentry() {
         if (sentryState) {
             checkEl.prop("checked", sentryState.val);
         } else {
-            checkEl.prop("checked", true);
+            checkEl.prop("checked", false);
         }
     } catch (err) {
         reportError(`[initializeSentry] error: ${err.message}, stack: ${err.stack}`);

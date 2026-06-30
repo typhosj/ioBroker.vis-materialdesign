@@ -242,18 +242,6 @@
                 "es": "ver registro de cambios",
                 "pl": "patrz dziennik zmian",
                 "zh-cn": "看到变更日志"
-            },
-            "0.2.66": {
-                "en": "see changelog",
-                "de": "siehe Changelog",
-                "ru": "см. список изменений",
-                "pt": "veja changelog",
-                "nl": "zie changelog",
-                "fr": "voir changelog",
-                "it": "vedi il log delle modifiche",
-                "es": "ver registro de cambios",
-                "pl": "patrz dziennik zmian",
-                "zh-cn": "看到变更日志"
             }
         },
         "title": "Material Design Widgets",
@@ -291,7 +279,6 @@
         ],
         "license": "MIT",
         "platform": "Javascript/Node.js",
-        "main": "main.js",
         "icon": "vis-materialdesign.png",
         "enabled": true,
         "extIcon": "https://raw.githubusercontent.com/Scrounger/ioBroker.vis-materialdesign/master/admin/vis-materialdesign.png",
@@ -320,7 +307,7 @@
         "scriptName": "Theme",
         "variableName": "myMdwTheme",
         "javascriptInstance": "",
-        "sentryReport": true,
+        "sentryReport": false,
         "colors": [],
         "defaultcolors": [],
         "colorsDark": [],
@@ -358,7 +345,7 @@
                 "type": "boolean",
                 "read": true,
                 "write": true,
-                "def": true,
+                "def": false,
                 "uuid": ""
             },
             "native": {}
