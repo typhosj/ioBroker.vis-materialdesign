@@ -62,8 +62,6 @@ let sortResetAfter = 120;                                                   // S
 let sortReset = 'memHeapUsed'                                               // Sortierung auf die zurückgesetzt werden soll
 
 let filterResetAfter = 120;                                                 // Filter nach X Sekunden zurücksetzen (0=deaktiviert)
-let sortResetTimerHandle;
-let filterResetTimerHandle;
 
 
 
@@ -319,28 +317,14 @@ on({ id: dpAdapterRestart }, function (obj) {
 
 
 function resetSort() {
-    let sortMode = myHelper().getStateValueIfExist(dpSortMode, null);
-
     if (sortResetAfter > 0) {
-        clearTimeout(sortResetTimerHandle);
-        sortResetTimerHandle = setTimeout(function () {
-            if (sortMode !== null && sortMode === myHelper().getStateValueIfExist(dpSortMode, null)) {
-                setState(dpSortMode, sortReset);
-            }
-        }, sortResetAfter * 1000);
+        setStateDelayed(dpSortMode, sortReset, false, sortResetAfter * 1000, true);
     }
 }
 
 function resetFilter() {
-    let filterMode = myHelper().getStateValueIfExist(dpFilterMode, null);
-
     if (filterResetAfter > 0) {
-        clearTimeout(filterResetTimerHandle);
-        filterResetTimerHandle = setTimeout(function () {
-            if (filterMode !== null && filterMode === myHelper().getStateValueIfExist(dpFilterMode, null)) {
-                setState(dpFilterMode, '');
-            }
-        }, filterResetAfter * 1000);
+        setStateDelayed(dpFilterMode, '', false, filterResetAfter * 1000, true);
     }
 }
 

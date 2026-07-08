@@ -1,13 +1,13 @@
 ![Logo](admin/vis-materialdesign.png)
 <!-- omit in toc -->
-# ioBroker.vis-materialdesign
+# ioBroker.vis2-materialdesign
 
 ![stable version](http://iobroker.live/badges/vis-materialdesign.svg)
-[![NPM version](http://img.shields.io/npm/v/iobroker.vis-materialdesign.svg)](https://www.npmjs.com/package/iobroker.vis-materialdesign)
-[![Number of Installations](http://iobroker.live/badges/vis-materialdesign-installed.svg)](https://www.npmjs.com/package/ioBroker.vis-materialdesign)
-[![Downloads](https://img.shields.io/npm/dm/iobroker.vis-materialdesign.svg)](https://www.npmjs.com/package/ioBroker.vis-materialdesign)
+[![NPM version](http://img.shields.io/npm/v/iobroker.vis2-materialdesign.svg)](https://www.npmjs.com/package/iobroker.vis2-materialdesign)
+[![Number of Installations](http://iobroker.live/badges/vis-materialdesign-installed.svg)](https://www.npmjs.com/package/ioBroker.vis2-materialdesign)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.vis2-materialdesign.svg)](https://www.npmjs.com/package/ioBroker.vis2-materialdesign)
 
-[![NPM](https://nodei.co/npm/iobroker.vis-materialdesign.png?downloads=true)](https://nodei.co/npm/iobroker.vis-materialdesign/)
+[![NPM](https://nodei.co/npm/iobroker.vis2-materialdesign.png?downloads=true)](https://nodei.co/npm/iobroker.vis2-materialdesign/)
 
 <!-- omit in toc -->
 ## Material Design Widgets for IoBroker VIS
@@ -39,7 +39,7 @@ provided by [iobroker.click](https://iobroker.click/index.html), thanks to bluef
 * [Weather View](https://forum.iobroker.net/topic/32232/material-design-widgets-wetter-view)
 * [Skript Status](https://forum.iobroker.net/topic/30662/material-design-widgets-skript-status)
 * [Adapter Status](https://forum.iobroker.net/topic/30661/material-design-widgets-adapter-status)
-* [UniFi Netzwerk Status](https://github.com/typhosj/ioBroker.vis-materialdesign/tree/master/examples/UnifiNetworkState)
+* [UniFi Netzwerk Status](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/examples/UnifiNetworkState)
 
 ### Questions and answers about the widgets
 If you have questions about the individual widgets, then first look at the topics of the individual widgets
@@ -114,31 +114,31 @@ In the adapter settings you can copy the binding command to the clipboard by cli
 
 Detailed widget documentation was moved to separate files:
 
-- [Material Design Icons and Images](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/material-design-icons-and-images.md)
-- [Buttons](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/buttons.md)
-- [Buttons Vertical](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/buttons-vertical.md)
-- [Icon Buttons](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/icon-buttons.md)
-- [Checkbox](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/checkbox.md)
-- [Switch](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/switch.md)
-- [Value](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/value.md)
-- [HTML Card](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/html-card.md)
-- [List](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/list.md)
-- [IconList](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/iconlist.md)
-- [Progress](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/progress.md)
-- [Progress Circular](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/progress-circular.md)
-- [Slider](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/slider.md)
-- [Slider Round](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/slider-round.md)
-- [Input](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/input.md)
-- [Top App Bar](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/top-app-bar.md)
-- [Charts](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/charts.md)
-- [Table](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/table.md)
-- [Responsive Layout](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/responsive-layout.md)
-- [Alerts](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/alerts.md)
-- [Calendar](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/calendar.md)
-- [Dialog](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/dialog.md)
-- [HTML Widgets](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/html-widgets.md)
+- [Material Design Icons and Images](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/material-design-icons-and-images.md)
+- [Buttons](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/buttons.md)
+- [Buttons Vertical](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/buttons-vertical.md)
+- [Icon Buttons](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/icon-buttons.md)
+- [Checkbox](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/checkbox.md)
+- [Switch](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/switch.md)
+- [Value](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/value.md)
+- [HTML Card](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/html-card.md)
+- [List](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/list.md)
+- [IconList](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/iconlist.md)
+- [Progress](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/progress.md)
+- [Progress Circular](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/progress-circular.md)
+- [Slider](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/slider.md)
+- [Slider Round](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/slider-round.md)
+- [Input](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/input.md)
+- [Top App Bar](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/top-app-bar.md)
+- [Charts](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/charts.md)
+- [Table](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/table.md)
+- [Responsive Layout](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/responsive-layout.md)
+- [Alerts](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/alerts.md)
+- [Calendar](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/calendar.md)
+- [Dialog](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/dialog.md)
+- [HTML Widgets](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/html-widgets.md)
 
-Full index: [doc/en/widgets/README.md](https://github.com/typhosj/ioBroker.vis-materialdesign/tree/master/doc/en/widgets)
+Full index: [doc/en/widgets/README.md](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/doc/en/widgets)
 
 ## Informations
 
@@ -152,6 +152,10 @@ The adapter uses the following libraries:
 
 
 ## Changelog
+### 1.0.0 (2026-07-08)
+* Native VIS 2 widget bundle added for simple Material Design widgets
+* VIS 2 is now required; legacy VIS widgets stay in the package as fallback files
+
 ### 0.5.10 (2026-07-01)
 * Calendar Widget improved for VIS2: content loads immediately on open and no error is shown on first open
 * (Scrounger) JSON Chart Widget: method to use css color variables added
@@ -169,7 +173,7 @@ The adapter uses the following libraries:
 * (Scrounger) IconList Widget: added option for color and text of status bar if state is active
 * (Scrounger) List Widget: main header added
 * (Scrounger) List Widget: events bug fix
-* (darkiop) documentation updated ([#PR179](https://github.com/typhosj/ioBroker.vis-materialdesign/pull/179))
+* (darkiop) documentation updated ([#PR179](https://github.com/typhosj/ioBroker.vis2-materialdesign/pull/179))
 * (Scrounger) Top App Bar Widget: fixed bugs found by sentry
 * (Scrounger) Top App Bar Widget: icon color bug fix if using json string
 * (Scrounger) Top App Bar Widget: selected item icon color option added
@@ -181,35 +185,35 @@ The adapter uses the following libraries:
 * (Scrounger) Advanced View in Widget 8 widget added
 * (Scrounger) Dialog Widget: background color bug fix on close animation
 * (Scrounger) Dialog Widget: option added to show a save button and write a value to a datapoint
-* (Scrounger) HTML Widget: bug fix for wrong type ([#182](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/182))
+* (Scrounger) HTML Widget: bug fix for wrong type ([#182](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/182))
 * (Scrounger) support for base64 images added
 * (Scrounger) Material Design Icons updated to v6.6.96
 * (Scrounger) bug fix for VIS Editor dev values
 
 <!-- omit in toc -->
 ### 0.5.9 (2021-06-13)
-* (Scrounger) Top App Bar Widget: option added to define navigation items per JSON String [Details see documentation!](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/top-app-bar.md)
+* (Scrounger) Top App Bar Widget: option added to define navigation items per JSON String [Details see documentation!](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/top-app-bar.md)
 * (Scrounger) Top App Bar Widget: option added to define an id per item
 * (Scrounger) fixed bugs found by sentry
 
 <!-- omit in toc -->
 ### 0.5.8 (2021-06-09)
-* (Scrounger) Top App Bar Widget: new layout 'auto' added - change between modal and permanent layout depending on screen resolution. [Details see documentation!](https://github.com/typhosj/ioBroker.vis-materialdesign/blob/master/doc/en/widgets/top-app-bar.md#layout-auto)
+* (Scrounger) Top App Bar Widget: new layout 'auto' added - change between modal and permanent layout depending on screen resolution. [Details see documentation!](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/top-app-bar.md#layout-auto)
 * (Scrounger) Top App Bar Widget: option added to set value on click at item that toggle submenu
 * (Scrounger) IconList Widget: option added to set used space per row for every items
-* (Scrounger) IconList Widget: option added to set visibility condition for every items ([#118](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/118))
-* (Scrounger) IconList Widget: bug fix for applying active color ([#176](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/176))
+* (Scrounger) IconList Widget: option added to set visibility condition for every items ([#118](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/118))
+* (Scrounger) IconList Widget: bug fix for applying active color ([#176](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/176))
 * (Scrounger) Grid Widget: bug fix for visibility condition
 * (Scrounger) Masonry Widget: bug fix for visibility condition
 
 <!-- omit in toc -->
 ### 0.5.7 (2021-05-26)
-* (Scrounger) Top App Bar Widget: color option for menu icon added ([#171](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/171))
-* (Scrounger) Top App Bar Widget: Permission group - option to deactivate default value added ([#173](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/173))
-* (Scrounger) iconList Widget: bug fix for active state at diffrent types ([#168](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/168))
-* (Scrounger) iconList Widget: layout bug fix for radius of buttons ([#174](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/174))
+* (Scrounger) Top App Bar Widget: color option for menu icon added ([#171](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/171))
+* (Scrounger) Top App Bar Widget: Permission group - option to deactivate default value added ([#173](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/173))
+* (Scrounger) iconList Widget: bug fix for active state at diffrent types ([#168](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/168))
+* (Scrounger) iconList Widget: layout bug fix for radius of buttons ([#174](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/174))
 * (Scrounger) list Widget: bug fix for theme properties
-* (Scrounger) select Widget: bug fix for long text ([#169](https://github.com/typhosj/ioBroker.vis-materialdesign/issues/169))
+* (Scrounger) select Widget: bug fix for long text ([#169](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues/169))
 * (Scrounger) fixed bugs found by sentry
 
 <!-- omit in toc -->

@@ -1,12 +1,12 @@
 {
-  "name": "iobroker.vis-materialdesign",
-  "version": "0.5.9",
+  "name": "iobroker.vis2-materialdesign",
+  "version": "1.0.0",
   "description": "Material Design Widgets based on Google material components web library",
   "author": {
     "name": "Scrounger",
     "email": "scrounger@gmx.net"
   },
-  "homepage": "https://github.com/typhosj/ioBroker.vis-materialdesign",
+  "homepage": "https://github.com/typhosj/ioBroker.vis2-materialdesign",
   "license": "MIT",
   "files": [
     "admin",
@@ -19,29 +19,32 @@
   ],
   "keywords": [
     "ioBroker",
-    "vis",
     "material",
-    "GUI"
+    "GUI",
+    "vis-2",
+    "vis2-materialdesign"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/typhosj/ioBroker.vis-materialdesign.git"
+    "url": "https://github.com/typhosj/ioBroker.vis2-materialdesign.git"
   },
   "devDependencies": {
     "@alcalzone/release-script": "^5.2.1",
     "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
     "@alcalzone/release-script-plugin-license": "^5.2.0",
-    "@alcalzone/release-script-plugin-manual-review": "^5.2.0"
+    "@alcalzone/release-script-plugin-manual-review": "^5.2.0",
+    "@iobroker/eslint-config": "^2.3.4"
   },
-  "main": "widgets/materialdesign.html",
+  "main": "widgets/vis2-materialdesign/customWidgets.js",
   "scripts": {
     "test:package": "node test/package.js",
     "test": "npm run test:package",
     "release": "release-script",
-    "lint": "node -e \"console.log(\\\"No lint configured for legacy widget adapter\\\")\""
+    "lint": "node -e \"console.log(\\\"No lint configured for legacy widget adapter\\\")\"",
+    "build": "node tasks"
   },
   "bugs": {
-    "url": "https://github.com/typhosj/ioBroker.vis-materialdesign/issues"
+    "url": "https://github.com/typhosj/ioBroker.vis2-materialdesign/issues"
   },
   "readmeFilename": "README.md",
   "dependencies": {
