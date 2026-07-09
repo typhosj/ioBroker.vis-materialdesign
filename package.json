@@ -1,21 +1,32 @@
 {
   "name": "iobroker.vis2-materialdesign",
   "version": "1.0.0",
-  "description": "Material Design Widgets based on Google material components web library",
+  "description": "Native VIS 2 Material Design widgets based on the original work by Scrounger",
   "author": {
-    "name": "Scrounger",
-    "email": "scrounger@gmx.net"
+    "name": "typhosj",
+    "email": "typhosj@gmx.de"
   },
   "homepage": "https://github.com/typhosj/ioBroker.vis2-materialdesign",
   "license": "MIT",
   "files": [
-    "admin",
-    "widgets",
+    "admin/**/*.css",
+    "admin/**/*.d.ts",
+    "admin/**/*.html",
+    "admin/**/*.js",
+    "admin/**/*.json",
+    "admin/**/*.mp3",
+    "admin/**/*.png",
+    "widgets/**/*.css",
+    "widgets/**/*.html",
+    "widgets/**/*.jpg",
+    "widgets/**/*.js",
+    "widgets/**/*.json",
+    "widgets/**/*.mp3",
+    "widgets/**/*.png",
+    "widgets/**/*.ttf",
     "io-package.json",
     "README.md",
-    "LICENSE",
-    "!**/*.map",
-    "!CHANGELOG_OLD.md"
+    "LICENSE"
   ],
   "keywords": [
     "ioBroker",
@@ -53,5 +64,8 @@
     "mathjs": "^15.2.0",
     "moment": "^2.30.1",
     "moment-duration-format": "^2.3.2"
-  }
+  },
+  "contributors": [
+    "Scrounger <scrounger@gmx.net>"
+  ]
 }

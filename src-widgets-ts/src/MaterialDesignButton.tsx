@@ -2,7 +2,17 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
-import { BaseRxData, RenderProps, VisWidget, card, commonAttrs, createInfo, setStateValue } from './widgetUtils';
+import {
+    BaseRxData,
+    PressState,
+    RenderProps,
+    VisWidget,
+    card,
+    commonAttrs,
+    createInfo,
+    parseActionValue,
+    setStateValue,
+} from './widgetUtils';
 
 const attrs = [
     ...commonAttrs,
@@ -20,8 +30,6 @@ const attrs = [
 ];
 
 export default class MaterialDesignButton extends VisWidget {
-    static adapter = 'vis-materialdesign';
-
     constructor(props: VisRxWidgetProps) {
         super(props);
     }
@@ -37,6 +45,9 @@ export default class MaterialDesignButton extends VisWidget {
     renderWidgetBody(props: RenderProps): React.JSX.Element {
         super.renderWidgetBody(props);
         const data = this.state.rxData as BaseRxData;
+        const pressState = this.state as PressState;
+        const background = pressState.active ? '#0d47a1' : pressState.hovered ? '#1565c0' : '#1976d2';
+        const writeValue = (): void => setStateValue(this.props, data.oid, parseActionValue(data.value));
 
         return card(
             <button
@@ -46,12 +57,36 @@ export default class MaterialDesignButton extends VisWidget {
                     height: '100%',
                     border: 0,
                     borderRadius: 4,
-                    background: '#1976d2',
+                    background,
                     color: '#fff',
                     cursor: 'pointer',
                     padding: '8px 12px',
+                    transform: pressState.active ? 'translateY(1px)' : 'none',
+                    transition: 'background 120ms ease, transform 80ms ease',
                 }}
-                onClick={() => setStateValue(this.props, data.oid, data.value)}
+                onMouseEnter={() => this.setState({ hovered: true } as PressState)}
+                onMouseLeave={() => this.setState({ active: false, hovered: false } as PressState)}
+                onMouseDown={() => this.setState({ active: true } as PressState)}
+                onMouseUp={() => {
+                    this.setState({ active: false } as PressState);
+                    writeValue();
+                }}
+                onKeyDown={event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        this.setState({ active: true } as PressState);
+                    }
+                }}
+                onKeyUp={event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        this.setState({ active: false } as PressState);
+                        writeValue();
+                    }
+                }}
+                onTouchStart={() => this.setState({ active: true } as PressState)}
+                onTouchEnd={() => {
+                    this.setState({ active: false } as PressState);
+                    writeValue();
+                }}
             >
                 {data.label || 'Button'}
             </button>,

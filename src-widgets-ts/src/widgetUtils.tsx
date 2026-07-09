@@ -14,6 +14,11 @@ export interface BaseRxData {
     value: string;
 }
 
+export interface PressState {
+    active?: boolean;
+    hovered?: boolean;
+}
+
 export const setColor = '#1976d2';
 
 export const commonAttrs = [
@@ -68,6 +73,19 @@ export function setStateValue(props: VisRxWidgetProps, oid: string, value: ioBro
     }
 }
 
+export function parseActionValue(value: string): ioBroker.StateValue {
+    if (value === 'true') {
+        return true;
+    }
+    if (value === 'false') {
+        return false;
+    }
+    if (value !== '' && !Number.isNaN(Number(value))) {
+        return Number(value);
+    }
+    return value;
+}
+
 export function card(children: React.ReactNode): React.JSX.Element {
     return <div style={{ boxSizing: 'border-box', width: '100%', height: '100%', padding: 8 }}>{children}</div>;
 }
@@ -75,8 +93,8 @@ export function card(children: React.ReactNode): React.JSX.Element {
 export function createInfo(id: string, name: string, attrs: RxWidgetInfo['visAttrs']): RxWidgetInfo {
     return {
         id,
-        visSet: 'vis-materialdesign',
-        visSetLabel: 'vis_materialdesign',
+        visSet: 'vis2-materialdesign',
+        visSetLabel: 'vis2_materialdesign',
         visSetColor: setColor,
         visName: name,
         visAttrs: attrs,

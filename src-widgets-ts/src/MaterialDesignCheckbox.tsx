@@ -5,8 +5,6 @@ import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker
 import { BaseRxData, RenderProps, VisWidget, card, commonAttrs, createInfo, setStateValue, stateValue } from './widgetUtils';
 
 export default class MaterialDesignCheckbox extends VisWidget {
-    static adapter = 'vis-materialdesign';
-
     constructor(props: VisRxWidgetProps) {
         super(props);
     }

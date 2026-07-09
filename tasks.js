@@ -14,8 +14,20 @@ function clean() {
 function copyAllFiles() {
     mkdirSync(widgetTarget, { recursive: true });
     cpSync(`${srcTs}build/customWidgets.js`, `${widgetTarget}/customWidgets.js`);
+    if (existsSync(`${srcTs}build/customWidgets.ssr.js`)) {
+        cpSync(`${srcTs}build/customWidgets.ssr.js`, `${widgetTarget}/customWidgets.ssr.js`);
+    }
+    if (existsSync(`${srcTs}build/mf-stats.json`)) {
+        cpSync(`${srcTs}build/mf-stats.json`, `${widgetTarget}/mf-stats.json`);
+    }
     if (existsSync(`${srcTs}build/assets`)) {
         cpSync(`${srcTs}build/assets`, `${widgetTarget}/assets`, { recursive: true });
+    }
+    if (existsSync(`${__dirname}/admin/materialdesign-widgets-click-sound.mp3`)) {
+        cpSync(
+            `${__dirname}/admin/materialdesign-widgets-click-sound.mp3`,
+            `${widgetTarget}/materialdesign-widgets-click-sound.mp3`,
+        );
     }
 }
 

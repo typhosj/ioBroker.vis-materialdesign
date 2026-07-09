@@ -1,0 +1,1 @@
+import{t as e}from"./MaterialDesignButtons-C5it312I.js";var t=e({id:`tplVis-materialdesign-Button-Link`,name:`Button Link`,kind:`link`,layout:`default`,label:`&nbsp;Link`,icon:`link`});export{t as default};

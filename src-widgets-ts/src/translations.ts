@@ -1,5 +1,6 @@
 const translations = {
     en: {
+        vis2_materialdesign: 'Material Design',
         vis_materialdesign: 'Material Design',
         group_common: 'Common',
         label: 'Label',
@@ -12,6 +13,7 @@ const translations = {
         value: 'Value',
     },
     de: {
+        vis2_materialdesign: 'Material Design',
         vis_materialdesign: 'Material Design',
         group_common: 'Allgemein',
         label: 'Beschriftung',

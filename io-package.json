@@ -4,8 +4,8 @@
         "version": "1.0.0",
         "news": {
             "1.0.0": {
-                "en": "Native VIS 2 widget bundle added. Legacy VIS widgets stay in the package as fallback, but VIS 2 is now required.",
-                "de": "Natives VIS-2-Widget-Bundle hinzugefügt. Alte VIS-Widgets bleiben als Fallback im Paket, aber VIS 2 ist jetzt erforderlich.",
+                "en": "Native VIS 2 widget bundle added. The widgets are maintained by typhosj and based on the original work by Scrounger. Legacy VIS widgets stay in the package as fallback files, but VIS 2 is now required.",
+                "de": "Natives VIS-2-Widget-Bundle hinzugefügt. Die Widgets werden von typhosj gepflegt und basieren auf der ursprünglichen Arbeit von Scrounger. Alte VIS-Widgets bleiben als Fallback-Dateien im Paket, aber VIS 2 ist jetzt erforderlich.",
                 "ru": "see changelog",
                 "pt": "see changelog",
                 "nl": "see changelog",
@@ -109,8 +109,8 @@
             "uk": "Material Design Widgets"
         },
         "desc": {
-            "en": "Material Design Widgets are based on Google's material design guidelines. The adapter uses different libraries (material components web library, vuetify, chartjs, etc.).",
-            "de": "Material Design Widgets basieren auf den Google-Richtlinien für das Material Design. Dabei verwendet der Adapter verschiedene Bibliothek (material components web library, vuetify, chartjs, etc.).",
+            "en": "Native VIS 2 Material Design widgets based on the original work by Scrounger.",
+            "de": "Native VIS-2-Material-Design-Widgets, basierend auf der ursprünglichen Arbeit von Scrounger.",
             "ru": "Виджеты для проектирования материалов основаны на руководстве Google по проектированию материалов. Адаптер использует различные библиотеки (material components web library, vuetify, chartjs, и т.д.).",
             "pt": "Os Widgets de design de materiais são baseados nas diretrizes de design de materiais do Google. O adaptador usa bibliotecas diferentes (material components web library, vuetify, chartjs, etc.).",
             "nl": "Material Design Widgets zijn gebaseerd op de materiaalontwerprichtlijnen van Google. De adapter maakt gebruik van verschillende bibliotheken (material components web library, vuetify, chartjs, etc.).",
@@ -119,15 +119,17 @@
             "es": "Los Widgets de diseño de materiales se basan en las directrices de diseño de materiales de Google. El adaptador utiliza diferentes librerías (material components web library, vuetify, chartjs, etc.).",
             "pl": "Widgety do projektowania materiałów oparte są na wytycznych Google dotyczących projektowania materiałów. Adapter wykorzystuje różne biblioteki (material components web library, vuetify, chartjs, itp.)",
             "zh-cn": "Material Design Widgets基于Google的Material Design准则。适配器使用不同的库（材料组件Web库，vuetify，chartjs等）。",
-            "uk": "Material Design Widgets are based on Google's material design guidelines. The adapter uses different libraries (material components web library, vuetify, chartjs, etc.)."
+            "uk": "Native VIS 2 Material Design widgets based on the original work by Scrounger."
         },
         "authors": [
+            "typhosj <typhosj@gmx.de>",
             "Scrounger <scrounger@gmx.net>"
         ],
         "keywords": [
-            "vis",
+            "vis-2",
             "material",
-            "GUI"
+            "GUI",
+            "vis2-materialdesign"
         ],
         "platform": "Javascript/Node.js",
         "icon": "vis-materialdesign.png",
@@ -173,7 +175,25 @@
                 "url": "vis2-materialdesign/customWidgets.js",
                 "bundlerType": "module",
                 "components": [
-                    "MaterialDesignButton",
+                    "MaterialDesignButtonNavigationVertical",
+                    "MaterialDesignButtonLinkVertical",
+                    "MaterialDesignButtonStateVertical",
+                    "MaterialDesignButtonStateMultiVertical",
+                    "MaterialDesignButtonAditionVertical",
+                    "MaterialDesignButtonToggleVertical",
+                    "MaterialDesignButtonNavigation",
+                    "MaterialDesignButtonLink",
+                    "MaterialDesignButtonState",
+                    "MaterialDesignButtonStateMulti",
+                    "MaterialDesignButtonAdition",
+                    "MaterialDesignButtonToggle",
+                    "MaterialDesignIconButtonNavigation",
+                    "MaterialDesignIconButtonLink",
+                    "MaterialDesignIconButtonState",
+                    "MaterialDesignIconButtonStateMulti",
+                    "MaterialDesignIconButtonAdition",
+                    "MaterialDesignIconButtonToggle",
+                    "MaterialDesignIconButtonSlider",
                     "MaterialDesignCheckbox",
                     "MaterialDesignIcon",
                     "MaterialDesignSwitch",

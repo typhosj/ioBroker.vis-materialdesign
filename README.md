@@ -10,11 +10,11 @@
 [![NPM](https://nodei.co/npm/iobroker.vis2-materialdesign.png?downloads=true)](https://nodei.co/npm/iobroker.vis2-materialdesign/)
 
 <!-- omit in toc -->
-## Material Design Widgets for IoBroker VIS
-[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VWAXSTS634G88&source=url)
+## Material Design Widgets for ioBroker VIS 2
+ioBroker VIS 2 Material Design widgets based on [Google's material design guidelines](https://material.io/design/).
 
-
-ioBroker Material Design Widgets are based on [Google's material design guidelines](https://material.io/design/)
+This adapter is maintained by typhosj. The widgets are based on the original
+VIS Material Design widget work by Scrounger.
 
 <br>
 
@@ -29,11 +29,21 @@ ioBroker Material Design Widgets are based on [Google's material design guidelin
 
 ## General
 
+### Author and attribution
+
+Author and maintainer: typhosj <typhosj@gmx.de>
+
+The widgets are based on the original VIS Material Design widget work by
+Scrounger <scrounger@gmx.net>.
+
 ### Online Example Project
 provided by [iobroker.click](https://iobroker.click/index.html), thanks to bluefox and iobroker.
 
 * <a href="https://iobroker.click/vis/index.html?Material%20Design%20Widgets" target="_blank">VIS Runtime</a> (<a href="http://iobroker.click:8082/vis/index.html?Material%20Design%20Widgets" target="_blank">alternativ</a>)
 * <a href="https://iobroker.click/vis/edit.html?Material%20Design%20Widgets" target="_blank">VIS Editor</a> (<a href="http://iobroker.click:8082/vis/edit.html?Material%20Design%20Widgets" target="_blank">alternativ</a>)
+
+These links point to the original VIS project. Native VIS 2 surfaces must be
+rebuilt manually.
 
 ### Practical examples
 * [Weather View](https://forum.iobroker.net/topic/32232/material-design-widgets-wetter-view)
@@ -153,8 +163,10 @@ The adapter uses the following libraries:
 
 ## Changelog
 ### 1.0.0 (2026-07-08)
-* Native VIS 2 widget bundle added for simple Material Design widgets
-* VIS 2 is now required; legacy VIS widgets stay in the package as fallback files
+* (typhosj) Native VIS 2 widget bundle added for simple Material Design widgets
+* (typhosj) Adapter renamed to `vis2-materialdesign` and VIS 2 is now required
+* (typhosj) Legacy VIS widgets stay in the package as fallback files
+* Widgets are based on the original VIS Material Design widget work by Scrounger
 
 ### 0.5.10 (2026-07-01)
 * Calendar Widget improved for VIS2: content loads immediately on open and no error is shown on first open
@@ -233,7 +245,11 @@ Older changelog entries are available in [CHANGELOG_OLD.md](CHANGELOG_OLD.md).
 ## License
 MIT License
 
+Copyright (c) 2026 typhosj <typhosj@gmx.de>  
 Copyright (c) 2021-2026 Scrounger <scrounger@gmx.net>
+
+The widgets are based on the original VIS Material Design widget work by
+Scrounger <scrounger@gmx.net>.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

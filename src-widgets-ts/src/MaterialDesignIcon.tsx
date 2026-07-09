@@ -32,8 +32,6 @@ const attrs = [
 ];
 
 export default class MaterialDesignIcon extends VisWidget {
-    static adapter = 'vis-materialdesign';
-
     constructor(props: VisRxWidgetProps) {
         super(props);
     }
