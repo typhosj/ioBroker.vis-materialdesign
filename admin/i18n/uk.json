@@ -34,6 +34,7 @@
     "appendTextFontSize": "шрифт розмір of доданий текст",
     "arcLength": "ARC LENGTH",
     "attention": "ATTENTION",
+    "autoFocus": "автофокус",
     "autoLockAfter": "Авто LOCKING після [S]",
     "axisLabelAutoSkip": "вісь авто skip of labels",
     "axisMaxLabel": "максимум число of вісь labels",

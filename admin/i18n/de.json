@@ -34,6 +34,7 @@
     "appendTextFontSize": "Schriftgröße des angehängten Textes",
     "arcLength": "Bogenlänge",
     "attention": "Achtung",
+    "autoFocus": "automatisch fokussieren",
     "autoLockAfter": "automatisch Verriegeln nach [s]",
     "axisLabelAutoSkip": "Automatisches Überspringen von Beschriftungen auf der Achse",
     "axisMaxLabel": "maximale Anzahl von Achsenbeschriftungen",

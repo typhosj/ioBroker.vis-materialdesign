@@ -34,6 +34,7 @@
     "appendTextFontSize": "附加文字的字体大小",
     "arcLength": "弧长",
     "attention": "注意",
+    "autoFocus": "自动聚焦",
     "autoLockAfter": "[s]之后自动锁定",
     "axisLabelAutoSkip": "标签轴自动跳过",
     "axisMaxLabel": "轴标签的最大数量",

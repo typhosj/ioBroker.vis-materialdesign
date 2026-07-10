@@ -34,6 +34,7 @@
     "appendTextFontSize": "lettergrootte van toegevoegde tekst",
     "arcLength": "boog lengte",
     "attention": "aandacht",
+    "autoFocus": "automatisch focussen",
     "autoLockAfter": "automatisch vergrendelen na [s]",
     "axisLabelAutoSkip": "as automatisch overslaan van labels",
     "axisMaxLabel": "maximum aantal aslabels",

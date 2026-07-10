@@ -34,6 +34,7 @@
     "appendTextFontSize": "rozmiar czcionki dołączanego tekstu",
     "arcLength": "długość łuku",
     "attention": "Uwaga",
+    "autoFocus": "automatyczny fokus",
     "autoLockAfter": "automatyczne blokowanie po [s]",
     "axisLabelAutoSkip": "automatyczne pomijanie etykiet w osi",
     "axisMaxLabel": "maksymalna liczba etykiet osi",

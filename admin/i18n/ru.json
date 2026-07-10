@@ -34,6 +34,7 @@
     "appendTextFontSize": "размер шрифта добавляемого текста",
     "arcLength": "длина дуги",
     "attention": "Внимание",
+    "autoFocus": "автофокус",
     "autoLockAfter": "автоматическая блокировка после [s]",
     "axisLabelAutoSkip": "ось авто пропустить метки",
     "axisMaxLabel": "максимальное количество меток оси",

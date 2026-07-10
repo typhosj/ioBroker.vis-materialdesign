@@ -34,6 +34,7 @@
     "appendTextFontSize": "tamaño de fuente del texto adjunto",
     "arcLength": "longitud de arco",
     "attention": "atención",
+    "autoFocus": "enfoque automático",
     "autoLockAfter": "Bloqueo automático después de [s]",
     "axisLabelAutoSkip": "eje de omisión automática de etiquetas",
     "axisMaxLabel": "número máximo de etiquetas de eje",
