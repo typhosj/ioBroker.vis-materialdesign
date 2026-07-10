@@ -264,7 +264,7 @@ function isSvgSource(value: string): boolean {
     return normalized.includes('.svg') || normalized.includes('image/svg+xml');
 }
 
-function renderIcon(image: string, colorValue: string, size: number, recolor = true): React.JSX.Element | null {
+export function renderIcon(image: string, colorValue: string, size: number, recolor = true): React.JSX.Element | null {
     if (!image) {
         return null;
     }

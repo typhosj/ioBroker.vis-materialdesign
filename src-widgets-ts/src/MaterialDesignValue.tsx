@@ -2,7 +2,224 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
-import { BaseRxData, RenderProps, VisWidget, card, createInfo, stateValue, valueTextAttrs } from './widgetUtils';
+import { BaseRxData, RenderProps, VisWidget, createInfo, stateValue } from './widgetUtils';
+import { renderIcon } from './MaterialDesignButtons';
+
+interface ValueData extends BaseRxData {
+    targetType?: 'auto' | 'number' | 'string' | 'boolean' | 'linked';
+    overrideText?: string;
+    textAlign?: 'start' | 'center' | 'end';
+    valueLabelWidth?: number;
+    valuesFontColor?: string;
+    valuesFontFamily?: string;
+    valuesFontSize?: number;
+    prepandText?: string;
+    prepandTextColor?: string;
+    prepandTextFontFamily?: string;
+    prepandTextFontSize?: number;
+    appendText?: string;
+    appendTextColor?: string;
+    appendTextFontFamily?: string;
+    appendTextFontSize?: number;
+    valueLabelUnit?: string;
+    minDecimals?: number;
+    maxDecimals?: number;
+    calculate?: string;
+    convertToDuration?: string;
+    convertToTimestamp?: string;
+    textOnTrue?: string;
+    textOnFalse?: string;
+    condition?: string;
+    image?: string;
+    imageColor?: string;
+    iconPosition?: 'left' | 'right';
+    iconHeight?: number;
+    changeEffectEnabled?: boolean;
+    effectFontColor?: string;
+    effectFontSize?: number;
+    effectDuration?: number;
+}
+
+const preview =
+    '<div id="prev_tplVis-materialdesign-value" style="position: relative; text-align: initial; padding: 4px "><div class="vis-widget_prev materialdesign-widget materialdesign-value vis-tpl-materialdesign-Value " style="width: 100px; height: 24px; padding: 0px; display: flex; align-items: center; left: 220px; top: 323px; position: absolute; --value-color-text:#44739e; --value-font-text:RobotoCondensed-Regular; --value-font-size-text:14px; --value-color-prepand:#44739e; --value-font-prepand:RobotoCondensed-Regular; --value-font-size-prepand:14px; --value-color-append:#44739e; --value-font-append:RobotoCondensed-Regular; --value-font-size-append:14px; z-index: 4;" data-tmodified="true" data-zmodified="true"> <span class="mdi mdi-information materialdesign-icon-image " style="width: auto; height: auto; font-size: 24px; color: #44739e; ;"></span> <div class="materialdesign-value prepand-text" style="margin: 0 2px 0 2px;"></div> <div class="materialdesign-value value-text" style="margin: 0 2px 0 2px; flex: 1;text-align: center">1,23 kWh</div> <div class="materialdesign-value append-text" style="margin: 0 2px 0 2px;"></div> <div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div></div></div>';
+
+const attrs: RxWidgetInfo['visAttrs'] = [
+    {
+        name: 'common',
+        fields: [
+            { name: 'oid', label: 'oid', type: 'id' },
+            { name: 'targetType', label: 'targetType', type: 'select', options: ['auto', 'number', 'string', 'boolean', 'linked'], default: 'auto' },
+            { name: 'overrideText', label: 'overrideText', type: 'html' },
+            { name: 'debug', label: 'debug', type: 'checkbox' },
+        ],
+    },
+    {
+        name: 'layout',
+        fields: [
+            { name: 'textAlign', label: 'textAlign', type: 'select', options: ['start', 'center', 'end'], default: 'start' },
+            { name: 'valueLabelWidth', label: 'valueLabelWidth', type: 'number', default: 4 },
+            { name: 'valuesFontColor', label: 'valuesFontColor', type: 'color' },
+            { name: 'valuesFontFamily', label: 'valuesFontFamily', type: 'fontname' },
+            { name: 'valuesFontSize', label: 'valuesFontSize', type: 'number' },
+            { name: 'prepandText', label: 'prepandText', type: 'html' },
+            { name: 'prepandTextColor', label: 'prepandTextColor', type: 'color' },
+            { name: 'prepandTextFontFamily', label: 'prepandTextFontFamily', type: 'fontname' },
+            { name: 'prepandTextFontSize', label: 'prepandTextFontSize', type: 'number' },
+            { name: 'appendText', label: 'appendText', type: 'html' },
+            { name: 'appendTextColor', label: 'appendTextColor', type: 'color' },
+            { name: 'appendTextFontFamily', label: 'appendTextFontFamily', type: 'fontname' },
+            { name: 'appendTextFontSize', label: 'appendTextFontSize', type: 'number' },
+        ],
+    },
+    {
+        name: 'formatNumber',
+        fields: [
+            { name: 'valueLabelUnit', label: 'valueLabelUnit', type: 'html' },
+            { name: 'minDecimals', label: 'minDecimals', type: 'number' },
+            { name: 'maxDecimals', label: 'maxDecimals', type: 'number' },
+            { name: 'calculate', label: 'calculate', type: 'html' },
+            { name: 'convertToDuration', label: 'convertToDuration', type: 'text' },
+            { name: 'convertToTimestamp', label: 'convertToTimestamp', type: 'text' },
+        ],
+    },
+    {
+        name: 'formatBoolean',
+        fields: [
+            { name: 'textOnTrue', label: 'textOnTrue', type: 'html' },
+            { name: 'textOnFalse', label: 'textOnFalse', type: 'html' },
+            { name: 'condition', label: 'condition', type: 'html' },
+        ],
+    },
+    {
+        name: 'formatLinked',
+        fields: [{ name: 'isHiddenOnLoad', label: 'isHiddenOnLoad', type: 'checkbox' }],
+    },
+    {
+        name: 'icon',
+        fields: [
+            { name: 'image', label: 'image', type: 'icon', default: 'information' },
+            { name: 'imageColor', label: 'imageColor', type: 'color' },
+            { name: 'iconPosition', label: 'iconPosition', type: 'select', options: ['left', 'right'], default: 'left' },
+            { name: 'iconHeight', label: 'iconHeight', type: 'slider', min: 0, max: 200, step: 1 },
+        ],
+    },
+    {
+        name: 'changeEffect',
+        fields: [
+            { name: 'changeEffectEnabled', label: 'changeEffectEnabled', type: 'checkbox' },
+            { name: 'effectFontColor', label: 'effectFontColor', type: 'color' },
+            { name: 'effectFontSize', label: 'effectFontSize', type: 'number' },
+            { name: 'effectDuration', label: 'effectDuration', type: 'number', default: 750 },
+        ],
+    },
+];
+
+function number(value: unknown, fallback = 0): number {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function text(value: unknown, fallback = ''): string {
+    return value === undefined || value === null ? fallback : String(value);
+}
+
+function color(value: unknown, fallback = ''): string {
+    const raw = text(value);
+    return raw.startsWith('#mdwTheme:') || raw.startsWith('var(') ? fallback : raw || fallback;
+}
+
+function replaceValue(expression: string, value: unknown): string {
+    const parsed = Number(value);
+    return expression.replace(/#value/g, Number.isFinite(parsed) ? String(parsed) : text(value));
+}
+
+function evalMaybe(expression: string | undefined, value: unknown): unknown {
+    if (!expression?.includes('#value')) {
+        return expression;
+    }
+    const replaced = replaceValue(expression, value);
+    const math = (window as unknown as { math?: { evaluate?: (value: string) => unknown } }).math;
+    if (math?.evaluate) {
+        return math.evaluate(replaced);
+    }
+    return Function(`"use strict";return (${replaced});`)() as unknown;
+}
+
+function formatDuration(seconds: number, template: string): string {
+    const moment = (window as unknown as {
+        moment?: {
+            duration: (value: number, unit: string) => { humanize: () => string; format?: (template: string) => string };
+        };
+    }).moment;
+    const duration = moment?.duration(seconds, 'seconds');
+    if (duration) {
+        return template === 'humanize' ? duration.humanize() : duration.format?.(template) ?? String(seconds);
+    }
+    if (template === 'humanize') {
+        return `${Math.round(seconds)} seconds`;
+    }
+    const whole = Math.max(0, Math.floor(seconds));
+    const hours = Math.floor(whole / 3600);
+    const minutes = Math.floor((whole % 3600) / 60);
+    const rest = whole % 60;
+    return [hours, minutes, rest].map(part => String(part).padStart(2, '0')).join(':');
+}
+
+function formatTimestamp(seconds: number, template: string): string {
+    const moment = (window as unknown as { moment?: { unix: (value: number) => { format: (template: string) => string } } }).moment;
+    if (moment?.unix) {
+        return moment.unix(seconds).format(template);
+    }
+    return new Date(seconds * 1000).toLocaleString();
+}
+
+function formatNumber(value: unknown, data: ValueData): string {
+    let current = value;
+    if (data.calculate?.includes('#value')) {
+        current = evalMaybe(data.calculate, current);
+    }
+    const numeric = Number(current);
+    if (data.convertToDuration && Number.isFinite(numeric)) {
+        return formatDuration(numeric, data.convertToDuration);
+    }
+    if (data.convertToTimestamp && Number.isFinite(numeric)) {
+        return formatTimestamp(numeric, data.convertToTimestamp);
+    }
+    if (!Number.isFinite(numeric)) {
+        return text(current);
+    }
+    const min = data.minDecimals === undefined ? undefined : number(data.minDecimals);
+    const max = data.maxDecimals === undefined ? undefined : number(data.maxDecimals);
+    const formatted = new Intl.NumberFormat(undefined, {
+        minimumFractionDigits: min,
+        maximumFractionDigits: max,
+    }).format(numeric);
+    return `${formatted}${data.valueLabelUnit ? ` ${data.valueLabelUnit}` : ''}`;
+}
+
+function formatBoolean(value: unknown, data: ValueData): string {
+    let current = value;
+    if (data.condition?.includes('#value')) {
+        current = evalMaybe(data.condition, current);
+    }
+    const on = current === true || current === 'true' || current === 1 || current === '1';
+    return on ? text(data.textOnTrue, text(current)) : text(data.textOnFalse, text(current));
+}
+
+function formattedValue(value: unknown, data: ValueData): string {
+    if (value === undefined || value === null) {
+        return '';
+    }
+    const type = data.targetType === 'auto' || !data.targetType ? typeof value : data.targetType;
+    const result = type === 'number' ? formatNumber(value, data) : type === 'boolean' ? formatBoolean(value, data) : text(value);
+    if (!data.overrideText) {
+        return result;
+    }
+    if (result.includes('|')) {
+        return result.split('|').reduce((acc, part, index) => acc.replaceAll(`#value[${index}]`, part), data.overrideText);
+    }
+    return data.overrideText.replace(/#value/g, result);
+}
 
 export default class MaterialDesignValue extends VisWidget {
     constructor(props: VisRxWidgetProps) {
@@ -10,7 +227,14 @@ export default class MaterialDesignValue extends VisWidget {
     }
 
     static getWidgetInfo(): RxWidgetInfo {
-        return createInfo('tplMaterialDesignValue', 'Value', valueTextAttrs);
+        return {
+            ...createInfo('tplVis2-materialdesign-value', 'Value', attrs),
+            visPrev: preview,
+            visDefaultStyle: {
+                width: 100,
+                height: 30,
+            },
+        };
     }
 
     getWidgetInfo(): RxWidgetInfo {
@@ -19,16 +243,41 @@ export default class MaterialDesignValue extends VisWidget {
 
     renderWidgetBody(props: RenderProps): React.JSX.Element {
         super.renderWidgetBody(props);
-        const data = this.state.rxData as BaseRxData;
+        const data = this.state.rxData as ValueData;
         const value = stateValue(this.state as VisRxWidgetState, data.oid);
+        const icon = renderIcon(text(data.image, 'information'), color(evalMaybe(data.imageColor, value), '#44739e'), number(data.iconHeight, 24));
+        const iconFirst = data.iconPosition !== 'right';
+        const gap = number(data.valueLabelWidth, 4);
+        const valueStyle: React.CSSProperties = {
+            color: color(evalMaybe(data.valuesFontColor, value)),
+            flex: 1,
+            fontFamily: text(data.valuesFontFamily) || undefined,
+            fontSize: data.valuesFontSize ? number(data.valuesFontSize, 14) : undefined,
+            margin: `0 ${gap}px`,
+            textAlign: data.textAlign || 'start',
+        };
+        const prependStyle: React.CSSProperties = {
+            color: color(evalMaybe(data.prepandTextColor, value)),
+            fontFamily: text(data.prepandTextFontFamily) || undefined,
+            fontSize: data.prepandTextFontSize ? number(data.prepandTextFontSize, 14) : undefined,
+        };
+        const appendStyle: React.CSSProperties = {
+            color: color(evalMaybe(data.appendTextColor, value)),
+            fontFamily: text(data.appendTextFontFamily) || undefined,
+            fontSize: data.appendTextFontSize ? number(data.appendTextFontSize, 14) : undefined,
+        };
 
-        return card(
-            <div style={{ color: data.color || 'inherit', fontSize: data.size || 'inherit' }}>
-                {data.label ? <div style={{ fontSize: '0.85em', opacity: 0.72 }}>{data.label}</div> : null}
-                <span>{data.prefix}</span>
-                <span>{value ?? ''}</span>
-                <span>{data.suffix}</span>
-            </div>,
+        return (
+            <div
+                className="materialdesign-widget materialdesign-value"
+                style={{ alignItems: 'center', boxSizing: 'border-box', display: 'flex', height: '100%', padding: 0, width: '100%' }}
+            >
+                {iconFirst ? <div className="materialdesign-value-icon">{icon}</div> : null}
+                <div className="materialdesign-value prepand-text" dangerouslySetInnerHTML={{ __html: text(data.prepandText) }} style={prependStyle} />
+                <div className="materialdesign-value value-text" dangerouslySetInnerHTML={{ __html: formattedValue(value, data) }} style={valueStyle} />
+                <div className="materialdesign-value append-text" dangerouslySetInnerHTML={{ __html: text(data.appendText) }} style={appendStyle} />
+                {!iconFirst ? <div className="materialdesign-value-icon">{icon}</div> : null}
+            </div>
         );
     }
 }
