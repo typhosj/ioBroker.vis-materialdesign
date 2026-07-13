@@ -56,7 +56,7 @@
     {
         "id": "dark.calendar.background_other_month",
         "desc": "calendarDayBackgroundOutsideColor",
-        "value": "#f7f7f7",
+        "value": "#202020",
         "widget": "Calendar"
     },
     {
@@ -140,7 +140,7 @@
     {
         "id": "dark.calendar.weeks_background",
         "desc": "calendarWeeksNumbersBackground",
-        "value": "#f7f7f7",
+        "value": "#202020",
         "widget": "Calendar"
     },
     {

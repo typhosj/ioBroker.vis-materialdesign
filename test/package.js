@@ -36,6 +36,10 @@ assert.ok(Object.keys(io.common.news).length <= 7, "common.news must contain max
 assert.ok(!io.common.main, "WWW-only adapter must not point to missing main.js");
 assert.strictEqual(io.common.onlyWWW, true);
 assert.strictEqual(io.native.sentryReport, false);
+assert.strictEqual(io.common.adminUI.config, "html", "React admin must use the HTML admin UI");
+assert.ok(fs.existsSync(path.join(root, "admin", "index.html")), "React admin build entry point must exist");
+assert.ok(fs.existsSync(path.join(root, "admin", "assets", "index.js")), "React admin bundle must exist");
+assert.ok(fs.existsSync(path.join(root, "src-admin", "src", "main.tsx")), "React admin source must exist");
 
 const sentry = io.instanceObjects.find((obj) => obj._id === "sentry");
 assert.ok(sentry, "sentry state must exist");
@@ -44,6 +48,10 @@ assert.strictEqual(sentry.common.def, false);
 const widgetRegistry = io.common.visWidgets.vis2MaterialDesignWidgets;
 assert.ok(widgetRegistry, "VIS2 widget registry must exist");
 const vite = fs.readFileSync(path.join(root, "src-widgets-ts", "vite.config.ts"), "utf8");
+const widgetUtils = fs.readFileSync(path.join(root, "src-widgets-ts", "src", "widgetUtils.tsx"), "utf8");
+assert.ok(widgetUtils.includes("name: 'useTheme'"), "all VIS2 widgets must expose the legacy theme action");
+assert.ok(widgetUtils.includes("__mdwThemeDark"), "VIS2 widgets must subscribe to the theme selector state");
+assert.ok(widgetUtils.includes("applyThemeVariables"), "VIS2 widgets must apply theme state values as CSS variables");
 const requiredComponents = [
     "MaterialDesignCalendar",
     "MaterialDesignChartBar",

@@ -111,7 +111,7 @@ export function num(value: unknown, fallback = 0): number {
 
 export function cleanColor(value: unknown, fallback: string): string {
     const raw = typeof value === 'string' ? value : '';
-    return raw && !raw.startsWith('#mdwTheme:') && !raw.startsWith('var(') ? raw : fallback;
+    return raw && !raw.startsWith('#mdwTheme:') ? raw : fallback;
 }
 
 export function progressState(value: ioBroker.StateValue | undefined, data: ProgressData): { percent: number; raw: number; color: string; label: string } {

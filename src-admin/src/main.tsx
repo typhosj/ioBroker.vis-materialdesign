@@ -1,0 +1,185 @@
+import { GenericApp, I18n, Loader, Logo, type GenericAppProps, type GenericAppState } from '@iobroker/adapter-react-v5';
+import PaletteIcon from '@mui/icons-material/Palette';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { Box, Button, Card, CardContent, Checkbox, CssBaseline, FormControlLabel, FormGroup, FormHelperText, Paper, Tab, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tabs, TextField, ThemeProvider, Typography } from '@mui/material';
+import React, { useMemo, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import colors from '../../admin/lib/colors.json';
+import colorsDark from '../../admin/lib/colorsDark.json';
+import defaultcolors from '../../admin/lib/defaultcolors.json';
+import defaultcolorsDark from '../../admin/lib/defaultcolorsDark.json';
+import defaultfontSizes from '../../admin/lib/defaultfontSizes.json';
+import defaultfonts from '../../admin/lib/defaultfonts.json';
+import fontSizes from '../../admin/lib/fontSizes.json';
+import fonts from '../../admin/lib/fonts.json';
+import de from '../../admin/i18n/de.json';
+import en from '../../admin/i18n/en.json';
+import es from '../../admin/i18n/es.json';
+import fr from '../../admin/i18n/fr.json';
+import it from '../../admin/i18n/it.json';
+import nl from '../../admin/i18n/nl.json';
+import pl from '../../admin/i18n/pl.json';
+import pt from '../../admin/i18n/pt.json';
+import ru from '../../admin/i18n/ru.json';
+import uk from '../../admin/i18n/uk.json';
+import zhCn from '../../admin/i18n/zh-cn.json';
+import '../../fonts.css';
+import './style.css';
+
+type ThemeName = 'colors' | 'colorsDark' | 'fonts' | 'fontSizes';
+type ThemeEntry = { id: string; desc: string; widget: string; defaultValue?: number; value?: string | number };
+type NativeConfig = Record<string, unknown> & { scriptName?: string; variableName?: string; javascriptInstance?: string; sentryReport?: boolean };
+type ThemeDefinition = { entries: ThemeEntry[]; defaults: Array<string | number>; title: string; widgetTitle: string };
+
+const translations = { de, en, es, fr, it, nl, pl, pt, ru, uk, 'zh-cn': zhCn };
+const themeDefinitions: Record<ThemeName, ThemeDefinition> = {
+    colors: { entries: colors, defaults: defaultcolors, title: 'default light colors', widgetTitle: 'Widget colors' },
+    colorsDark: { entries: colorsDark, defaults: defaultcolorsDark, title: 'default dark colors', widgetTitle: 'Widget colors' },
+    fonts: { entries: fonts, defaults: defaultfonts, title: 'config_fonts', widgetTitle: 'Widget fonts' },
+    fontSizes: { entries: fontSizes, defaults: defaultfontSizes, title: 'config_fontSizes', widgetTitle: 'Widget font sizes' },
+};
+
+I18n.setTranslations(translations);
+const t = (text: string): string => I18n.t(text);
+
+function defaultsKey(theme: ThemeName): string {
+    return `default${theme}`;
+}
+
+function readDefaults(config: NativeConfig, theme: ThemeName): Array<string | number> {
+    const fallback = themeDefinitions[theme].defaults;
+    const saved = config[defaultsKey(theme)];
+    if (!Array.isArray(saved)) return [...fallback];
+    return fallback.map((value, index) => saved[index] ?? value) as Array<string | number>;
+}
+
+function readEntries(config: NativeConfig, theme: ThemeName, defaults: Array<string | number>): ThemeEntry[] {
+    const saved = Array.isArray(config[theme]) ? config[theme] as ThemeEntry[] : [];
+    return themeDefinitions[theme].entries.map(entry => {
+        const old = saved.find(candidate => candidate.id === entry.id);
+        const rawDefault = old?.defaultValue as unknown;
+        const savedDefault = rawDefault === '' ? Number.NaN : Number(rawDefault);
+        const defaultValue = Number.isInteger(savedDefault) && savedDefault >= 0 && savedDefault < defaults.length ? savedDefault : old ? undefined : entry.defaultValue;
+        return { ...entry, ...old, defaultValue, value: old?.value ?? entry.value ?? defaults[defaultValue ?? 0] };
+    });
+}
+
+function ThemeEditor(props: { config: NativeConfig; update: (key: string, value: unknown) => void }): React.JSX.Element {
+    const [tab, setTab] = useState(0);
+    const [filter, setFilter] = useState('');
+    const theme = (['colors', 'colorsDark', 'fonts', 'fontSizes'] as ThemeName[])[tab];
+    const definition = themeDefinitions[theme];
+    const defaults = readDefaults(props.config, theme);
+    const entries = readEntries(props.config, theme, defaults);
+    const filteredEntries = useMemo(() => entries.filter(entry => entry.widget.toLowerCase().includes(filter.toLowerCase())), [entries, filter]);
+    const updateDefaults = (next: Array<string | number>) => props.update(defaultsKey(theme), next);
+    const updateEntries = (next: ThemeEntry[]) => props.update(theme, next);
+
+    return <Box sx={{ p: 1, py: 2 }}>
+        <Tabs value={tab} onChange={(_event, next: number) => { setTab(next); setFilter(''); }} sx={{ borderBottom: 1, borderColor: 'divider' }} variant="scrollable" scrollButtons="auto">
+            <Tab label={t('config_colors')} /><Tab label={t('config_colorsDark')} /><Tab label={t('config_fonts')} /><Tab label={t('config_fontSizes')} />
+        </Tabs>
+        <Card sx={{ mt: 2 }}>
+            <CardContent>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2 }}><Typography variant="h6">{t(definition.title)}</Typography><Button sx={{ ml: 'auto' }} onClick={() => { updateDefaults([...definition.defaults]); updateEntries(readEntries({ [theme]: [] }, theme, [...definition.defaults])); }}>{t('reset')}</Button></Box>
+                <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))', gap: 2 }}>
+                    {defaults.map((value, index) => <Box key={index} sx={{ alignItems: 'center', display: 'flex', gap: 1 }}>
+                        {theme.startsWith('colors') && <Box aria-label={String(value)} sx={{ backgroundColor: String(value), border: 1, borderColor: 'divider', borderRadius: 0.5, flex: '0 0 auto', height: 28, width: 28 }} />}
+                        {theme === 'fonts' && <Typography sx={{ flex: '0 0 auto', fontFamily: String(value), fontSize: 22, minWidth: 32 }}>Aa</Typography>}
+                        {theme === 'fontSizes' && <Typography sx={{ flex: '0 0 auto', fontSize: `${Number(value) || 14}px`, minWidth: 32 }}>Aa</Typography>}
+                        <TextField fullWidth label={`${t(`${theme}Default`)} ${index}`} type={theme === 'fontSizes' ? 'number' : 'text'} value={value} variant="standard" onChange={event => { const next = [...defaults]; next[index] = theme === 'fontSizes' ? Number(event.target.value) : event.target.value; updateDefaults(next); }} />
+                    </Box>)}
+                </Box>
+            </CardContent>
+        </Card>
+        <Card sx={{ mt: 2 }}>
+            <CardContent>
+                <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', mb: 2, flexWrap: 'wrap' }}><Typography variant="h6">{t(definition.widgetTitle)}</Typography><TextField label={t('Filter Widgets')} value={filter} onChange={event => setFilter(event.target.value)} variant="standard" sx={{ ml: 'auto', minWidth: 220 }} /></Box>
+                <TableContainer component={Paper} variant="outlined"><Table size="small"><TableHead><TableRow><TableCell>{t('Widget')}</TableCell><TableCell>{t('description')}</TableCell><TableCell>{t(`${theme}_table`)}</TableCell><TableCell>{t(`${theme}Default`)}</TableCell></TableRow></TableHead><TableBody>
+                    {filteredEntries.map(entry => <TableRow key={entry.id}><TableCell>{entry.widget}</TableCell><TableCell>{t(entry.desc)}</TableCell><TableCell><Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>{theme.startsWith('colors') && <Box aria-label={String(entry.value ?? '')} sx={{ backgroundColor: String(entry.value ?? 'transparent'), border: 1, borderColor: 'divider', borderRadius: 0.5, flex: '0 0 auto', height: 24, width: 24 }} />}<TextField fullWidth type={theme === 'fontSizes' ? 'number' : 'text'} value={entry.value ?? ''} variant="standard" onChange={event => updateEntries(entries.map(candidate => candidate.id === entry.id ? { ...candidate, value: theme === 'fontSizes' ? Number(event.target.value) : event.target.value, defaultValue: undefined } : candidate))} /></Box></TableCell><TableCell><Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>{defaults.map((_value, index) => <Button key={index} size="small" variant={entry.defaultValue === index ? 'contained' : 'outlined'} onClick={() => updateEntries(entries.map(candidate => candidate.id === entry.id ? { ...candidate, defaultValue: index, value: defaults[index] } : candidate))}>{index}</Button>)}</Box></TableCell></TableRow>)}
+                </TableBody></Table></TableContainer>
+            </CardContent>
+        </Card>
+    </Box>;
+}
+
+function Config(props: { common: Record<string, unknown>; config: NativeConfig; instance: number; onError: (error: string) => void; onLoad: (settings: Record<string, unknown>) => void; update: (key: string, value: unknown) => void; onGenerate: () => void }): React.JSX.Element {
+    const [tab, setTab] = useState(0);
+    return <Box component="main" sx={{ height: { xs: 'calc(100% - 56px)', sm: 'calc(100% - 64px)' }, overflowY: 'auto' }}>
+        <Box sx={{ minHeight: 72, position: 'relative', px: 1, py: 1 }}><Logo common={props.common} instance={props.instance} native={props.config} onError={props.onError} onLoad={props.onLoad} /><Typography component="h1" variant="h6" sx={{ fontWeight: 700, position: 'absolute', top: 18, left: 84 }}>Material Design Widgets</Typography></Box>
+        <Tabs value={tab} onChange={(_event, next: number) => setTab(next)} sx={{ borderBottom: 1, borderColor: 'divider' }}><Tab icon={<SettingsIcon />} iconPosition="start" label={t('config_general')} /><Tab icon={<PaletteIcon />} iconPosition="start" label={t('Theme Editor for your Widgets')} /></Tabs>
+        {tab === 0 ? <Box sx={{ p: 1, py: 2, display: 'grid', gap: 2 }}><Card><CardContent><Typography variant="h6" gutterBottom>{t('Generate global script')}</Typography><TextField fullWidth label={t('script name')} value={String(props.config.scriptName ?? 'Theme')} variant="standard" onChange={event => props.update('scriptName', event.target.value)} /><TextField fullWidth label={t('name of the variable')} value={String(props.config.variableName ?? 'myMdwTheme')} sx={{ mt: 2 }} variant="standard" onChange={event => props.update('variableName', event.target.value)} /><TextField fullWidth label={t('SelectJavascriptInstance')} value={String(props.config.javascriptInstance ?? '')} sx={{ mt: 2 }} variant="standard" onChange={event => props.update('javascriptInstance', event.target.value)} /><Button variant="contained" sx={{ mt: 2 }} onClick={props.onGenerate}>{t('generate script')}</Button></CardContent></Card><Card><CardContent><Typography variant="h6">{t('Sentry - automatic error reporting')}</Typography><FormGroup sx={{ pt: 1 }}><FormControlLabel control={<Checkbox checked={props.config.sentryReport === true} onChange={event => props.update('sentryReport', event.target.checked)} />} label={t('send Widget error reports')} /><FormHelperText sx={{ ml: 4, mt: -0.5 }}>{t('sentryInfo')}</FormHelperText></FormGroup></CardContent></Card></Box> : <ThemeEditor config={props.config} update={props.update} />}
+    </Box>;
+}
+
+class MaterialDesignAdmin extends GenericApp<GenericAppProps, GenericAppState> {
+    constructor(props: GenericAppProps) { super(props, { adapterName: 'vis2-materialdesign', bottomButtons: true, translations }); }
+    onPrepareLoad(settings: NativeConfig): void {
+        super.onPrepareLoad(settings);
+        (['colors', 'colorsDark', 'fonts', 'fontSizes'] as ThemeName[]).forEach(theme => {
+            const defaults = readDefaults(settings, theme);
+            settings[defaultsKey(theme)] = defaults;
+            settings[theme] = readEntries(settings, theme, defaults);
+        });
+    }
+    private async setThemeState(id: string, name: string, value: string | number): Promise<void> {
+        const type = typeof value === 'number' ? 'number' : 'string';
+        const existing = await this.socket.getObject(id);
+        if (!existing) {
+            await this.socket.setObject(id, { type: 'state', common: { name, desc: name, type, read: true, write: false, role: 'value' }, native: {} } as never);
+        } else if (existing.common.name !== name) {
+            await this.socket.setObject(id, { ...existing, common: { ...existing.common, name, desc: name } } as never);
+        }
+        await this.socket.setState(id, value, true);
+    }
+    private async syncRuntimeStates(): Promise<void> {
+        const config = this.state.native as NativeConfig;
+        const namespace = `${this.adapterName}.${this.instance}`;
+        await this.socket.setState(`${namespace}.sentry`, config.sentryReport === true, true);
+        for (const theme of ['colors', 'colorsDark', 'fonts', 'fontSizes'] as ThemeName[]) {
+            const defaults = readDefaults(config, theme);
+            const entries = readEntries(config, theme, defaults);
+            for (const [index, value] of defaults.entries()) {
+                const id = theme === 'colors' ? `${namespace}.colors.light.default_${index}` : theme === 'colorsDark' ? `${namespace}.colors.dark.default_${index}` : `${namespace}.${theme}.default_${index}`;
+                await this.setThemeState(id, `${t(`${theme}Default`)} ${index}`, value);
+            }
+            for (const entry of entries) {
+                const id = theme.startsWith('colors') ? `${namespace}.colors.${entry.id}` : `${namespace}.${theme}.${entry.id}`;
+                await this.setThemeState(id, t(entry.desc), entry.value ?? '');
+            }
+        }
+        await this.socket.setState(`${namespace}.lastchange`, Date.now(), true);
+    }
+    private async generateGlobalScript(): Promise<void> {
+        const config = this.state.native as NativeConfig;
+        const javascriptInstance = String(config.javascriptInstance ?? '');
+        const variableName = String(config.variableName ?? 'myMdwTheme');
+        if (!javascriptInstance || !/^[A-Za-z_$][\w$]*$/.test(variableName)) {
+            this.showAlert(t('SelectJavascriptInstance'), 'warning');
+            return;
+        }
+        const namespace = `${this.adapterName}.${this.instance}`;
+        const states = await this.socket.getObjectView(`${namespace}.`, `${namespace}.\u9999`, 'state');
+        const lines = [`var ${variableName} = {};`];
+        const paths = new Set<string>();
+        Object.keys(states).filter(id => id !== `${namespace}.colors.darkTheme`).sort().forEach(id => {
+            let path = variableName;
+            id.substring(namespace.length + 1).split('.').forEach(part => {
+                path += `.${part}`;
+                if (!paths.has(path)) { lines.push(`${path} = {};`); paths.add(path); }
+            });
+            lines.push(`${path}.getId = function () { return "${id}"; };`);
+            lines.push(`${path}.getValue = function () { return getState("${id}").val; };`);
+        });
+        const id = `script.js.global.MaterialDesignWidgets.${namespace.replace('.', '')}`;
+        await this.socket.setObject(id, { type: 'script', common: { name: String(config.scriptName ?? 'Theme'), expert: true, engineType: 'Javascript/js', engine: `system.adapter.${javascriptInstance}`, source: lines.join('\n'), debug: false, verbose: false, enabled: true } } as never);
+        this.showAlert(t('generate script'), 'success');
+    }
+    onSave(isClose?: boolean): void {
+        super.onSave(isClose);
+        void this.syncRuntimeStates().catch(error => this.showAlert(String(error), 'error'));
+    }
+    render(): React.JSX.Element { if (!this.state.loaded) return <Loader />; return <ThemeProvider theme={this.state.theme}><CssBaseline /><Config common={this.common as Record<string, unknown>} config={this.state.native as NativeConfig} instance={this.instance} onError={this.showError} onLoad={settings => this.setState({ native: settings })} update={(key, value) => this.updateNativeValue(key, value)} onGenerate={() => void this.generateGlobalScript().catch(error => this.showAlert(String(error), 'error'))} />{this.renderHelperDialogs()}</ThemeProvider>; }
+}
+
+createRoot(document.getElementById('root')!).render(<MaterialDesignAdmin />);

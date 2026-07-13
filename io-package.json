@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "vis2-materialdesign",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "news": {
+      "0.2.0": {
+        "en": "Ported the remaining Material Design widgets to VIS 2, added the React configuration UI and restored theme application in the VIS 2 editor.",
+        "de": "Verbleibende Material-Design-Widgets nach VIS 2 portiert, React-Konfiguration ergänzt und Themenübernahme im VIS-2-Editor wiederhergestellt.",
+        "ru": "see changelog",
+        "pt": "see changelog",
+        "nl": "see changelog",
+        "fr": "see changelog",
+        "it": "see changelog",
+        "es": "see changelog",
+        "pl": "see changelog",
+        "zh-cn": "see changelog",
+        "uk": "see changelog"
+      },
       "0.1.0": {
         "en": "Initial native VIS 2 port of the Material Design button widgets. Based on the original VIS Material Design widgets version 0.5.9 by Scrounger.",
         "de": "Erste native VIS-2-Portierung der Material-Design-Button-Widgets. Basiert auf den ursprünglichen VIS-Material-Design-Widgets Version 0.5.9 von Scrounger.",
@@ -68,7 +81,7 @@
       "_default": "%web_protocol%://%ip%:%web_port%/vis-2/edit.html"
     },
     "adminUI": {
-      "config": "materialize"
+      "config": "html"
     },
     "globalDependencies": [
       {

@@ -125,7 +125,7 @@ function text(value: unknown, fallback = ''): string {
 
 function color(value: unknown, fallback = ''): string {
     const raw = text(value);
-    return raw.startsWith('#mdwTheme:') || raw.startsWith('var(') ? fallback : raw || fallback;
+    return raw.startsWith('#mdwTheme:') ? fallback : raw || fallback;
 }
 
 function replaceValue(expression: string, value: unknown): string {

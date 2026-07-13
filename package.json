@@ -1,6 +1,6 @@
 {
   "name": "iobroker.vis2-materialdesign",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Native VIS 2 Material Design widgets based on the original work by Scrounger",
   "author": {
     "name": "typhosj",
@@ -16,6 +16,7 @@
     "admin/**/*.json",
     "admin/**/*.mp3",
     "admin/**/*.png",
+    "admin/**/*.woff2",
     "widgets/**/*.css",
     "widgets/**/*.html",
     "widgets/**/*.jpg",
@@ -24,6 +25,7 @@
     "widgets/**/*.mp3",
     "widgets/**/*.png",
     "widgets/**/*.ttf",
+    "widgets/**/*.woff2",
     "io-package.json",
     "README.md",
     "LICENSE"
@@ -44,21 +46,39 @@
     "@alcalzone/release-script-plugin-iobroker": "^5.2.0",
     "@alcalzone/release-script-plugin-license": "^5.2.0",
     "@alcalzone/release-script-plugin-manual-review": "^5.2.0",
-    "@iobroker/eslint-config": "^2.3.4"
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@iobroker/adapter-react-v5": "^8.2.13",
+    "@iobroker/eslint-config": "^2.3.4",
+    "@mui/icons-material": "^6.5.0",
+    "@mui/material": "^6.5.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "~6.0.3",
+    "vite": "^8.1.3"
   },
   "main": "widgets/vis2-materialdesign/customWidgets.js",
   "scripts": {
     "test:package": "node test/package.js",
+    "test:pr-gate": "node test/pr-gate.js",
     "test": "npm run test:package",
+    "pr:repocheck": "node -e \"require('fs').rmSync('src-widgets-ts/build', { recursive: true, force: true })\" && npx @iobroker/repochecker https://github.com/typhosj/ioBroker.vis2-materialdesign --local",
+    "pr:check": "npm run build && npm test && npm run test:pr-gate && npm pack --dry-run && npm run pr:repocheck",
     "release": "release-script",
     "lint": "node -e \"console.log(\\\"No lint configured for legacy widget adapter\\\")\"",
-    "build": "node tasks"
+    "build": "node tasks",
+    "build:admin": "vite build --config vite.admin.config.mjs"
   },
   "bugs": {
     "url": "https://github.com/typhosj/ioBroker.vis2-materialdesign/issues"
   },
   "readmeFilename": "README.md",
   "dependencies": {
+    "@fontsource/jura": "^5.2.7",
+    "@fontsource/roboto-condensed": "^5.2.8",
     "axios": "^1.18.1",
     "chroma-js": "^3.2.0",
     "mathjs": "^15.2.0",

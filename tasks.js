@@ -43,3 +43,4 @@ if (!existsSync(`${srcTs}/node_modules`)) {
 
 execFileSync('npm', ['run', 'build'], { cwd: srcTs, stdio: 'inherit' });
 copyAllFiles();
+execFileSync('npm', ['run', 'build:admin'], { cwd: __dirname, stdio: 'inherit' });

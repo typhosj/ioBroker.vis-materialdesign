@@ -113,9 +113,13 @@ The original VIS1 widget set used the following libraries. Native VIS2 component
 
 ## Changelog
 ### **WORK IN PROGRESS**
+
+### 0.2.0 (2026-07-13)
 * (typhosj) Ported all remaining legacy Material Design widget templates to native VIS 2 components
 * (typhosj) Added calendar, chart, table and embedded child-view widgets for dialogs, masonry, grid and advanced views
 * (typhosj) Added automated legacy-template-to-VIS2 registration coverage checks
+* (typhosj) Ported the adapter configuration UI to React 5 with the native theme editor
+* (typhosj) Restored the VIS2 editor action to apply Material Design theme values to widget properties
 
 ### 0.1.0 (2026-07-09)
 * (typhosj) Initial native VIS 2 port of the Material Design button widgets
