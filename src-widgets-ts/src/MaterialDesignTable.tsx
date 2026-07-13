@@ -1,0 +1,45 @@
+import React from 'react';
+import type { RxWidgetInfo, VisRxWidgetState } from '@iobroker/types-vis-2';
+import { RenderProps, VisWidget, createInfo, stateValue } from './widgetUtils';
+
+type Data = Record<string, unknown> & { oid?: string; dataJson?: string; countCols?: number };
+type Row = Record<string, unknown>;
+const s = (value: unknown, fallback = ''): string => value === undefined || value === null || value === '' || value === 'null' ? fallback : String(value);
+const n = (value: unknown, fallback = 0): number => value === undefined || value === null || value === '' || !Number.isFinite(Number(value)) ? fallback : Number(value);
+const b = (value: unknown, fallback = false): boolean => value === undefined || value === null || value === '' ? fallback : value === true || value === 'true' || value === 1 || value === '1';
+const size = (value: unknown): string | undefined => { const text = s(value); return text && text !== 'auto' ? (Number.isFinite(Number(text)) ? `${text}px` : text) : undefined; };
+const valueFor = (row: Row, key: string): unknown => row[key];
+function rows(input: unknown): Row[] {
+    try {
+        const parsed: unknown = typeof input === 'string' ? JSON.parse(input.replace(/\n/g, ' ').replace(/\t/g, '')) : input;
+        if (Array.isArray(parsed)) return parsed.filter((row): row is Row => !!row && typeof row === 'object');
+        if (!parsed || typeof parsed !== 'object') return [];
+        return Object.values(parsed as Record<string, unknown>).map(value => value && typeof value === 'object' && '_data' in value ? (value as { _data: Row })._data : value).filter((row): row is Row => !!row && typeof row === 'object');
+    } catch { return []; }
+}
+function bound(text: string, row: Row): string { return text.replace(/#\[obj\.(.*?)\]/g, (_all, key: string) => s(valueFor(row, key))); }
+
+const attrs: RxWidgetInfo['visAttrs'] = [
+    { name: 'common', fields: [{ name: 'oid', label: 'oid', type: 'id' }, { name: 'dataJson', label: 'dataJson', type: 'html' }, { name: 'countCols', label: 'countCols', type: 'number', default: 1 }, { name: 'debug', label: 'debug', type: 'checkbox' }] },
+    { name: 'tableLayout', label: 'group_tableLayout', fields: [{ name: 'tableLayout', label: 'tableLayout', type: 'select', options: ['standard', 'card', 'cardOutlined'], default: 'standard' }, { name: 'showHeader', label: 'showHeader', type: 'checkbox', default: true }, { name: 'fixedHeader', label: 'fixedHeader', type: 'checkbox' }, { name: 'roundBorder', label: 'roundBorder', type: 'checkbox', default: true }, { name: 'headerRowHeight', label: 'headerRowHeight', type: 'number' }, { name: 'headerTextSize', label: 'headerTextSize', type: 'text' }, { name: 'headerFontFamily', label: 'headerFontFamily', type: 'fontname' }, { name: 'rowHeight', label: 'rowHeight', type: 'number' }] },
+    { name: 'color', label: 'group_color', fields: ['colorBackground', 'colorHeaderRowBackground', 'colorHeaderRowText', 'colorRowBackground', 'colorRowBackgroundHover', 'colorRowText', 'borderColor', 'dividers'].map(name => ({ name, label: name, type: 'color' as const })) },
+    { name: 'columnLayout', label: 'group_columnLayout', indexFrom: 0, indexTo: 'countCols', fields: [{ name: 'showColumn', label: 'showColumn', type: 'checkbox', default: true }, { name: 'colType', label: 'colType', type: 'select', options: ['text', 'image'], default: 'text' }, { name: 'columnWidth', label: 'columnWidth', type: 'number' }, { name: 'colNoWrap', label: 'colNoWrap', type: 'checkbox' }, { name: 'label', label: 'label', type: 'html' }, { name: 'textAlign', label: 'textAlign', type: 'select', options: ['left', 'right', 'center'], default: 'center' }, { name: 'colTextSize', label: 'colTextSize', type: 'text' }, { name: 'padding_left', label: 'padding_left', type: 'number' }, { name: 'padding_right', label: 'padding_right', type: 'number' }, { name: 'fontFamily', label: 'fontFamily', type: 'fontname' }, { name: 'colTextColor', label: 'colTextColor', type: 'color' }, { name: 'prefix', label: 'prefix', type: 'html' }, { name: 'suffix', label: 'suffix', type: 'html' }, { name: 'imageSize', label: 'imageSize', type: 'number' }, { name: 'sortKey', label: 'sortKey', type: 'text' }] },
+];
+
+export default class MaterialDesignTable extends VisWidget {
+    private sortKey = ''; private sortAsc = true;
+    static getWidgetInfo(): RxWidgetInfo { return { ...createInfo('tplVis2-materialdesign-Table', 'Table', attrs), visPrev: '<img src="widgets/materialdesign/img/prev_table.png"></img>', visDefaultStyle: { width: 400, height: 250 } }; }
+    getWidgetInfo(): RxWidgetInfo { return MaterialDesignTable.getWidgetInfo(); }
+    renderWidgetBody(props: RenderProps): React.JSX.Element {
+        super.renderWidgetBody(props);
+        const data = this.state.rxData as unknown as Data;
+        const source = s(data.oid) && s(data.oid) !== 'nothing_selected' ? stateValue(this.state as VisRxWidgetState, s(data.oid)) : data.dataJson;
+        let content = rows(source);
+        const cols = Array.from({ length: Math.max(1, Math.floor(n(data.countCols, 1)) + 1) }, (_, index) => index).filter(index => b(data[`showColumn${index}`], true));
+        if (this.sortKey) content = [...content].sort((left, right) => { const a = valueFor(left, this.sortKey), z = valueFor(right, this.sortKey); return (a! < z! ? -1 : a! > z! ? 1 : 0) * (this.sortAsc ? 1 : -1); });
+        const layout = s(data.tableLayout) === 'cardOutlined' ? ' materialdesign-table-card materialdesign-table-card--outlined' : s(data.tableLayout) === 'card' ? ' materialdesign-table-card' : '';
+        const selectSort = (index: number): void => { const key = s(data[`sortKey${index}`], Object.keys(content[0] || {})[index] || ''); if (!key) return; this.sortAsc = key === this.sortKey ? !this.sortAsc : true; this.sortKey = key; this.forceUpdate(); };
+        const cell = (row: Row, index: number): React.JSX.Element => { const key = Object.keys(row)[index]; const raw = valueFor(row, key); const prefix = bound(s(data[`prefix${index}`]), row), suffix = bound(s(data[`suffix${index}`]), row); const image = s(data[`colType${index}`]) === 'image'; return <td className="mdc-data-table__cell" style={{ color: s(data[`colTextColor${index}`]), fontFamily: s(data[`fontFamily${index}`]), fontSize: size(data[`colTextSize${index}`]), paddingLeft: n(data[`padding_left${index}`], 8), paddingRight: n(data[`padding_right${index}`], 8), textAlign: s(data[`textAlign${index}`], 'center'), whiteSpace: b(data[`colNoWrap${index}`]) ? 'nowrap' : undefined }}>{prefix}{image ? <img src={s(raw)} style={{ maxHeight: n(data.rowHeight) ? n(data.rowHeight) : undefined, maxWidth: n(data[`imageSize${index}`]) || undefined, verticalAlign: 'middle' }} /> : s(raw)}{suffix}</td>; };
+        return <div className="materialdesign-widget materialdesign-table" style={{ background: s(data.colorBackground), height: '100%', overflow: b(data.fixedHeader) ? 'auto' : undefined, width: '100%' }}><div className={`mdc-data-table${layout}`} style={{ border: `1px solid ${s(data.borderColor, 'transparent')}`, borderRadius: b(data.roundBorder, true) ? undefined : 0, width: '100%' }}><table className="mdc-data-table__table" aria-label="Material Design Widgets Table" style={{ borderCollapse: 'collapse', width: '100%' }}><thead style={{ position: b(data.fixedHeader) ? 'sticky' : undefined, top: 0 }}><tr className="mdc-data-table__header-row" style={{ background: s(data.colorHeaderRowBackground), color: s(data.colorHeaderRowText), height: n(data.headerRowHeight) || undefined }}>{b(data.showHeader, true) ? cols.map(index => <th key={index} className="mdc-data-table__header-cell" onClick={() => selectSort(index)} scope="col" style={{ cursor: 'pointer', fontFamily: s(data.headerFontFamily), fontSize: size(data.headerTextSize), paddingLeft: n(data[`padding_left${index}`], 8), paddingRight: n(data[`padding_right${index}`], 8), textAlign: s(data[`textAlign${index}`], 'center'), width: n(data[`columnWidth${index}`]) || undefined }}><span dangerouslySetInnerHTML={{ __html: s(data[`label${index}`], `col ${index}`) }} /> {this.sortKey === s(data[`sortKey${index}`], Object.keys(content[0] || {})[index] || '') ? (this.sortAsc ? '▲' : '▼') : null}</th>) : null}</tr></thead><tbody className="mdc-data-table__content">{content.map((row, rowIndex) => <tr className="mdc-data-table__row" key={rowIndex} style={{ background: s(data.colorRowBackground), borderBottom: `1px solid ${s(data.dividers, 'transparent')}`, color: s(data.colorRowText), height: n(data.rowHeight) || undefined }}>{cols.map(index => <React.Fragment key={index}>{cell(row, index)}</React.Fragment>)}</tr>)}</tbody></table></div></div>;
+    }
+}

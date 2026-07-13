@@ -93,6 +93,12 @@
                 "url": "vis2-materialdesign/customWidgets.js",
                 "bundlerType": "module",
                 "components": [
+                    "MaterialDesignColorScheme",
+                    "MaterialDesignDialogView",
+                    "MaterialDesignDialogIFrame",
+                    "MaterialDesignAutocomplete",
+                    "MaterialDesignAlerts",
+                    "MaterialDesignCard",
                     "MaterialDesignButtonNavigationVertical",
                     "MaterialDesignButtonLinkVertical",
                     "MaterialDesignButtonStateVertical",
@@ -115,13 +121,17 @@
                     "MaterialDesignCheckbox",
                     "MaterialDesignIcon",
                     "MaterialDesignIconList",
+                    "MaterialDesignList",
                     "MaterialDesignInput",
+                    "MaterialDesignInstalledVersion",
                     "MaterialDesignSelect",
                     "MaterialDesignProgress",
                     "MaterialDesignProgressCircular",
                     "MaterialDesignRoundSlider",
                     "MaterialDesignSlider",
                     "MaterialDesignSwitch",
+                    "MaterialDesignTable",
+                    "MaterialDesignTopAppBar",
                     "MaterialDesignValue"
                 ]
             }
