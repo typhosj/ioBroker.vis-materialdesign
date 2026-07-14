@@ -216,6 +216,8 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
             const label = on ? data.labelTrue || data.labelFalse || '' : data.labelFalse || '';
             const labelPosition = data.labelPosition || 'right';
             const labelGap = labelPosition === 'off' ? 0 : 16;
+            // The switch keeps a small gap between control and label like VIS1 (margin 0 10px).
+            const switchMargin = labelPosition === 'off' ? 0 : 10;
             const labelElement =
                 labelPosition === 'off' ? null : (
                     <span
@@ -224,6 +226,9 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
                             color: color(on ? data.labelColorTrue : data.labelColorFalse, '#44739e'),
                             cursor: data.labelClickActive === false ? 'default' : 'pointer',
                             display: 'inline-flex',
+                            // Grow to fill: VIS1 spreads label and control apart in a wide widget (label at the far
+                            // edge, control at the other). `1 1 auto` replicates that spread; a content-sized label
+                            // would hug the control and MISMATCH old. Both old and new hug at content width anyway.
                             flex: '1 1 auto',
                             fontFamily: data.valueFontFamily || undefined,
                             fontSize: data.valueFontSize ? `${data.valueFontSize}px` : undefined,
@@ -256,11 +261,11 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
                         role="switch"
                         style={{
                             filter: controlFilter,
-                            marginLeft: labelGap,
-                            marginRight: labelGap,
+                            marginLeft: switchMargin,
+                            marginRight: switchMargin,
                             overflow: 'visible',
                             position: 'relative',
-                            width: 36,
+                            width: 32,
                             height: 20,
                             flex: '0 0 auto',
                             ['--materialdesign-color-switch-on' as string]: color(data.colorSwitchTrue, '#44739e'),
@@ -280,16 +285,19 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
                                 opacity: on ? 0.54 : 0.38,
                                 position: 'absolute',
                                 top: 3,
-                                width: 36,
+                                width: 32,
                             }}
                         />
                         <div
                             className="mdc-switch__thumb-underlay mdc-ripple-upgraded mdc-ripple-upgraded--unbounded"
                             style={{
                                 height: 28,
-                                left: on ? 16 : -4,
+                                left: on ? 12 : -8,
                                 position: 'absolute',
                                 top: -4,
+                                // Neutralize the ambient VIS1 `.mdc-switch--checked` translateX(20px); we drive the
+                                // thumb travel via `left` so it works with or without the legacy stylesheet loaded.
+                                transform: 'none',
                                 transition: 'left 120ms ease',
                                 width: 28,
                             }}
@@ -376,14 +384,15 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
                 <div
                     className={`materialdesign-widget mdc-form-field materialdesign-${def.kind}${labelPosition === 'left' ? ' mdc-form-field--align-end' : ''}`}
                     ref={element => {
-                        // VIS2 wraps every widget in an overflow-hidden element; labels and MDC ripples may extend beyond it.
+                        // VIS2 wraps every widget in an overflow-hidden element; labels and MDC ripples may extend
+                        // beyond it. Only lift the clipping — do NOT touch the wrapper width. Writing
+                        // `max(clientWidth, scrollWidth)` back on every render is a ratchet: the unbounded MDC ripple
+                        // always makes scrollWidth exceed clientWidth, so the widget grew wider on each re-render
+                        // (visible in the editor as the control widening with every selection). Old sets no width.
                         if (element?.parentElement) {
                             const wrapper = element.parentElement;
                             window.requestAnimationFrame(() => {
                                 wrapper.style.setProperty('overflow', 'visible', 'important');
-                                if (labelPosition !== 'off') {
-                                    wrapper.style.width = `${Math.max(wrapper.clientWidth, element.scrollWidth)}px`;
-                                }
                             });
                         }
                     }}
