@@ -446,6 +446,7 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
     return class MaterialDesignButtonVariant extends VisWidget {
         private lockTimer: number | undefined;
         private lastTouchAt = 0;
+        private lastSliderAt = 0;
 
         constructor(props: VisRxWidgetProps) {
             super(props);
@@ -526,6 +527,9 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
             if (data.readOnly || this.isLocked(data)) {
                 return;
             }
+            // Mark slider interaction so the button's mouse-up does not fire the toggle
+            // (execute() for kind 'slider') and clobber the dragged value.
+            this.lastSliderAt = Date.now();
             const rect = event.currentTarget.getBoundingClientRect();
             const x = event.clientX - rect.left - rect.width / 2;
             const y = event.clientY - rect.top - rect.height / 2;
@@ -628,14 +632,14 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
                             this.setState({ active: false, hovered: false } as PressState);
                         }}
                         onMouseDown={() => {
-                            if (Date.now() - this.lastTouchAt < 700) {
+                            if (Date.now() - this.lastTouchAt < 700 || Date.now() - this.lastSliderAt < 700) {
                                 return;
                             }
                             this.setState({ active: true } as PressState);
                             this.pushDown(data);
                         }}
                         onMouseUp={() => {
-                            if (Date.now() - this.lastTouchAt < 700) {
+                            if (Date.now() - this.lastTouchAt < 700 || Date.now() - this.lastSliderAt < 700) {
                                 return;
                             }
                             this.setState({ active: false } as PressState);

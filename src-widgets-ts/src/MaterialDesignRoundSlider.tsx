@@ -134,7 +134,9 @@ function working(value: ioBroker.StateValue | undefined): boolean {
 }
 
 function polar(angle: number, radius: number): { x: number; y: number } {
-    const rad = ((angle - 90) * Math.PI) / 180;
+    // Angle measured clockwise from 3 o'clock (positive x), matching the old round-slider webcomponent
+    // (`_angle2xy = {x: cos, y: sin}`) so startAngle/arcLength orient identically (default 135/270 → gap at bottom).
+    const rad = (angle * Math.PI) / 180;
     return { x: 50 + radius * Math.cos(rad), y: 50 + radius * Math.sin(rad) };
 }
 
@@ -185,7 +187,8 @@ export default class MaterialDesignRoundSlider extends VisWidget {
         const y = event.clientY - box.top - box.height / 2;
         const start = num(data.startAngle, 135);
         const arc = Math.max(1, num(data.arcLength, 270));
-        let angle = (Math.atan2(y, x) * 180) / Math.PI + 90;
+        // atan2 is clockwise from 3 o'clock (positive x, y down) — same frame as polar() above.
+        let angle = (Math.atan2(y, x) * 180) / Math.PI;
         if (angle < 0) {
             angle += 360;
         }

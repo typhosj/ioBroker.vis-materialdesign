@@ -94,7 +94,7 @@ export default class MaterialDesignProgressCircular extends VisWidget {
                         role="progressbar"
                         style={{ height: size, position: 'relative', width: size }}
                     >
-                        <svg viewBox={`0 0 ${size} ${size}`} style={{ height: '100%', transform: `rotate(${num(data.progressCircularRotate, 0) - 90}deg)`, width: '100%' }}>
+                        <svg viewBox={`0 0 ${size} ${size}`} style={{ height: '100%', transform: `rotate(${num(data.progressCircularRotate, 0)}deg)`, width: '100%' }}>
                             <circle className="v-progress-circular__underlay" cx={size / 2} cy={size / 2} fill={cleanColor(data.innerColor, 'transparent')} r={radius} stroke={cleanColor(data.colorProgressBackground, 'rgba(161, 161, 161, 0.26)')} strokeWidth={stroke} />
                             <circle
                                 className="v-progress-circular__overlay"
