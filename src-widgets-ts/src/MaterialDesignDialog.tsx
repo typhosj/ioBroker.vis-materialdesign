@@ -277,41 +277,51 @@ export class MaterialDesignDialog extends VisWidget {
     super(props);
   }
   private open = false;
-  private readonly embeddedViewId = `materialdesign-dialog-view-${Math.random()
-    .toString(36)
-    .slice(2)}`;
-  private renderedView = "";
+  private readonly viewRef = React.createRef<HTMLDivElement>();
+  private measuredH = 0;
+  private polling = false;
   getWidgetInfo(): RxWidgetInfo {
     return dialogInfo(this.kind);
   }
   componentDidMount(): void {
     super.componentDidMount();
-    this.renderEmbeddedView();
+    this.startMeasure();
   }
   componentDidUpdate(): void {
-    this.renderEmbeddedView();
+    this.startMeasure();
   }
-  private renderEmbeddedView(): void {
-    const d = this.state.rxData as unknown as Data;
-    const visible =
-      s(d.showDialogMethod) === "datapoint"
-        ? b(stateValue(this.state as VisRxWidgetState, s(d.showDialogOid)))
-        : this.open;
-    const view = s(d.contains_view);
+  // VIS2 views use absolutely-positioned widgets, so the embedded view has no
+  // intrinsic height, and its content loads asynchronously. Poll the container's
+  // scrollHeight after opening and size the container to it, so the card fits the
+  // content like the old Vuetify dialog.
+  private startMeasure(): void {
     if (this.kind !== "view") return;
-    if (!visible || !view) {
-      this.renderedView = "";
+    if (!this.viewRef.current) {
+      this.measuredH = 0;
+      this.polling = false;
       return;
     }
-    if (view === this.renderedView) return;
-    const vis = (
-      window as unknown as {
-        vis?: { renderView?: (viewDiv: string, view: string) => void };
+    if (this.polling) return;
+    this.polling = true;
+    let ticks = 0;
+    const tick = (): void => {
+      const el = this.viewRef.current;
+      if (!el) {
+        this.polling = false;
+        return;
       }
-    ).vis;
-    if (!vis?.renderView) return;
-    vis.renderView(this.embeddedViewId, view);
-    this.renderedView = view;
+      const h = el.scrollHeight;
+      if (h && Math.abs(h - this.measuredH) > 1) {
+        this.measuredH = h;
+        this.forceUpdate();
+      }
+      if (++ticks < 14) {
+        setTimeout(tick, 120);
+      } else {
+        this.polling = false;
+      }
+    };
+    tick();
   }
   private feedback(d: Data): void {
     if (n(d.vibrateOnMobilDevices) > 0)
@@ -347,7 +357,10 @@ export class MaterialDesignDialog extends VisWidget {
     const fullscreen =
       typeof window !== "undefined" &&
       window.innerWidth <= n(d.fullscreenResolutionLower, 0);
-    const title = s(d.title, s(d.contains_view));
+    const view = s(d.contains_view);
+    const title = s(d.title, view);
+    // Old default: full-width dialog sized to its content (capped at 90vh/90vw).
+    const bodyW = fullscreen ? "100%" : s(d.dialogMaxWidth, "96vw");
     const content =
       this.kind === "iframe" ? (
         <iframe
@@ -361,7 +374,7 @@ export class MaterialDesignDialog extends VisWidget {
           src={s(d.src)}
           style={{
             border: 0,
-            height: "100%",
+            height: fullscreen ? "100%" : s(d.viewHeight, "400px"),
             overflowX: b(d.scrollX) ? "scroll" : "hidden",
             overflowY: b(d.scrollY) ? "scroll" : "hidden",
             width: "100%",
@@ -369,10 +382,28 @@ export class MaterialDesignDialog extends VisWidget {
         />
       ) : (
         <div
-          id={this.embeddedViewId}
           className="v-dialog-view-container"
-          style={{ height: s(d.viewHeight, "100%") }}
-        />
+          ref={this.viewRef}
+          style={{
+            height: s(d.viewHeight) || this.measuredH || undefined,
+            overflow: "hidden",
+            position: "relative",
+            width: "100%",
+          }}
+        >
+          {visible && view
+            ? (
+                this as unknown as {
+                  getWidgetView: (
+                    v: string,
+                    p?: Record<string, unknown>,
+                  ) => React.JSX.Element;
+                }
+              ).getWidgetView(view, {
+                style: { width: "100%", height: "100%" },
+              })
+            : null}
+        </div>
       );
     return (
       <div
@@ -432,35 +463,45 @@ export class MaterialDesignDialog extends VisWidget {
               onClick={(e) => e.stopPropagation()}
               style={{
                 background: s(d.backgroundColor, "#fff"),
+                borderRadius: 4,
+                boxShadow:
+                  "0 11px 15px -7px rgba(0,0,0,.2),0 24px 38px 3px rgba(0,0,0,.14),0 9px 46px 8px rgba(0,0,0,.12)",
                 display: "flex",
                 flexDirection: "column",
-                height: fullscreen ? "100%" : s(d.viewHeight, "auto"),
-                maxWidth: s(d.dialogMaxWidth, fullscreen ? "100%" : "auto"),
-                width: fullscreen ? "100%" : undefined,
+                height: fullscreen ? "100%" : "auto",
+                maxHeight: fullscreen ? "100%" : "90vh",
+                maxWidth: fullscreen ? "100%" : "96vw",
+                overflow: "hidden",
+                width: bodyW,
               }}
             >
               {b(d.showTitle, true) ? (
                 <header
                   style={{
+                    alignItems: "center",
                     background: s(d.headerBackgroundColor),
-                    color: s(d.titleColor),
+                    color: s(d.titleColor, "#44739e"),
+                    display: "flex",
                     fontFamily: s(d.titleFont),
-                    fontSize: n(d.titleFontSize, 20),
+                    fontSize: n(d.titleFontSize, 16),
+                    fontWeight: 500,
                     height: n(d.headerHeight, 50),
-                    padding: "0 16px",
+                    padding: "0 24px",
                   }}
                   dangerouslySetInnerHTML={{ __html: title }}
                 />
               ) : null}
-              <main style={{ flex: 1, padding: n(d.viewDistanceToBorder, 24) }}>
+              <main style={{ flex: 1, minHeight: 0, overflow: "auto", padding: n(d.viewDistanceToBorder, 24) }}>
                 {content}
               </main>
               <footer
                 style={{
+                  alignItems: "center",
                   background: s(d.footerBackgroundColor),
                   display: "flex",
                   height: n(d.footerHeight, 56),
                   justifyContent: s(d.buttonPosition, "flex-end"),
+                  padding: "0 8px",
                 }}
               >
                 {b(d.showDivider) ? (
@@ -471,9 +512,18 @@ export class MaterialDesignDialog extends VisWidget {
                 <button
                   onClick={close}
                   style={{
-                    color: s(d.buttonFontColor),
+                    background: "transparent",
+                    border: 0,
+                    borderRadius: 4,
+                    color: s(d.buttonFontColor, "#44739e"),
+                    cursor: "pointer",
                     fontFamily: s(d.buttonFont),
-                    fontSize: n(d.buttonFontSize) || undefined,
+                    fontSize: n(d.buttonFontSize, 16),
+                    fontWeight: 500,
+                    height: 36,
+                    minWidth: 64,
+                    padding: "0 16px",
+                    textTransform: "uppercase",
                     width: b(d.buttonFullWidth) ? "100%" : undefined,
                   }}
                   dangerouslySetInnerHTML={{
