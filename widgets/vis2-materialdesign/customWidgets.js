@@ -1,1 +1,1 @@
-import{n as e,t}from"./assets/virtual_mf-REMOTE_ENTRY_ID___mfe_internal__vis2MaterialDesignWidgets__customWidgets_js-ByKHy0FM.js";export{t as get,e as init};
+import{n as e,t}from"./assets/virtual_mf-REMOTE_ENTRY_ID___mfe_internal__vis2MaterialDesignWidgets__customWidgets_js-D1Y4oo9N.js";export{t as get,e as init};

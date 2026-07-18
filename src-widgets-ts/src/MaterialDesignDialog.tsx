@@ -163,6 +163,11 @@ const closeFields = [
     label: "fullscreenCloseIconColor",
     type: "color" as const,
   },
+  {
+    name: "fullscreenCloseIconPressColor",
+    label: "fullscreenCloseIconPressColor",
+    type: "color" as const,
+  },
 ];
 export function dialogInfo(kind: Kind): RxWidgetInfo {
   const common = [
@@ -277,6 +282,7 @@ export class MaterialDesignDialog extends VisWidget {
     super(props);
   }
   private open = false;
+  private pressClose = false;
   private readonly viewRef = React.createRef<HTMLDivElement>();
   private measuredH = 0;
   private polling = false;
@@ -511,6 +517,9 @@ export class MaterialDesignDialog extends VisWidget {
                 ) : null}
                 <button
                   onClick={close}
+                  onPointerDown={fullscreen ? () => { this.pressClose = true; this.forceUpdate(); } : undefined}
+                  onPointerUp={fullscreen ? () => { this.pressClose = false; this.forceUpdate(); } : undefined}
+                  onPointerLeave={fullscreen ? () => { if (this.pressClose) { this.pressClose = false; this.forceUpdate(); } } : undefined}
                   style={{
                     background: "transparent",
                     border: 0,
@@ -526,16 +535,22 @@ export class MaterialDesignDialog extends VisWidget {
                     textTransform: "uppercase",
                     width: b(d.buttonFullWidth) ? "100%" : undefined,
                   }}
-                  dangerouslySetInnerHTML={{
-                    __html: fullscreen ? "" : s(d.buttonText, "close"),
-                  }}
+                  // A button can carry EITHER dangerouslySetInnerHTML OR children, never both (React #60).
+                  // Fullscreen shows the close icon (child); windowed shows the buttonText HTML.
+                  {...(fullscreen
+                    ? {}
+                    : { dangerouslySetInnerHTML: { __html: s(d.buttonText, "close") } })}
                 >
                   {fullscreen
                     ? renderIcon(
                         s(d.fullscreenCloseIcon, "close"),
-                        s(d.fullscreenCloseIconColor),
+                        this.pressClose && s(d.fullscreenCloseIconPressColor)
+                          ? s(d.fullscreenCloseIconPressColor)
+                          : s(d.fullscreenCloseIconColor),
                         20,
-                        !!d.fullscreenCloseIconColor,
+                        this.pressClose && s(d.fullscreenCloseIconPressColor)
+                          ? true
+                          : !!d.fullscreenCloseIconColor,
                       )
                     : null}
                 </button>
