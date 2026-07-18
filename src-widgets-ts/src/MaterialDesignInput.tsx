@@ -174,11 +174,57 @@ function inputType(data: InputData): string {
     return data.inputType === 'mask' ? 'text' : data.inputType || 'text';
 }
 
-function placeholder(data: InputData): string {
+// VueTheMask-style tokens (VIS1 used vue-the-mask); any other mask char is a literal separator.
+const MASK_TOKENS: Record<string, { pattern: RegExp; transform?: (c: string) => string }> = {
+    '#': { pattern: /\d/ },
+    S: { pattern: /[a-zA-Z]/ },
+    A: { pattern: /[a-zA-Z]/, transform: c => c.toUpperCase() },
+    a: { pattern: /[a-zA-Z]/, transform: c => c.toLowerCase() },
+    N: { pattern: /[0-9a-zA-Z]/ },
+    X: { pattern: /./ },
+};
+
+// Effective mask string: strip the stored `['…']` array syntax, take the first mask.
+function maskPattern(data: InputData): string {
     if (data.inputType !== 'mask' || !data.inputMask) {
         return '';
     }
-    return data.inputMask.replace(/^\[/, '').replace(/\]$/, '').replace(/'/g, '');
+    return data.inputMask.replace(/^\[/, '').replace(/\]$/, '').replace(/'/g, '').split(',')[0].trim();
+}
+
+// Enforce the mask on raw input: keep only chars matching each token position, auto-insert literals.
+export function applyMask(raw: string, mask: string): string {
+    if (!mask) {
+        return raw;
+    }
+    let out = '';
+    let pending = ''; // buffered literals, flushed only before the next real token char (no trailing separator)
+    let ri = 0;
+    for (let mi = 0; mi < mask.length && ri < raw.length; mi++) {
+        const token = MASK_TOKENS[mask[mi]];
+        if (token) {
+            while (ri < raw.length && !token.pattern.test(raw[ri])) {
+                ri++;
+            }
+            if (ri >= raw.length) {
+                break;
+            }
+            out += pending;
+            pending = '';
+            out += token.transform ? token.transform(raw[ri]) : raw[ri];
+            ri++;
+        } else {
+            pending += mask[mi];
+            if (raw[ri] === mask[mi]) {
+                ri++;
+            }
+        }
+    }
+    return out;
+}
+
+function placeholder(data: InputData): string {
+    return maskPattern(data);
 }
 
 function icon(name: string | undefined, color: string | undefined, size: number): React.JSX.Element | null {
@@ -357,10 +403,11 @@ export default class MaterialDesignInput extends VisWidget {
                                             this.forceUpdate();
                                         }}
                                         onChange={event => {
-                                            this.localValue = event.target.value;
+                                            // Mask type enforces the pattern as you type (VIS1 vue-the-mask parity).
+                                            this.localValue = data.inputType === 'mask' ? applyMask(event.target.value, maskPattern(data)) : event.target.value;
                                             // Native date/time pickers (esp. Android) fire only `change`,
                                             // often without a blur — commit their atomic value immediately.
-                                            // Text/number keep committing on blur/Enter to avoid per-keystroke writes.
+                                            // Text/number/mask keep committing on blur/Enter to avoid per-keystroke writes.
                                             if (data.inputType === 'date' || data.inputType === 'time') {
                                                 this.commit(data, event.target.value);
                                             }
