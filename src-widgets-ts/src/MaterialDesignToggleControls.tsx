@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
-import { RenderProps, VisWidget, createInfo, parseActionValue, setStateValue, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, parseActionValue, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 export interface ToggleControlData {
     oid?: string;
@@ -230,7 +230,7 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
                             // would hug the control and MISMATCH old. Both old and new hug at content width anyway.
                             flex: '1 1 auto',
                             fontFamily: data.valueFontFamily || undefined,
-                            fontSize: data.valueFontSize ? `${data.valueFontSize}px` : undefined,
+                            fontSize: data.valueFontSize ? sizeCss(data.valueFontSize, 16) : undefined,
                             minWidth: 0,
                             overflow: 'visible',
                             whiteSpace: 'nowrap',

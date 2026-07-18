@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
-import { BaseRxData, RenderProps, VisWidget, createInfo, stateValue } from './widgetUtils';
+import { BaseRxData, RenderProps, VisWidget, createInfo, sizeCss, stateValue } from './widgetUtils';
 
 export interface ProgressData extends BaseRxData {
     min?: number;
@@ -220,7 +220,7 @@ export default class MaterialDesignProgress extends VisWidget {
                                     color: cleanColor(data.textColor, '#44739e'),
                                     display: 'flex',
                                     fontFamily: data.textFontFamily || undefined,
-                                    fontSize: data.textFontSize ? num(data.textFontSize, 12) : 12,
+                                    fontSize: data.textFontSize ? sizeCss(data.textFontSize, 12) : 12,
                                     height: '100%',
                                     justifyContent: data.textAlign === 'center' ? 'center' : data.textAlign === 'start' ? 'flex-start' : 'flex-end',
                                     position: 'relative',

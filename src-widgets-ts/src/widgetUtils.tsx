@@ -89,6 +89,16 @@ export function stateValue(state: VisRxWidgetState, oid: string): ioBroker.State
     return oid ? state.values?.[`${oid}.val`] : undefined;
 }
 
+// CSS font-size that survives a theme `var(--…)` (or any string with a unit): return it as-is, otherwise numeric → `${n}px`.
+export function sizeCss(value: unknown, fallbackPx: number): string {
+    if (typeof value === 'string') {
+        const text = value.trim();
+        if (text.startsWith('var(') || /[a-z%)]$/i.test(text)) return text;
+    }
+    const num = value === '' || value === null || value === undefined ? NaN : Number(value);
+    return `${Number.isFinite(num) ? num : fallbackPx}px`;
+}
+
 export function setStateValue(props: VisRxWidgetProps, oid: string, value: ioBroker.StateValue): void {
     const context = (props as unknown as { context?: { setValue?: (id: string, value: ioBroker.StateValue) => void } }).context;
     if (oid && context?.setValue) {
@@ -216,7 +226,8 @@ export function applyThemeVariables(data: Record<string, unknown>, values: Recor
         const parts = key.match(/^__mdwTheme_(colors|fonts|fontSizes)_(.+)_\d+$/);
         if (!parts) return;
         const variable = cssVariable(parts[1] as ThemeType, decodeThemeId(parts[2]));
-        if (value !== undefined && value !== null) document.documentElement.style.setProperty(variable, String(value));
+        // Font sizes carry no unit in the theme state; legacy appended 'px' (setCssFontSizes). Without it a `var()` resolves to a unitless number and is ignored as a CSS font-size.
+        if (value !== undefined && value !== null) document.documentElement.style.setProperty(variable, parts[1] === 'fontSizes' ? `${value}px` : String(value));
     });
 }
 

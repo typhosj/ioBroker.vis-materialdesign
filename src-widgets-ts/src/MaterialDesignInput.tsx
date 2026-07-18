@@ -4,7 +4,7 @@ import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker
 
 import { renderIcon } from './MaterialDesignButtons';
 import { cleanColor, num } from './MaterialDesignProgress';
-import { RenderProps, VisWidget, createInfo, setStateValue, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 interface InputData {
     oid?: string;
@@ -205,9 +205,8 @@ function plainColor(value: unknown, fallback: string): string {
     return typeof value === 'string' && value.startsWith('#mdwTheme:') ? fallback : themeColor(value, fallback);
 }
 
-function fontSize(value: unknown, fallback: number): number {
-    const parsed = num(value, fallback);
-    return parsed > 0 ? parsed : fallback;
+function fontSize(value: unknown, fallback: number): string {
+    return sizeCss(value, fallback);
 }
 
 export default class MaterialDesignInput extends VisWidget {

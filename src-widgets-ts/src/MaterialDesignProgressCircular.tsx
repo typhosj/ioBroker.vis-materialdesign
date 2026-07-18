@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
-import { RenderProps, VisWidget, createInfo, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, sizeCss, stateValue } from './widgetUtils';
 import { ProgressData, cleanColor, num, progressState } from './MaterialDesignProgress';
 
 const preview =
@@ -116,7 +116,7 @@ export default class MaterialDesignProgressCircular extends VisWidget {
                                     color: cleanColor(data.textColor, '#44739e'),
                                     display: 'flex',
                                     fontFamily: data.textFontFamily || undefined,
-                                    fontSize: data.textFontSize ? num(data.textFontSize, 12) : 12,
+                                    fontSize: data.textFontSize ? sizeCss(data.textFontSize, 12) : 12,
                                     inset: 0,
                                     justifyContent: 'center',
                                     position: 'absolute',

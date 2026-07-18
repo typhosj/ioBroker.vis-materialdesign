@@ -4,7 +4,7 @@ import type { RxWidgetInfo, VisRxWidgetState } from '@iobroker/types-vis-2';
 
 import { renderIcon } from './MaterialDesignButtons';
 import { cleanColor, num } from './MaterialDesignProgress';
-import { RenderProps, VisWidget, createInfo, setStateValue, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 interface SelectData {
     oid?: string;
@@ -285,11 +285,11 @@ export default class MaterialDesignSelect extends VisWidget {
                             </fieldset>
                         ) : null}
                         {data.prepandIcon && selectedSlot !== 'prepend' ? <span style={{ flex: '0 0 auto', marginRight: 4 }}>{renderIcon(data.prepandIcon, color(data.prepandIconColor, '#44739e'), num(data.prepandIconSize, 16), !!data.prepandIconColor)}</span> : null}
-                        {data.inputPrefix ? <span style={{ color: color(data.inputAppendixColor, textColor), fontFamily: data.inputAppendixFontFamily || undefined, fontSize: num(data.inputAppendixFontSize, 14), marginRight: 4 }}>{data.inputPrefix}</span> : null}
+                        {data.inputPrefix ? <span style={{ color: color(data.inputAppendixColor, textColor), fontFamily: data.inputAppendixFontFamily || undefined, fontSize: sizeCss(data.inputAppendixFontSize, 14), marginRight: 4 }}>{data.inputPrefix}</span> : null}
                         {selectedIcon && selectedSlot === 'prepend' ? <span style={{ flex: '0 0 auto', marginRight: 4 }}>{selectedIcon}</span> : null}
                         <span style={{ flex: '1 1 auto', minWidth: 0, paddingTop: active ? 11 : 0 }}>
                             {selectedIcon && selectedSlot === 'prepend-inner' ? <span style={{ display: 'inline-block', marginRight: 4, verticalAlign: 'middle' }}>{selectedIcon}</span> : null}
-                            {data.inputLabelText ? <span style={{ color: color(this.open ? data.inputLabelColorSelected : data.inputLabelColor, 'rgba(0, 0, 0, 0.54)'), fontFamily: data.inputLabelFontFamily || undefined, fontSize: active ? activeLabelFontSize : num(data.inputLabelFontSize, 16), left: 10, position: 'absolute', top: active ? (outlined ? -4 : 1) : 9, whiteSpace: 'nowrap' }}>{data.inputLabelText}</span> : null}
+                            {data.inputLabelText ? <span style={{ color: color(this.open ? data.inputLabelColorSelected : data.inputLabelColor, 'rgba(0, 0, 0, 0.54)'), fontFamily: data.inputLabelFontFamily || undefined, fontSize: active ? activeLabelFontSize : sizeCss(data.inputLabelFontSize, 16), left: 10, position: 'absolute', top: active ? (outlined ? -4 : 1) : 9, whiteSpace: 'nowrap' }}>{data.inputLabelText}</span> : null}
                             {this.isAutocomplete ? (
                                 <input
                                     onBlur={() => { window.setTimeout(() => { if (this.filterText !== undefined) { this.filterText = undefined; this.forceUpdate(); } }, 150); }}
@@ -298,15 +298,15 @@ export default class MaterialDesignSelect extends VisWidget {
                                     onFocus={() => { if (this.filterText === undefined) { this.filterText = ''; } this.open = true; this.forceUpdate(); }}
                                     onKeyDown={event => this.onAutocompleteKey(event, list, data)}
                                     placeholder={selected?.text || ''}
-                                    style={{ background: 'transparent', border: 0, color: textColor, display: 'block', fontFamily: data.inputTextFontFamily || undefined, fontSize: num(data.inputTextFontSize, 16), outline: 'none', padding: 0, textOverflow: 'ellipsis', width: '100%' }}
+                                    style={{ background: 'transparent', border: 0, color: textColor, display: 'block', fontFamily: data.inputTextFontFamily || undefined, fontSize: sizeCss(data.inputTextFontSize, 16), outline: 'none', padding: 0, textOverflow: 'ellipsis', width: '100%' }}
                                     type="text"
                                     value={this.filterText ?? (selected?.text || '')}
                                 />
                             ) : (
-                                <span style={{ display: 'block', fontFamily: data.inputTextFontFamily || undefined, fontSize: num(data.inputTextFontSize, 16), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selected?.text || ''}</span>
+                                <span style={{ display: 'block', fontFamily: data.inputTextFontFamily || undefined, fontSize: sizeCss(data.inputTextFontSize, 16), overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{selected?.text || ''}</span>
                             )}
                         </span>
-                        {data.inputSuffix ? <span style={{ color: color(data.inputAppendixColor, textColor), fontFamily: data.inputAppendixFontFamily || undefined, fontSize: num(data.inputAppendixFontSize, 14), marginLeft: 4 }}>{data.inputSuffix}</span> : null}
+                        {data.inputSuffix ? <span style={{ color: color(data.inputAppendixColor, textColor), fontFamily: data.inputAppendixFontFamily || undefined, fontSize: sizeCss(data.inputAppendixFontSize, 14), marginLeft: 4 }}>{data.inputSuffix}</span> : null}
                         {data.clearIconShow && current !== undefined && current !== null && current !== '' ? <button aria-label="clear" onClick={event => { event.stopPropagation(); this.localValue = ''; setStateValue(this.props, data.oid || '', ''); this.filterText = undefined; this.open = !!data.openOnClear; this.forceUpdate(); }} style={{ background: 'transparent', border: 0, cursor: 'pointer', display: 'flex', marginLeft: 4, padding: 2 }} type="button">{renderIcon(data.clearIcon || 'close', color(data.clearIconColor, '#44739e'), num(data.clearIconSize, 16), !!data.clearIconColor)}</button> : null}
                         <span style={{ flex: '0 0 auto', marginLeft: 6 }}>{renderIcon(data.collapseIcon || 'menu-down', color(data.collapseIconColor, '#44739e'), num(data.collapseIconSize, 16), !!data.collapseIconColor)}</span>
                         {selectedIcon && selectedSlot === 'append-outer' ? <span style={{ flex: '0 0 auto', marginLeft: 4 }}>{selectedIcon}</span> : null}
@@ -326,8 +326,8 @@ export default class MaterialDesignSelect extends VisWidget {
                                         : color(data.listItemBackgroundColor, '#FFFFFF');
                                 return <button key={String(item.value)} className={`v-list-item${isSelected ? ' v-list-item--active' : ''}`} onClick={() => { this.localValue = item.value; setStateValue(this.props, data.oid || '', item.value); this.filterText = undefined; this.open = false; this.forceUpdate(); }} onMouseEnter={() => { this.hoveredValue = String(item.value); this.forceUpdate(); }} onMouseLeave={() => { this.hoveredValue = undefined; this.forceUpdate(); }} style={{ alignItems: 'center', background, border: 0, boxSizing: 'border-box', cursor: 'pointer', display: 'flex', minHeight: num(data.listItemHeight, 40) || 40, padding: '6px 12px', textAlign: 'left', width: '100%' }} type="button">
                                     {item.icon ? <span style={{ flex: '0 0 auto', marginRight: 12 }}>{renderIcon(item.icon, color(isSelected ? data.listIconSelectedColor : isHovered ? data.listIconHoverColor : item.imageColor, color(data.listIconColor, '#44739e')), num(data.listIconSize, 20), !!item.imageColor)}</span> : null}
-                                    <span style={{ flex: '1 1 auto', minWidth: 0 }}><span className="materialdesign-v-list-item-title" style={{ color: itemColor, display: 'block', fontFamily: data.listItemFont || undefined, fontSize: num(data.listItemFontSize, 16) }}>{item.text}</span>{item.subText ? <span className="materialdesign-v-list-item-subtitle" style={{ color: color(isSelected ? data.listItemSubFontSelectedColor : isHovered ? data.listItemSubFontHoverColor : data.listItemSubFontColor, itemColor), display: 'block', fontFamily: data.listItemSubFont || undefined, fontSize: num(data.listItemSubFontSize, 14) }}>{item.subText}</span> : null}</span>
-                                    {data.showValue ? <span className="materialdesign-v-list-item-value" style={{ color: color(isSelected ? data.listItemValueFontSelectedColor : isHovered ? data.listItemValueFontHoverColor : data.listItemValueFontColor, itemColor), fontFamily: data.listItemValueFont || undefined, fontSize: num(data.listItemValueFontSize, 14), marginLeft: 8 }}>{String(item.value)}</span> : null}
+                                    <span style={{ flex: '1 1 auto', minWidth: 0 }}><span className="materialdesign-v-list-item-title" style={{ color: itemColor, display: 'block', fontFamily: data.listItemFont || undefined, fontSize: sizeCss(data.listItemFontSize, 16) }}>{item.text}</span>{item.subText ? <span className="materialdesign-v-list-item-subtitle" style={{ color: color(isSelected ? data.listItemSubFontSelectedColor : isHovered ? data.listItemSubFontHoverColor : data.listItemSubFontColor, itemColor), display: 'block', fontFamily: data.listItemSubFont || undefined, fontSize: sizeCss(data.listItemSubFontSize, 14) }}>{item.subText}</span> : null}</span>
+                                    {data.showValue ? <span className="materialdesign-v-list-item-value" style={{ color: color(isSelected ? data.listItemValueFontSelectedColor : isHovered ? data.listItemValueFontHoverColor : data.listItemValueFontColor, itemColor), fontFamily: data.listItemValueFont || undefined, fontSize: sizeCss(data.listItemValueFontSize, 14), marginLeft: 8 }}>{String(item.value)}</span> : null}
                                 </button>;
                             })}
                         </div>

@@ -3,7 +3,7 @@ import React from 'react';
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
 import { cleanColor, num, snapToStep } from './MaterialDesignProgress';
-import { RenderProps, VisWidget, createInfo, setStateValue, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 export interface RoundSliderData {
     oid?: string;
@@ -289,7 +289,7 @@ export default class MaterialDesignRoundSlider extends VisWidget {
                             color: cleanColor(data.valueLabelColor, '#44739e'),
                             display: 'flex',
                             fontFamily: data.valueFontFamily || undefined,
-                            fontSize: data.valueFontSize ? num(data.valueFontSize, 16) : 16,
+                            fontSize: data.valueFontSize ? sizeCss(data.valueFontSize, 16) : 16,
                             justifyContent: 'center',
                             pointerEvents: 'none',
                             position: 'absolute',

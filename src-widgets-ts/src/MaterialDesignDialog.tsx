@@ -6,6 +6,7 @@ import {
   VisWidget,
   createInfo,
   setStateValue,
+  sizeCss,
   stateValue,
 } from "./widgetUtils";
 
@@ -418,7 +419,7 @@ export class MaterialDesignDialog extends VisWidget {
               border: 0,
               color: s(d.mdwButtonSecondaryColor, "#fff"),
               fontFamily: s(d.textFontFamily),
-              fontSize: n(d.textFontSize) || undefined,
+              fontSize: d.textFontSize ? sizeCss(d.textFontSize, 14) : undefined,
               height: "100%",
               width: "100%",
             }}
@@ -482,7 +483,7 @@ export class MaterialDesignDialog extends VisWidget {
                     color: s(d.titleColor, "#44739e"),
                     display: "flex",
                     fontFamily: s(d.titleFont),
-                    fontSize: n(d.titleFontSize, 16),
+                    fontSize: sizeCss(d.titleFontSize, 16),
                     fontWeight: 500,
                     height: n(d.headerHeight, 50),
                     padding: "0 24px",
@@ -517,7 +518,7 @@ export class MaterialDesignDialog extends VisWidget {
                     color: s(d.buttonFontColor, "#44739e"),
                     cursor: "pointer",
                     fontFamily: s(d.buttonFont),
-                    fontSize: n(d.buttonFontSize, 16),
+                    fontSize: sizeCss(d.buttonFontSize, 16),
                     fontWeight: 500,
                     height: 36,
                     minWidth: 64,

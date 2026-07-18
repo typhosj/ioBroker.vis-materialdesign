@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
-import { BaseRxData, RenderProps, VisWidget, createInfo, stateValue } from './widgetUtils';
+import { BaseRxData, RenderProps, VisWidget, createInfo, sizeCss, stateValue } from './widgetUtils';
 import { renderIcon } from './MaterialDesignButtons';
 
 interface ValueData extends BaseRxData {
@@ -252,19 +252,19 @@ export default class MaterialDesignValue extends VisWidget {
             color: color(evalMaybe(data.valuesFontColor, value)),
             flex: 1,
             fontFamily: text(data.valuesFontFamily) || undefined,
-            fontSize: data.valuesFontSize ? number(data.valuesFontSize, 14) : undefined,
+            fontSize: data.valuesFontSize ? sizeCss(data.valuesFontSize, 14) : undefined,
             margin: `0 ${gap}px`,
             textAlign: data.textAlign || 'start',
         };
         const prependStyle: React.CSSProperties = {
             color: color(evalMaybe(data.prepandTextColor, value)),
             fontFamily: text(data.prepandTextFontFamily) || undefined,
-            fontSize: data.prepandTextFontSize ? number(data.prepandTextFontSize, 14) : undefined,
+            fontSize: data.prepandTextFontSize ? sizeCss(data.prepandTextFontSize, 14) : undefined,
         };
         const appendStyle: React.CSSProperties = {
             color: color(evalMaybe(data.appendTextColor, value)),
             fontFamily: text(data.appendTextFontFamily) || undefined,
-            fontSize: data.appendTextFontSize ? number(data.appendTextFontSize, 14) : undefined,
+            fontSize: data.appendTextFontSize ? sizeCss(data.appendTextFontSize, 14) : undefined,
         };
 
         return (

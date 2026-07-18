@@ -1,6 +1,6 @@
 import React from 'react';
 import type { RxWidgetInfo, VisRxWidgetState } from '@iobroker/types-vis-2';
-import { RenderProps, VisWidget, createInfo, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, sizeCss, stateValue } from './widgetUtils';
 import { renderIcon } from './MaterialDesignButtons';
 
 type Data = Record<string, unknown> & { oid?: string };
@@ -11,7 +11,7 @@ const s = (v: unknown, d = ''): string => {
 };
 const b = (v: unknown, d = false): boolean => v === undefined || v === null || v === '' ? d : v === true || v === 'true' || v === 1 || v === '1';
 const n = (v: unknown, d = 0): number => Number.isFinite(Number(v)) ? Number(v) : d;
-const px = (v: unknown, d: number): string => `${n(v, d)}px`;
+const px = (v: unknown, d: number): string => sizeCss(v, d);
 const events = (v: unknown): Event[] => { try { const value = JSON.parse(s(v)); return Array.isArray(value) ? value : []; } catch { return []; } };
 // Local YYYY-MM-DD (toISOString() shifts to UTC and misplaces events by a day in +offset zones)
 const isoDate = (day: Date): string => `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;

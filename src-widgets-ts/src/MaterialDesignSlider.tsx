@@ -3,7 +3,7 @@ import React from 'react';
 import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
 import { cleanColor, num, snapToStep } from './MaterialDesignProgress';
-import { RenderProps, VisWidget, createInfo, setStateValue, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 export interface SliderData {
     oid?: string;
@@ -286,7 +286,7 @@ export default class MaterialDesignSlider extends VisWidget {
                                     color: cleanColor(data.prepandTextColor, '#44739e'),
                                     flex: data.prepandTextWidth ? `0 0 ${num(data.prepandTextWidth, 0)}px` : '0 0 auto',
                                     fontFamily: data.prepandTextFontFamily || undefined,
-                                    fontSize: num(data.prepandTextFontSize, 16),
+                                    fontSize: sizeCss(data.prepandTextFontSize, 16),
                                 }}
                             >
                                 {data.prepandText}
@@ -402,7 +402,7 @@ export default class MaterialDesignSlider extends VisWidget {
                                     color: cleanColor(data.valueLabelColor, '#44739e'),
                                     flex: `0 0 ${num(data.valueLabelWidth, 50)}px`,
                                     fontFamily: data.valueFontFamily || undefined,
-                                    fontSize: num(data.valueFontSize, 16),
+                                    fontSize: sizeCss(data.valueFontSize, 16),
                                     textAlign: 'right',
                                 }}
                             />
