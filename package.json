@@ -71,9 +71,9 @@
     "test:widgets": "vitest run",
     "test": "npm run test:package && npm run test:widgets",
     "pr:repocheck": "node -e \"require('fs').rmSync('src-widgets-ts/build', { recursive: true, force: true })\" && npx @iobroker/repochecker https://github.com/typhosj/ioBroker.vis2-materialdesign --local",
-    "pr:check": "npm run build && npm test && npm run test:pr-gate && npm pack --dry-run && npm run pr:repocheck",
+    "pr:check": "npm run build && npm run lint && npm test && npm run test:pr-gate && npm pack --dry-run && npm run pr:repocheck",
     "release": "release-script",
-    "lint": "node -e \"console.log(\\\"No lint configured for legacy widget adapter\\\")\"",
+    "lint": "eslint src-widgets-ts/src src-admin/src",
     "build": "node tasks",
     "build:admin": "vite build --config vite.admin.config.mjs"
   },

@@ -215,7 +215,6 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
             const locked = !!data.lockEnabled && !this.unlocked;
             const label = on ? data.labelTrue || data.labelFalse || '' : data.labelFalse || '';
             const labelPosition = data.labelPosition || 'right';
-            const labelGap = labelPosition === 'off' ? 0 : 16;
             // The switch keeps a small gap between control and label like VIS1 (margin 0 10px).
             const switchMargin = labelPosition === 'off' ? 0 : 10;
             const labelElement =

@@ -5,7 +5,6 @@ import {
   RenderProps,
   VisWidget,
   createInfo,
-  parseActionValue,
   setStateValue,
   stateValue,
 } from "./widgetUtils";
