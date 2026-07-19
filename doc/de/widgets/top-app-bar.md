@@ -1,6 +1,6 @@
 # Top App Bar
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/top-app-bar.md)
 
 VIS-2-Top-App-Bar mit responsivem Navigation Drawer und indizierten Menüeinträgen.
 Template-ID: `tplVis2-materialdesign-TopAppBar-Navigation`.

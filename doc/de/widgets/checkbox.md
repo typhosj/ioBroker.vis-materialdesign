@@ -1,6 +1,6 @@
 # Checkbox
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/checkbox.md)
 
 Eine native Material-Design-Checkbox für VIS 2, die boolesche oder eigene
 Aus-/Ein-Werte liest und schreibt. Template-ID:

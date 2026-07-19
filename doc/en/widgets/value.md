@@ -1,6 +1,6 @@
 # Value
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/value.md)
 
 Displays an ioBroker state as text, number, boolean or linked value, with
 formatting, prefix/suffix and optional icon. Template id:

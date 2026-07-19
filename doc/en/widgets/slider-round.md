@@ -1,6 +1,6 @@
 # Slider Round
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/slider-round.md)
 
 A circular native VIS 2 slider for numeric states. Template id:
 `tplVis2-materialdesign-Slider-Round`.

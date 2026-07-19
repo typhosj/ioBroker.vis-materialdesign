@@ -1,6 +1,6 @@
 # Table
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/table.md)
 
 A native VIS 2 table for JSON rows with configurable indexed columns. Template
 id: `tplVis2-materialdesign-Table`.

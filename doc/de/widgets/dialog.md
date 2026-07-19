@@ -1,6 +1,6 @@
 # Dialog
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/dialog.md)
 
 Zwei per State geöffnete VIS-2-Dialoge: einer bettet eine VIS-2-Ansicht ein, der
 andere eine iFrame-URL.
@@ -18,3 +18,6 @@ Template-IDs: `tplVis2-materialdesign-Vuetify-Dialog-View` und
 </table>
 
 **Keine Sandbox** nur für vertrauenswürdige iFrame-Inhalte aktivieren.
+
+Für dauerhaft eingebettete Inhalte ohne Dialog siehe
+[Advanced View in Widget](html-widgets.md).

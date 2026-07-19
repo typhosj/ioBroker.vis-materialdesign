@@ -1,6 +1,6 @@
 # Warnmeldungen
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/alerts.md)
 
 Zeigt eine JSON-Warteschlange als Material-Design-Meldungen. Geschlossene
 Meldungen werden aus dem State entfernt. Template-ID:

@@ -1,6 +1,6 @@
 # HTML Card
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/html-card.md)
 
 Native VIS-2-Material-Design-Karte mit Titel, Untertitel, Text, Bild und optionaler
 Link- oder State-Aktion. Template-ID: `tplVis2-materialdesign-Card`.

@@ -1,6 +1,6 @@
 # Progress
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/progress.md)
 
 A linear VIS 2 progress indicator for numeric or boolean states. Template id:
 `tplVis2-materialdesign-Progress`.

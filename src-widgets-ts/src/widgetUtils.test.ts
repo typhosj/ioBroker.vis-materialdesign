@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { applyThemeVariables, createInfo, parseActionValue, setStateValue, stateValue } from './widgetUtils';
+import { pickerValueName } from './IconFilePicker';
+import { applyThemeVariables, createInfo, editorDialogPalette, iconFieldDataKey, parseActionValue, setStateValue, stateValue } from './widgetUtils';
 
 describe('widget utilities', () => {
     it('keeps legacy action values typed', () => {
@@ -46,5 +47,31 @@ describe('widget utilities', () => {
             [`${data[`${light!.name}_dark`]}.val`]: '#445566',
         });
         expect(document.documentElement.style.getPropertyValue('--materialdesign-widget-theme-color-calendar-border')).toBe('#445566');
+    });
+
+    it('derives editor dialog colors from the surrounding VIS2 surface', () => {
+        const surface = document.createElement('div');
+        const child = document.createElement('div');
+        surface.style.backgroundColor = 'rgb(48, 48, 48)';
+        surface.style.color = 'rgb(255, 255, 255)';
+        surface.appendChild(child);
+        document.body.appendChild(surface);
+
+        expect(editorDialogPalette(child)).toEqual({
+            surface: 'rgb(48, 48, 48)',
+            text: 'rgb(255, 255, 255)',
+            secondaryText: 'rgba(255, 255, 255, 0.7)',
+        });
+        surface.remove();
+    });
+
+    it('supports both VIS2 counted-field name shapes', () => {
+        expect(iconFieldDataKey('listImage', { name: 'listImage2', index: 2 })).toBe('listImage2');
+        expect(iconFieldDataKey('listImage', { name: 'listImage', index: 2 })).toBe('listImage2');
+    });
+
+    it('shows icon names and file names in picker buttons', () => {
+        expect(pickerValueName('home-outline')).toBe('home-outline');
+        expect(pickerValueName('/icons-mfd-svg/weather/cloud%20white.svg')).toBe('cloud white.svg');
     });
 });

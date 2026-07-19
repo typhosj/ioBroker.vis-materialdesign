@@ -95,17 +95,18 @@ export default class MaterialDesignProgressCircular extends VisWidget {
                         style={{ height: size, position: 'relative', width: size }}
                     >
                         <svg viewBox={`0 0 ${size} ${size}`} style={{ height: '100%', transform: `rotate(${num(data.progressCircularRotate, 0)}deg)`, width: '100%' }}>
-                            <circle className="v-progress-circular__underlay" cx={size / 2} cy={size / 2} fill={cleanColor(data.innerColor, 'transparent')} r={radius} stroke={cleanColor(data.colorProgressBackground, 'rgba(161, 161, 161, 0.26)')} strokeWidth={stroke} />
+                            {/* stroke/fill via inline style, not SVG attrs: ambient legacy vuetify CSS
+                                (.v-progress-circular__underlay/__overlay{stroke:...}) overrides the attribute otherwise */}
+                            <circle className="v-progress-circular__underlay" cx={size / 2} cy={size / 2} r={radius} strokeWidth={stroke} style={{ fill: cleanColor(data.innerColor, 'transparent'), stroke: cleanColor(data.colorProgressBackground, 'rgba(161, 161, 161, 0.26)') }} />
                             <circle
                                 className="v-progress-circular__overlay"
                                 cx={size / 2}
                                 cy={size / 2}
-                                fill="transparent"
                                 r={radius}
-                                stroke={progress.color}
                                 strokeDasharray={circumference}
                                 strokeDashoffset={dashOffset}
                                 strokeWidth={stroke}
+                                style={{ fill: 'transparent', stroke: progress.color }}
                             />
                         </svg>
                         {data.showValueLabel !== false ? (

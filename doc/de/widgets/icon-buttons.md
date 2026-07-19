@@ -1,6 +1,6 @@
 # Icon-Buttons
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/icon-buttons.md)
 
 Kompakte VIS-2-Buttons ohne Beschriftung für Navigation, Links, State,
 Multi-State, Addition, Toggle und einen kreisförmigen Wert-Slider.

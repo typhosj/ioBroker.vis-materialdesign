@@ -1,6 +1,6 @@
 # Wertanzeige
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/value.md)
 
 Zeigt einen ioBroker-Zustand als Text, Zahl, Bool-Wert oder verknüpften Wert an –
 mit Formatierung, Präfix/Suffix und optionalem Icon. Template-ID:

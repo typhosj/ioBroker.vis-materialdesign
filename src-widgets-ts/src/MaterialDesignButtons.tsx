@@ -242,7 +242,10 @@ function attrs(def: ButtonDefinition): RxWidgetInfo['visAttrs'] {
 }
 
 function color(value: unknown, fallback: string): string {
-    return typeof value === 'string' && value ? value : fallback;
+    // Legacy `#mdwTheme:vis-materialdesign.0.…` tokens are not resolvable here (the vis2 widgets don't read the old
+    // theme). Treat them as unset so the fallback applies — otherwise the raw token lands as an invalid CSS color
+    // (e.g. the button label rendered black instead of the secondary white).
+    return typeof value === 'string' && value && !value.startsWith('#mdwTheme:') ? value : fallback;
 }
 
 function numeric(value: unknown, fallback = 0): number {

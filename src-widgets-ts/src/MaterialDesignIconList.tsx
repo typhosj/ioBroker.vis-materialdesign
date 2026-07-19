@@ -3,7 +3,7 @@ import React from 'react';
 import type { RxWidgetInfo, VisRxWidgetState, WidgetData } from '@iobroker/types-vis-2';
 
 import { renderIcon } from './MaterialDesignButtons';
-import { RenderProps, VisWidget, createInfo, parseActionValue, setStateValue, stateValue } from './widgetUtils';
+import { RenderProps, VisWidget, createInfo, iconField, parseActionValue, setStateValue, stateValue } from './widgetUtils';
 
 type Data = Record<string, unknown> & {
     listItemDataMethod?: string;
@@ -101,13 +101,13 @@ const attrs: RxWidgetInfo['visAttrs'] = [
         { name: 'headerTextColor', label: 'headerTextColor', type: 'color' },
         { name: 'headerTextSize', label: 'headerTextSize', type: 'number' },
         { name: 'headerFontFamily', label: 'headerFontFamily', type: 'fontname' },
-        { name: 'headerImage', label: 'headerImage', type: 'icon' },
+        iconField('headerImage', 'headerImage'),
         { name: 'headerImageColor', label: 'headerImageColor', type: 'color' },
         { name: 'headerImageHeight', label: 'headerImageHeight', type: 'slider', min: 0, max: 200, step: 1 },
     ] },
     { name: 'lock', fields: [
         { name: 'autoLockAfter', label: 'autoLockAfter', type: 'number', default: 10 },
-        { name: 'lockIcon', label: 'lockIcon', type: 'icon', default: 'lock-outline' },
+        iconField('lockIcon', 'lockIcon', 'lock-outline'),
         { name: 'lockIconTop', label: 'lockIconTop', type: 'slider', min: 0, max: 100, step: 1, default: 5 },
         { name: 'lockIconLeft', label: 'lockIconLeft', type: 'slider', min: 0, max: 100, step: 1, default: 5 },
         { name: 'lockIconSize', label: 'lockIconSize', type: 'number' },
@@ -140,9 +140,9 @@ const attrs: RxWidgetInfo['visAttrs'] = [
         { name: 'valueAppendix', label: 'valueAppendix', type: 'html' },
         { name: 'buttonBgColor', label: 'buttonBgColor', type: 'color' },
         { name: 'buttonBgColorActive', label: 'buttonBgColorActive', type: 'color' },
-        { name: 'listImage', label: 'listImage', type: 'icon' },
+        iconField('listImage', 'listImage'),
         { name: 'listImageColor', label: 'listImageColor', type: 'color' },
-        { name: 'listImageActive', label: 'listImageActive', type: 'icon' },
+        iconField('listImageActive', 'listImageActive'),
         { name: 'listImageActiveColor', label: 'listImageActiveColor', type: 'color' },
         { name: 'statusBarColor', label: 'statusBarColor', type: 'color' },
         { name: 'statusBarColorActive', label: 'statusBarColorActive', type: 'color' },

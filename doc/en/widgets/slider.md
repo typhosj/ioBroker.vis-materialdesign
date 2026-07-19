@@ -1,6 +1,6 @@
 # Slider
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/slider.md)
 
 A horizontal or vertical native VIS 2 slider that reads and writes a numeric
 state. Template id: `tplVis2-materialdesign-Slider`.

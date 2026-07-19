@@ -1,6 +1,6 @@
 # Icon Buttons
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/icon-buttons.md)
 
 Compact icon-only VIS 2 buttons for navigation, links, state, multi-state,
 addition, toggle and a circular value slider.

@@ -1,6 +1,6 @@
 # Fortschritt kreisförmig
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/progress-circular.md)
 
 Kreisförmiger VIS-2-Fortschritt mit derselben Wertabbildung und Beschriftung wie
 der lineare Balken. Template-ID: `tplVis2-materialdesign-Progress-Circular`.

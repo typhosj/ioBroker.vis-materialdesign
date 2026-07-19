@@ -1,6 +1,6 @@
 # Slider
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/slider.md)
 
 Horizontaler oder vertikaler nativer VIS-2-Slider für numerische Zustände.
 Template-ID: `tplVis2-materialdesign-Slider`.

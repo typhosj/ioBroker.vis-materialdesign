@@ -1,6 +1,6 @@
 # Fortschritt
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/progress.md)
 
 Linearer VIS-2-Fortschrittsbalken für numerische oder boolesche Zustände.
 Template-ID: `tplVis2-materialdesign-Progress`.

@@ -1,6 +1,6 @@
 # Material-Design-Icons und Hilfswidgets
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/material-design-icons-and-images.md)
 
 Native VIS-2-Hilfswidgets für ein einzelnes Icon, eine Farbschema-Vorschau und
 die installierte Paketversion.

@@ -1,6 +1,6 @@
 # Charts
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/charts.md)
 
 Four native VIS 2 chart widgets: Bar, Pie, JSON and Line History.
 

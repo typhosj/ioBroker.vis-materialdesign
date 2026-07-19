@@ -1,6 +1,6 @@
 # Responsives Layout
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/responsive-layout.md)
 
 Responsive VIS-2-Container für Masonry Views, Grid Views und zustandsgesteuerte
 eingebettete Ansichten.
@@ -20,3 +20,7 @@ und `tplVis2-materialdesign-view-in-widget8`.
 
 Die native VIS-2-Child-View-Funktion bettet Inhalte ein, ohne die aktive
 Hauptansicht zu wechseln.
+
+**Auswahlhilfe:** Masonry oder Grid verwenden, wenn mehrere Views gleichzeitig
+responsiv angeordnet werden sollen. [Advanced View in Widget](html-widgets.md)
+verwenden, wenn ein State genau eine Child View auswählt.

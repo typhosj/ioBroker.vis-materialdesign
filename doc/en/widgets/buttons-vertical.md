@@ -1,6 +1,6 @@
 # Buttons Vertical
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/buttons-vertical.md)
 
 Vertical counterparts of all six button actions. Icon and label are arranged
 vertically while action and state behaviour matches the normal buttons.

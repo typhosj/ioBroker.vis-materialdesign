@@ -1,6 +1,6 @@
 # IconList
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/iconlist.md)
 
 Displays state-dependent icons in a responsive VIS 2 icon grid. Data can be
 entered in the editor or read from JSON. Template id:

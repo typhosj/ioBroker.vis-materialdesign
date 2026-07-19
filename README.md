@@ -12,107 +12,63 @@
 
 <!-- omit in toc -->
 
-## Material Design Widgets for ioBroker VIS 2
-
-ioBroker VIS 2 Material Design widgets based on [Google's material design guidelines](https://material.io/design/).
+## Material Design widgets for ioBroker VIS 2
 
 This adapter is maintained by typhosj. The widgets are based on the original
 VIS Material Design widget work by Scrounger.
 
-<br>
+**Documentation:** [Deutsch](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/de/README.md) · [English](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/README.md)
 
-<!-- omit in toc -->
+## Design status
 
-## Table of Content
+Existing widgets currently keep their established Material Design 2-era look,
+component IDs and settings. An opt-in Material 3 presentation is planned. It
+will not silently change existing VIS 2 projects.
 
-- [General](#general)
-- [Adapter settings](#adapter-settings)
-- [Widget documentation](#widget-documentation)
-- [Informations](#informations)
-- [Changelog](#changelog)
-- [License](#license)
+## Requirements
 
-## General
+- ioBroker with Admin 7.6.20 or newer
+- Node.js 22 or newer
+- an installed VIS 2 adapter
+- a current Chromium-based browser or Firefox (target environment)
 
-### Author and attribution
+Vibration feedback depends on the browser and device. See the
+[browser compatibility table](https://developer.mozilla.org/en-US/docs/Web/API/Navigator/vibrate#browser_compatibility).
 
-Author and maintainer: typhosj <typhosj@gmx.de>
+## Installation
 
-The widgets are based on the original VIS Material Design widget work by
-Scrounger <scrounger@gmx.net>.
+Install **Material Design Widgets** (`vis2-materialdesign`) from the ioBroker
+Admin adapter list. No separate adapter process is needed for widget delivery.
 
-### Legacy examples and forum posts
+## Quick start
 
-The following examples and discussion threads refer to the original VIS1 widgets. Use them as design/feature references, not as VIS2 installation instructions.
+1. Open the VIS 2 editor and a project.
+2. Open the **Material Design** widget set.
+3. Drag a widget into the view and select it.
+4. Configure its object ID and behaviour in the **WIDGET** tab.
+5. Save the project and test the view in runtime mode.
 
-- [Weather View](https://forum.iobroker.net/topic/32232/material-design-widgets-wetter-view)
-- [Skript Status](https://forum.iobroker.net/topic/30662/material-design-widgets-skript-status)
-- [Adapter Status](https://forum.iobroker.net/topic/30661/material-design-widgets-adapter-status)
-- [UniFi Netzwerk Status](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/examples/UnifiNetworkState)
+Theme use is optional. Configure colors and fonts in the adapter's **Theme
+Editor**, save them, then use **Theme → use theme** on a selected widget. This
+copies the matching theme references into that widget; explicit widget settings
+can still be changed afterwards.
 
-### Questions about the legacy widgets
+## Documentation
 
-- [German threads](https://forum.iobroker.net/search?term=Material%20Design%20Widgets%3A&in=titles&matchWords=all&by%5B%5D=Scrounger&categories%5B%5D=7&sortBy=topic.title&sortDirection=desc&showAs=topics)
+- [German user guide](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/de/README.md)
+- [English user guide](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/README.md)
+- [German widget catalog](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/de/widgets/README.md)
+- [English widget catalog](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/README.md)
 
-### Browser support
+## Support and historical examples
 
-The generated widgets target modern Chromium-based browsers and current Firefox versions. Installed VIS2 runtime/browser compatibility testing is still pending.
+Report current VIS 2 problems in the
+[GitHub issue tracker](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues).
 
-### Supported Browser for vibrate on mobil devices function
-
-https://developer.mozilla.org/en-US/docs/Web/API/Navigator/vibrate
-
-## Adapter settings
-
-The adapter configuration contains the VIS 2 theme editor. Widgets can copy the
-configured colors, fonts and font sizes through their **Theme** group in the
-VIS 2 editor. Widget-specific groups can override individual theme values.
-
-## Widget documentation
-
-Native VIS 2 documentation is available in English and German. Screenshots show
-the current VIS 2 widgets and editor groups.
-
-- [English index](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/doc/en/widgets)
-- [Deutscher Index](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/doc/de/widgets)
-
-- [Material Design Icons and Utilities](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/material-design-icons-and-images.md)
-- [Buttons](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/buttons.md)
-- [Buttons Vertical](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/buttons-vertical.md)
-- [Icon Buttons](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/icon-buttons.md)
-- [Checkbox](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/checkbox.md)
-- [Switch](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/switch.md)
-- [Value](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/value.md)
-- [HTML Card](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/html-card.md)
-- [List](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/list.md)
-- [IconList](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/iconlist.md)
-- [Progress](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/progress.md)
-- [Progress Circular](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/progress-circular.md)
-- [Slider](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/slider.md)
-- [Slider Round](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/slider-round.md)
-- [Input](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/input.md)
-- [Top App Bar](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/top-app-bar.md)
-- [Charts](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/charts.md)
-- [Table](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/table.md)
-- [Responsive Layout](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/responsive-layout.md)
-- [Alerts](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/alerts.md)
-- [Calendar](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/calendar.md)
-- [Dialog](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/dialog.md)
-- [Advanced View in Widget](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/html-widgets.md)
-
-Full indexes: [English](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/doc/en/widgets) · [Deutsch](https://github.com/typhosj/ioBroker.vis2-materialdesign/tree/master/doc/de/widgets)
-
-## Informations
-
-### Legacy library references
-
-The original VIS1 widget set used the following libraries. Native VIS2 components only use the dependencies bundled by their VIS2 build.
-
-- [Google material components for the web](https://github.com/material-components/material-components-web)
-- [Vuetify](https://github.com/vuetifyjs/vuetify)
-- [chartjs](https://www.chartjs.org/)
-- [round-slider from thomasloven](https://github.com/thomasloven/round-slider)
-- [Material Design Icons](https://materialdesignicons.com/)
+The repository also contains an
+[archive of historical VIS 1 examples](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/examples/README.md).
+These examples are not installation instructions for this adapter and are not
+supported as VIS 2 projects.
 
 ## Changelog
 

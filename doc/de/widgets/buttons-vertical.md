@@ -1,6 +1,6 @@
 # Buttons vertikal
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/buttons-vertical.md)
 
 Vertikale Gegenstücke aller sechs Button-Aktionen. Icon und Beschriftung stehen
 untereinander; Aktion und Zustandsverhalten entsprechen den normalen Buttons.

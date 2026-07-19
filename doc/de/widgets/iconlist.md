@@ -1,6 +1,6 @@
 # IconList
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/iconlist.md)
 
 Zeigt zustandsabhängige Icons in einem responsiven VIS-2-Raster. Daten werden im
 Editor eingegeben oder aus JSON gelesen. Template-ID:

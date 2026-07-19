@@ -1,6 +1,6 @@
 # Switch
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/switch.md)
 
 A native VIS 2 Material Design switch that reads and writes boolean or custom
 off/on values. Template id: `tplVis2-materialdesign-Switch`.

@@ -1,6 +1,6 @@
 # Responsive Layout
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/responsive-layout.md)
 
 Responsive VIS 2 containers for Masonry Views, Grid Views and state-controlled
 embedded views.
@@ -20,3 +20,7 @@ and `tplVis2-materialdesign-view-in-widget8`.
 
 Embedded content uses the native VIS 2 child-view mechanism; it does not change
 the active top-level view.
+
+**Choose between them:** use Masonry or Grid to arrange multiple views at once.
+Use [Advanced View in Widget](html-widgets.md) when a state selects exactly one
+child view.

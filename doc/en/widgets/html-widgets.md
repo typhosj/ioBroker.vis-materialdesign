@@ -1,10 +1,9 @@
 # Advanced View in Widget
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/html-widgets.md)
 
-VIS 1 HTML-control snippets are not used by native VIS 2 widgets. Their VIS 2
-replacement is a child-view container that embeds complete VIS 2 views and
-selects them from a state.
+A child-view container that embeds complete VIS 2 views and selects one from a
+state.
 
 Template ids: `tplVis2-materialdesign-view-in-widget` and
 `tplVis2-materialdesign-view-in-widget8`.
@@ -18,5 +17,5 @@ Template ids: `tplVis2-materialdesign-view-in-widget` and
 <td><ul><li>Select the controlling object id and embedded views.</li><li>Configure fade-in/out and optional pre-rendering.</li><li>The `8` variant provides indexed state-to-view entries and persistence settings.</li></ul></td></tr>
 </table>
 
-Rebuild old HTML snippets with native VIS 2 widgets inside a child view. Legacy
-`mdw-*` HTML attributes are not a supported VIS 2 configuration API.
+Use [Responsive Layout](responsive-layout.md) instead when multiple child views
+must be arranged at the same time.

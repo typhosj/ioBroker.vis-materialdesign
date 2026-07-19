@@ -1,6 +1,6 @@
 # Alerts
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/alerts.md)
 
 Displays a JSON alert queue as Material Design notices. Alerts can be closed and
 the updated queue is written back to the state. Template id:

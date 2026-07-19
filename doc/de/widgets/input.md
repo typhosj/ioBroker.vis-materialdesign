@@ -1,6 +1,6 @@
 # Eingabe, Select und Autocomplete
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/input.md)
 
 Drei native VIS-2-Elemente für Text-/Zahleneingabe und Wertauswahl.
 

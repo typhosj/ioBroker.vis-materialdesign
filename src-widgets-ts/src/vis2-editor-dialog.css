@@ -1,0 +1,131 @@
+.mdw-editor-button {
+    appearance: none;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    cursor: pointer;
+    font: inherit;
+    font-size: .8125rem;
+    font-weight: 500;
+    letter-spacing: .02857em;
+    line-height: 1.75;
+    min-width: 64px;
+    text-transform: uppercase;
+}
+
+.mdw-editor-button:focus-visible {
+    outline: 2px solid #3399cc;
+    outline-offset: 2px;
+}
+
+.mdw-editor-button--outlined {
+    background: transparent;
+    border: 1px solid rgba(51, 153, 204, .5);
+    color: #3399cc;
+    padding: 3px 9px;
+}
+
+.mdw-editor-button--outlined:hover,
+.mdw-editor-button--text:hover {
+    background: rgba(51, 153, 204, .08);
+}
+
+.mdw-editor-dialog {
+    background: transparent;
+    border: 0;
+    color: var(--mdw-editor-dialog-text, rgba(0, 0, 0, .87));
+    font: inherit;
+    max-height: calc(100% - 64px);
+    max-width: 600px;
+    overflow: visible;
+    padding: 0;
+    width: calc(100% - 64px);
+}
+
+.mdw-editor-dialog::backdrop {
+    background: rgba(0, 0, 0, .5);
+}
+
+.mdw-editor-dialog__paper {
+    background: var(--mdw-editor-dialog-surface, #fff);
+    border-radius: 4px;
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, .2), 0 24px 38px 3px rgba(0, 0, 0, .14), 0 9px 46px 8px rgba(0, 0, 0, .12);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    width: 100%;
+}
+
+.mdw-editor-dialog__title {
+    flex: 0 0 auto;
+    font-size: 1.25rem;
+    font-weight: 500;
+    letter-spacing: .0075em;
+    line-height: 1.6;
+    margin: 0;
+    padding: 16px 24px;
+}
+
+.mdw-editor-dialog__content {
+    color: var(--mdw-editor-dialog-secondary-text, rgba(0, 0, 0, .6));
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 24px 20px;
+}
+
+.mdw-editor-dialog__content p {
+    font-size: 1rem;
+    letter-spacing: .00938em;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.mdw-editor-dialog__actions {
+    align-items: center;
+    display: flex;
+    flex: 0 0 auto;
+    gap: 8px;
+    justify-content: flex-end;
+    padding: 8px;
+}
+
+.mdw-editor-button--text {
+    background: transparent;
+    color: #3399cc;
+    padding: 6px 8px;
+}
+
+.mdw-editor-button--contained {
+    background: #3399cc;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+    color: #fff;
+    padding: 6px 16px;
+}
+
+.mdw-editor-button--contained:hover {
+    background: #2b82ad;
+}
+
+@media (max-width: 663px) {
+    .mdw-editor-dialog {
+        max-height: calc(100% - 32px);
+        width: calc(100% - 32px);
+    }
+
+    .mdw-editor-dialog__paper {
+        max-height: calc(100vh - 32px);
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mdw-editor-dialog[open] .mdw-editor-dialog__paper {
+        animation: mdw-editor-dialog-enter 150ms cubic-bezier(0, 0, .2, 1);
+    }
+}
+
+@keyframes mdw-editor-dialog-enter {
+    from { opacity: 0; transform: scale(.95); }
+    to { opacity: 1; transform: scale(1); }
+}

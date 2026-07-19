@@ -1,6 +1,6 @@
 # Liste
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/list.md)
 
 Konfigurierbare VIS-2-Liste mit Textzeilen, Buttons, Switches oder Checkboxen.
 Zeilen kommen aus Editor-Einträgen oder einem JSON-State. Template-ID:

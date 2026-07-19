@@ -1,6 +1,6 @@
 # Progress Circular
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/progress-circular.md)
 
 A circular VIS 2 progress indicator with the same value mapping and labels as
 the linear progress widget. Template id:

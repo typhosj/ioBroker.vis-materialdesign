@@ -1,6 +1,6 @@
 # Material Design Icons and Utilities
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/material-design-icons-and-images.md)
 
 Native VIS 2 utility widgets for a standalone icon, color-scheme preview and
 installed package version.

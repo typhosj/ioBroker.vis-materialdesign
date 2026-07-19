@@ -1,6 +1,6 @@
 # Calendar
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/calendar.md)
 
 A native VIS 2 month, week and day calendar driven by a JSON event state.
 Template id: `tplVis2-materialdesign-Calendar`.

@@ -1,6 +1,6 @@
 # Buttons
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/buttons.md)
 
 Sechs native VIS-2-Buttonvarianten für Navigation, Links, Zustandswerte,
 mehrere Zustände, numerische Addition und Ein/Aus-Umschaltung.

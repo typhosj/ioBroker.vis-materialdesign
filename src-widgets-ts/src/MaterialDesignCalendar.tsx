@@ -25,6 +25,8 @@ export function formatCalendarTime(minutes: number, mode = 'locale', locale?: st
     const mins = normalized % 60;
     if (mode === '24h') return `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
     if (mode === '12h') return `${hours % 12 || 12}:${String(mins).padStart(2, '0')} ${hours < 12 ? 'AM' : 'PM'}`;
+    // German locale: match the legacy Vuetify axis format `HH Uhr` (full hours) instead of Intl's `HH:MM`.
+    if (locale && locale.toLowerCase().startsWith('de')) return mins === 0 ? `${String(hours).padStart(2, '0')} Uhr` : `${String(hours).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
     return new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(2000, 0, 1, hours, mins));
 }
 
@@ -103,7 +105,7 @@ export default class MaterialDesignCalendar extends VisWidget {
         const gridDays = Array.from({ length: dayCount }, (_, index) => { const day = new Date(start); day.setDate(start.getDate() + index); return { day, iso: isoDate(day) }; });
         const timeGrid = <div style={{ display: 'grid', flex: 1, gridTemplateColumns: `${Math.max(32, n(d.calendarTimeAxisWidth, 60))}px repeat(${dayCount}, minmax(0, 1fr))`, gridTemplateRows: `32px repeat(${slotCount}, ${slotHeight}px)`, minHeight: 0, overflow: 'auto' }}>
             <div style={{ background: s(d.calendarTimeAxisHeaderBackgroundColor, isDark ? '#202020' : '#f7f7f7'), gridColumn: 1, gridRow: 1 }} />
-            {gridDays.map(({ day, iso }, dayIndex) => <div key={`header-${iso}`} style={{ background: s(d.calendarHeaderBackground, 'transparent'), border: `1px solid ${s(d.calendarBorderColor, '#e0e0e0')}`, gridColumn: dayIndex + 2, gridRow: 1, overflow: 'hidden', padding: 4, textAlign: 'center' }}>{(() => { const hf = view === 'week' ? s(d.calendarWeekViewHeaderFormat) : s(d.calendarDayViewHeaderFormat); const df = view === 'week' ? s(d.calendarWeekViewDayFormat) : s(d.calendarDayViewDayFormat); return hf || df ? `${hf ? formatMoment(day, hf, locale) : ''}${hf && df ? ' ' : ''}${df ? formatMoment(day, df, locale) : ''}` : new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric' }).format(day); })()}</div>)}
+            {gridDays.map(({ day, iso }, dayIndex) => <div key={`header-${iso}`} style={{ background: s(d.calendarHeaderBackground, 'transparent'), border: `1px solid ${s(d.calendarBorderColor, '#e0e0e0')}`, gridColumn: dayIndex + 2, gridRow: 1, overflow: 'hidden', padding: 4, textAlign: 'center' }}>{(() => { const hf = view === 'week' ? s(d.calendarWeekViewHeaderFormat) : s(d.calendarDayViewHeaderFormat); const df = view === 'week' ? s(d.calendarWeekViewDayFormat) : s(d.calendarDayViewDayFormat); return hf || df ? `${hf ? formatMoment(day, hf, locale) : ''}${hf && df ? ' ' : ''}${df ? formatMoment(day, df, locale) : ''}` : new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric' }).format(day); })()}</div>)}
             {Array.from({ length: slotCount }, (_, slot) => {
                 const minute = firstMinute + slot * intervalMinutes;
                 const showLabel = b(d.calendarTimeAxisShortIntervals, true) || minute % 60 === 0;

@@ -1,6 +1,9 @@
 ![Logo](../../admin/vis-materialdesign.png)
 # Proxmox Beispiel Projekt für Material Design Widgets
 
+> **Archivhinweis:** Historisches VIS-1-Beispiel. Keine Installationsanleitung
+> für `vis2-materialdesign` und kein unterstütztes VIS-2-Projekt.
+
 Ein Beispiel Projekt für eine responsiv VIS View mit Proxmox Daten.
 
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=VWAXSTS634G88&source=url)

@@ -1,6 +1,6 @@
 # Buttons
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/buttons.md)
 
 Six native VIS 2 button variants for navigation, links, state writes, multi-state
 writes, numeric addition and on/off toggling.

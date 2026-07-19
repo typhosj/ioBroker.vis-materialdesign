@@ -1,6 +1,9 @@
 ![Logo](../../admin/vis-materialdesign.png)
 # UniFi Netzwerk Status für Material Design Widgets
 
+> **Archivhinweis:** Historisches VIS-1-Beispiel. Keine Installationsanleitung
+> für `vis2-materialdesign` und kein unterstütztes VIS-2-Projekt.
+
 Skript zur Anzeige des Status aller Netzwerk Geräte mit dem Unifi Adapter.
 
 **Hinweis: Das Skript funktioniert nicht 'out of the box' und benötigt ggf. Anpassungen, d.h. man sollte sich mit javascript etwas auskennen.**

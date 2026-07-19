@@ -1,6 +1,6 @@
 # Kalender
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/calendar.md)
 
 Nativer VIS-2-Monats-, Wochen- und Tageskalender aus einem JSON-Termin-State.
 Template-ID: `tplVis2-materialdesign-Calendar`.

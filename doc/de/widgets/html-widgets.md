@@ -1,10 +1,9 @@
 # Advanced View in Widget
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/html-widgets.md)
 
-HTML-Control-Snippets aus VIS 1 werden von nativen VIS-2-Widgets nicht verwendet.
-Der Ersatz ist ein Child-View-Container, der komplette VIS-2-Ansichten einbettet
-und per State auswählt.
+Ein Child-View-Container, der komplette VIS-2-Ansichten einbettet und per State
+auswählt.
 
 Template-IDs: `tplVis2-materialdesign-view-in-widget` und
 `tplVis2-materialdesign-view-in-widget8`.
@@ -18,5 +17,5 @@ Template-IDs: `tplVis2-materialdesign-view-in-widget` und
 <td><ul><li>Steuernde Objekt-ID und einzubettende Ansichten wählen.</li><li>Ein-/Ausblenddauer und optionales Vorrendern konfigurieren.</li><li>Die `8`-Variante bietet indizierte State-zu-View-Einträge und Persistenz.</li></ul></td></tr>
 </table>
 
-Alte HTML-Snippets mit nativen VIS-2-Widgets in einer Child View neu aufbauen.
-Legacy-Attribute `mdw-*` sind keine unterstützte VIS-2-Konfigurationsschnittstelle.
+Sollen mehrere Child Views gleichzeitig angeordnet werden, stattdessen
+[Responsives Layout](responsive-layout.md) verwenden.

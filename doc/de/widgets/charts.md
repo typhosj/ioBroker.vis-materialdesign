@@ -1,6 +1,6 @@
 # Diagramme
 
-[Zurück zur README](../../../README.md#widget-documentation)
+[Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/charts.md)
 
 Vier native VIS-2-Diagramme: Balken, Kreis, JSON und Linienverlauf.
 

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import '@fontsource/jura/files/jura-latin-400-normal.woff2';
 import '@fontsource/roboto-condensed/files/roboto-condensed-latin-400-normal.woff2';
 
-import type { RxRenderWidgetProps, RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
+import type { RxRenderWidgetProps, RxWidgetInfo, RxWidgetInfoAttributesField, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
+import { IconFilePicker, type PickerSocket, type PickerTexts, type PickerTheme } from './IconFilePicker';
 import type VisRxWidget from '@iobroker/types-vis-2/visRxWidget';
 import colors from '../../admin/lib/colors.json';
 import fonts from '../../admin/lib/fonts.json';
@@ -20,6 +20,7 @@ import './mdi-font.css';
 // use ambiently and cannot express inline. Vendored from the legacy bundle so the widgets
 // keep rendering after the VIS1 legacy CSS is removed. See the file header for scope.
 import './materialdesign-mdc.css';
+import './vis2-editor-dialog.css';
 
 // VIS 2 resolves widget-attribute GROUP headers via the legacy `window.vis._` / `window.systemDictionary`,
 // which the component i18n does NOT populate — so custom groups (e.g. `group_theme`) render as raw keys.
@@ -150,6 +151,54 @@ export function createInfo(id: string, name: string, attrs: RxWidgetInfo['visAtt
     };
 }
 
+// Combined icon+file picker as a `type:'custom'` field (replaces plain `type:'icon'`): lets the
+// user pick an MDI font icon OR browse an ioBroker file, both stored in the same data key. In counted
+// groups VIS2 normally suffixes `field.name` with the row index (e.g. `listImage0`). Older editor
+// builds may instead keep the base name and expose the row as `field.index`; support both shapes.
+export function iconFieldDataKey(name: string, field: { name?: string; index?: number }): string {
+    const fieldName = field.name ?? name;
+    return field.index === undefined || fieldName !== name ? fieldName : `${fieldName}${field.index}`;
+}
+
+export function iconField(name: string, label: string, def?: string): RxWidgetInfoAttributesField {
+    return {
+        type: 'custom',
+        name,
+        label,
+        default: def,
+        component: (field, data, onDataChange, props) => {
+            const pickerTexts: PickerTexts = {
+                adapter: VisWidget.t('iconPickerAdapter'),
+                cancel: VisWidget.t('iconPickerCancel'),
+                choose: VisWidget.t('iconPickerChoose'),
+                chooseEllipsis: VisWidget.t('iconPickerChooseEllipsis'),
+                clear: VisWidget.t('iconPickerClear'),
+                empty: VisWidget.t('iconPickerEmpty'),
+                file: VisWidget.t('iconPickerFile'),
+                icon: VisWidget.t('iconPickerIcon'),
+                loading: VisWidget.t('iconPickerLoading'),
+                preview: VisWidget.t('iconPickerPreview'),
+                search: VisWidget.t('iconPickerSearch'),
+                up: VisWidget.t('iconPickerUp'),
+            };
+            const indexedField = field as { name?: string; index?: number };
+            const key = iconFieldDataKey(name, indexedField);
+            const rec = data as Record<string, unknown>;
+            const ctx = (props as { context?: { socket?: PickerSocket; theme?: PickerTheme } })?.context;
+            return (
+                <IconFilePicker
+                    label={VisWidget.t(label)}
+                    onChange={value => onDataChange({ [key]: value })}
+                    socket={ctx?.socket}
+                    texts={pickerTexts}
+                    theme={ctx?.theme}
+                    value={String(rec[key] ?? '')}
+                />
+            );
+        },
+    } as RxWidgetInfoAttributesField;
+}
+
 type ThemeEntry = { id: string; desc: string; widget: string };
 type ThemeType = 'colors' | 'fonts' | 'fontSizes';
 
@@ -179,8 +228,38 @@ function themeStateId(type: ThemeType, id: string, dark = false): string {
     return `vis2-materialdesign.0.${type}.${id}`;
 }
 
+export function editorDialogPalette(start: Element | null): { surface: string; text: string; secondaryText: string } {
+    let current = start;
+    while (current) {
+        const style = window.getComputedStyle(current);
+        if (style.backgroundColor && style.backgroundColor !== 'transparent' && !/rgba\([^)]*,\s*0(?:\.0+)?\)/.test(style.backgroundColor)) {
+            const channels = style.backgroundColor.match(/[\d.]+/g)?.slice(0, 3).map(Number);
+            const dark = !!channels && (channels[0] * 299 + channels[1] * 587 + channels[2] * 114) / 1000 < 128;
+            return {
+                surface: style.backgroundColor,
+                text: style.color || (dark ? '#fff' : 'rgba(0, 0, 0, 0.87)'),
+                secondaryText: dark ? 'rgba(255, 255, 255, 0.7)' : 'rgba(0, 0, 0, 0.6)',
+            };
+        }
+        current = current.parentElement;
+    }
+    return { surface: '#fff', text: 'rgba(0, 0, 0, 0.87)', secondaryText: 'rgba(0, 0, 0, 0.6)' };
+}
+
 function UseThemeButton(props: { entries: Array<{ type: ThemeType; entry: ThemeEntry }>; data: Record<string, unknown>; onDataChange: (data: Record<string, unknown>) => void }): React.JSX.Element {
-    const [open, setOpen] = React.useState(false);
+    const dialogRef = React.useRef<HTMLDialogElement>(null);
+    const titleId = React.useId();
+    const descriptionId = React.useId();
+    const close = (): void => dialogRef.current?.close();
+    const open = (event: React.MouseEvent<HTMLButtonElement>): void => {
+        const dialog = dialogRef.current;
+        if (!dialog || dialog.open) return;
+        const palette = editorDialogPalette(event.currentTarget.parentElement);
+        dialog.style.setProperty('--mdw-editor-dialog-surface', palette.surface);
+        dialog.style.setProperty('--mdw-editor-dialog-text', palette.text);
+        dialog.style.setProperty('--mdw-editor-dialog-secondary-text', palette.secondaryText);
+        dialog.showModal();
+    };
     const apply = (): void => {
         const next = { ...props.data };
         props.entries.forEach(({ type, entry }) => {
@@ -189,9 +268,21 @@ function UseThemeButton(props: { entries: Array<{ type: ThemeType; entry: ThemeE
             Object.keys(next).filter(key => new RegExp(`^${entry.desc}\\d+$`).test(key)).forEach(key => { next[key] = value; });
         });
         props.onDataChange(next);
-        setOpen(false);
+        close();
     };
-    return <><Button size="small" variant="outlined" onClick={() => setOpen(true)}>{VisWidget.t('useTheme')}</Button><Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth><DialogTitle>{VisWidget.t('useTheme')}</DialogTitle><DialogContent><DialogContentText>{VisWidget.t('all colors, fonts and font sizes of the widget will be overridden - do you want to continue?')}</DialogContentText></DialogContent><DialogActions><Button onClick={() => setOpen(false)}>{VisWidget.t('cancel')}</Button><Button variant="contained" onClick={apply} autoFocus>{VisWidget.t('ok')}</Button></DialogActions></Dialog></>;
+    return <>
+        <button className="mdw-editor-button mdw-editor-button--outlined" onClick={open} type="button">{VisWidget.t('useTheme')}</button>
+        <dialog aria-describedby={descriptionId} aria-labelledby={titleId} className="mdw-editor-dialog" onClick={event => { if (event.target === event.currentTarget) close(); }} ref={dialogRef}>
+            <div className="mdw-editor-dialog__paper">
+                <h2 className="mdw-editor-dialog__title" id={titleId}>{VisWidget.t('useTheme')}</h2>
+                <div className="mdw-editor-dialog__content"><p id={descriptionId}>{VisWidget.t('all colors, fonts and font sizes of the widget will be overridden - do you want to continue?')}</p></div>
+                <div className="mdw-editor-dialog__actions">
+                    <button className="mdw-editor-button mdw-editor-button--text" onClick={close} type="button">{VisWidget.t('cancel')}</button>
+                    <button autoFocus className="mdw-editor-button mdw-editor-button--contained" onClick={apply} type="button">{VisWidget.t('ok')}</button>
+                </div>
+            </div>
+        </dialog>
+    </>;
 }
 
 function encodeThemeId(id: string): string {

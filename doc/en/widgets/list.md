@@ -1,6 +1,6 @@
 # List
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/list.md)
 
 A configurable VIS 2 list with text rows, buttons, switches or checkboxes.
 Rows can come from indexed editor fields or a JSON state. Template id:

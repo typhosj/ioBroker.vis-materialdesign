@@ -1,6 +1,6 @@
 # Checkbox
 
-[Back to README](../../../README.md#widget-documentation)
+[User guide](../README.md) › [Widget catalog](README.md) · [Deutsch](../../de/widgets/checkbox.md)
 
 A native VIS 2 Material Design checkbox that reads and writes boolean or custom
 off/on values. Template id: `tplVis2-materialdesign-CheckBox`.
