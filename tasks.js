@@ -37,6 +37,10 @@ function copyAllFiles() {
 
 clean();
 
+// Regenerate the runtime `group_*` label subset from the admin i18n before building (keeps
+// widgetUtils' group-header bridge in sync without dragging the full dictionary into the runtime).
+require('./scripts/gen-group-labels.cjs').generate();
+
 if (!existsSync(`${srcTs}/node_modules`)) {
     execFileSync('npm', ['install'], { cwd: srcTs, stdio: 'inherit' });
 }
