@@ -343,7 +343,6 @@
     "fullscreenResolutionLower": "показывать полноэкранный диалог, если разрешение ниже",
     "Generate global script": "Создать глобальный скрипт",
     "generate script": "Создать скрипт",
-    "generateHtmlControl": "создать виджет Html",
     "globalColor": "глобальный цвет",
     "group_alertLayout": "расположение",
     "group_autoCompleteListLayout": "макет меню",

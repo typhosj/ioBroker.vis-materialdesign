@@ -116,7 +116,6 @@ const attrs: RxWidgetInfo['visAttrs'] = [
                 options: ['text', 'date', 'time'],
                 default: 'text',
             },
-            { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
             { name: 'debug', label: 'debug', type: 'checkbox' },
         ],
     },
@@ -462,8 +461,8 @@ export default class MaterialDesignSelect extends VisWidget {
 
     renderWidgetBody(props: RenderProps): React.JSX.Element {
         super.renderWidgetBody(props);
-        const data = this.state.rxData as SelectData;
-        const list = items(data, this.props.context?.objects || {});
+        const data = this.state.rxData as unknown as SelectData;
+        const list = items(data, (this.props.context as unknown as { objects?: Record<string, ioBroker.Object> })?.objects || {});
         const state = stateValue(this.state as VisRxWidgetState, data.oid || '');
         if (state !== this.seenStateValue) {
             this.seenStateValue = state;

@@ -24,7 +24,7 @@ describe('widget utilities', () => {
 
     it('adds calendar theme selectors and applies light/dark values', () => {
         const info = createInfo('test-calendar', 'Calendar', []);
-        const fields = info.visAttrs?.find(group => group.name === 'theme')?.fields || [];
+        const fields = (info.visAttrs?.find(group => group.name === 'theme')?.fields || []) as ReadonlyArray<{ name?: string; default?: string }>;
         const light = fields.find(field => field.name?.includes('colors_light_d_calendar_d_border'));
         expect(light).toBeDefined();
         expect(fields.some(field => field.name === 'useTheme')).toBe(true);

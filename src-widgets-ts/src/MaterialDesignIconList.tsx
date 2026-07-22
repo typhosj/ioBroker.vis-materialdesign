@@ -117,7 +117,7 @@ const attrs: RxWidgetInfo['visAttrs'] = [
     ] },
     { name: 'listItemData', fields: [
         { name: 'listItemDataMethod', label: 'listItemDataMethod', type: 'select', options: ['inputPerEditor', 'jsonStringObject'], default: 'inputPerEditor' },
-        { name: 'countListItems', label: 'countListItems', type: 'number', default: 1, onChange: (_field, data, changeData) => changeData({ ...data, lastListItemIndex: Math.max(0, Math.floor(Number(data.countListItems) || 1) - 1) }) },
+        { name: 'countListItems', label: 'countListItems', type: 'number', default: 1, onChange: (_field, data, changeData) => { changeData({ ...data, lastListItemIndex: Math.max(0, Math.floor(Number(data.countListItems) || 1) - 1) }); return Promise.resolve(); } },
         { name: 'lastListItemIndex', type: 'number', default: 0, hidden: () => true },
         { name: 'json_string_oid', label: 'json_string_oid', type: 'id' },
     ] },

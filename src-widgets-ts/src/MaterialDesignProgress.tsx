@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type { RxWidgetInfo, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
+import type { RxWidgetInfo, RxWidgetInfoAttributesField, VisRxWidgetProps, VisRxWidgetState } from '@iobroker/types-vis-2';
 
 import { squarePreview, BaseRxData, RenderProps, VisWidget, createInfo, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
 
@@ -43,13 +43,13 @@ export interface ProgressData extends BaseRxData {
 export const linearPreview =
     '<div id="prev_tplVis-materialdesign-Progress" style="position: relative; text-align: initial; display: flex; justify-content:center;"><div class="vis-widget_prev materialdesign-widget materialdesign-progress vis-tpl-materialdesign-Progress " style="width: 100px; height: 30px; left: 105px; top: 68px; position: absolute; --vue-progress-progress-color:#44739e; --vue-progress-progress-color-background:rgba(161, 161, 161, 0.26); --vue-progress-progress-color-text:#44739e; --vue-progress-progress-color-text-size:12px; --vue-progress-progress-color-text-font-family:RobotoCondensed-Light; --vue-progress-progress-color-text-align:end; z-index: 4;" data-tmodified="true" data-zmodified="true"> <div class="materialdesign-vuetify-progress" style="width: 100%; height: 100%; display: flex; justify-content: center;"><div role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="41" class="v-progress-linear v-progress-linear--rounded theme--light" style="height: 30px;"><div class="v-progress-linear__background primary" style="opacity: 0.3; left: 41%; width: 59%;"></div><div class="v-progress-linear__buffer"></div><div class="v-progress-linear__determinate primary" style="width: 41%;"></div><div class="v-progress-linear__content"><div class="materialdesign-vuetify-progress-value-label" style="width: 100%; margin-left: 10px; margin-right: 10px;">41 %</div></div></div></div><div class="ui-resizable-handle ui-resizable-n" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-w" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-nw" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-ne" style="z-index: 90;"></div><div class="ui-resizable-handle ui-resizable-sw" style="z-index: 90;"></div></div></div>';
 
-const commonFields: Record<string, unknown>[] = [
+const commonFields: RxWidgetInfoAttributesField[] = [
     { name: 'oid', label: 'oid', type: 'id' },
     { name: 'min', label: 'min', type: 'number' },
     { name: 'max', label: 'max', type: 'number' },
 ];
 
-const colorFields: Record<string, unknown>[] = [
+const colorFields: RxWidgetInfoAttributesField[] = [
     { name: 'colorProgressBackground', label: 'colorProgressBackground', type: 'color' },
     { name: 'colorProgress', label: 'colorProgress', type: 'color' },
     { name: 'colorOneCondition', label: 'colorOneCondition', type: 'number' },
@@ -58,7 +58,7 @@ const colorFields: Record<string, unknown>[] = [
     { name: 'colorTwo', label: 'colorTwo', type: 'color' },
 ];
 
-const labelFields: Record<string, unknown>[] = [
+const labelFields: RxWidgetInfoAttributesField[] = [
     { name: 'showValueLabel', label: 'showValueLabel', type: 'checkbox', default: true },
     { name: 'valueLabelStyle', label: 'valueLabelStyle', type: 'select', options: ['progressPercent', 'progressValue', 'progressCustom'], default: 'progressPercent' },
     { name: 'valueLabelUnit', label: 'valueLabelUnit', type: 'text' },
@@ -76,7 +76,6 @@ export const linearAttrs: RxWidgetInfo['visAttrs'] = [
             ...commonFields,
             { name: 'reverse', label: 'reverse', type: 'checkbox' },
             { name: 'invertValue', label: 'invertValue', type: 'checkbox' },
-            { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
             { name: 'debug', label: 'debug', type: 'checkbox' },
         ],
     },

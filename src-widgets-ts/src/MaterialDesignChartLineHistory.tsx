@@ -356,9 +356,9 @@ export default class MaterialDesignChartLineHistory extends VisWidget {
                 n(item(d, "minTimeInterval", i)) > 0
                   ? n(item(d, "minTimeInterval", i)) * 1000
                   : undefined,
-              aggregate: s(item(d, "aggregate", i), "minmax"),
+              aggregate: s(item(d, "aggregate", i), "minmax") as ioBroker.GetHistoryOptions["aggregate"],
               timeout: Math.max(0, n(d.chartTimeout, 2)) * 1000,
-            });
+            } as ioBroker.GetHistoryOptions & { timeout: number });
             return {
               oid,
               points: values.map((v) => ({

@@ -60,7 +60,6 @@ interface InputData {
     appendOuterIcon?: string;
     appendOuterIconSize?: number;
     appendOuterIconColor?: string;
-    generateHtmlControl?: boolean;
     debug?: boolean;
 }
 
@@ -79,7 +78,6 @@ const attrs: RxWidgetInfo['visAttrs'] = [
             },
             { name: 'inputMask', label: 'inputMask', type: 'text' },
             { name: 'inputMaxLength', label: 'inputMaxLength', type: 'number' },
-            { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
             { name: 'debug', label: 'debug', type: 'checkbox' },
         ],
     },
@@ -496,7 +494,7 @@ export default class MaterialDesignInput extends VisWidget {
                                 '--vue-text-field-appendix-color': appendixColor,
                                 '--vue-text-field-appendix-font-family':
                                     data.inputAppendixFontFamily || data.inputTextFontFamily || undefined,
-                                '--vue-text-field-appendix-font-size': `${fontSize(data.inputAppendixFontSize, fontSize(data.inputTextFontSize, 16))}px`,
+                                '--vue-text-field-appendix-font-size': `${fontSize(data.inputAppendixFontSize ?? data.inputTextFontSize, 16)}px`,
                                 boxSizing: 'border-box',
                                 color: textColor,
                                 display: 'flex',
@@ -733,7 +731,7 @@ export default class MaterialDesignInput extends VisWidget {
                                             aria-label="clear"
                                             onClick={() => {
                                                 this.localValue = '';
-                                                setStateValue(props as VisRxWidgetProps, data.oid || '', '');
+                                                setStateValue(this.props, data.oid || '', '');
                                                 this.forceUpdate();
                                             }}
                                             style={{

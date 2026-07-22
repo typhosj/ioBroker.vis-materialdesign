@@ -82,7 +82,6 @@ export interface SliderData {
     thumbFontSize?: number;
     thumbFontFamily?: string;
     useLabelRules?: boolean;
-    generateHtmlControl?: boolean;
     debug?: boolean;
 }
 
@@ -104,7 +103,6 @@ const attrs: RxWidgetInfo['visAttrs'] = [
             { name: 'vibrateOnMobilDevices', label: 'vibrateOnMobilDevices', type: 'number', default: 50 },
             { name: 'clickSoundPlay', label: 'clickSoundPlay', type: 'checkbox' },
             { name: 'clickSoundVolume', label: 'clickSoundVolume', type: 'slider', min: 0, max: 1, step: 0.1, default: 0.5 },
-            { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
             { name: 'debug', label: 'debug', type: 'checkbox' },
         ],
     },

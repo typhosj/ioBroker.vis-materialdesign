@@ -56,6 +56,15 @@ export interface PressState {
     hovered?: boolean;
 }
 
+// Widget component state: the vis-2 base state plus the transient UI flags the
+// widgets store locally (press/hover feedback and the lock overlay). Declaring
+// them here lets `setState({ active: true })` type-check against React's state.
+export interface WidgetState extends VisRxWidgetState {
+    active?: boolean;
+    hovered?: boolean;
+    unlocked?: boolean;
+}
+
 export const setColor = '#ffc107';
 
 export const commonAttrs = [
@@ -274,6 +283,8 @@ export function createInfo(id: string, name: string, attrs: RxWidgetInfo['visAtt
         visSetLabel: 'Material Design',
         visSetColor: setColor,
         visName: name,
+        // Placeholder; every caller overrides it via spread with a real preview.
+        visPrev: '',
         visAttrs: [
             {
                 name: 'theme',
@@ -469,11 +480,11 @@ export function applyThemeVariables(data: Record<string, unknown>, values: Recor
     });
 }
 
-const BaseVisWidget = window.visRxWidget as typeof VisRxWidget<BaseRxData, VisRxWidgetState>;
+const BaseVisWidget = window.visRxWidget as typeof VisRxWidget<BaseRxData, WidgetState>;
 
 export class VisWidget extends BaseVisWidget {
     render(): React.JSX.Element | null {
-        applyThemeVariables(this.state.rxData as unknown as Record<string, unknown>, this.state.values);
+        applyThemeVariables(this.state.rxData as unknown as Record<string, unknown>, this.state.values as unknown as Record<string, ioBroker.StateValue> | undefined);
         return super.render();
     }
 }

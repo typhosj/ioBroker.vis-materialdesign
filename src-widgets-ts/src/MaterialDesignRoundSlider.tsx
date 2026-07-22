@@ -38,7 +38,6 @@ export interface RoundSliderData {
     textForValueLessThan?: string;
     valueGreaterThan?: number;
     textForValueGreaterThan?: string;
-    generateHtmlControl?: boolean;
     debug?: boolean;
 }
 
@@ -63,7 +62,6 @@ const attrs: RxWidgetInfo['visAttrs'] = [
             { name: 'vibrateOnMobilDevices', label: 'vibrateOnMobilDevices', type: 'number', default: 50 },
             { name: 'clickSoundPlay', label: 'clickSoundPlay', type: 'checkbox' },
             { name: 'clickSoundVolume', label: 'clickSoundVolume', type: 'slider', min: 0, max: 1, step: 0.1, default: 0.5 },
-            { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
             { name: 'debug', label: 'debug', type: 'checkbox' },
         ],
     },
@@ -272,7 +270,7 @@ export default class MaterialDesignRoundSlider extends VisWidget {
                             width: '100%',
                         } as React.CSSProperties
                     }
-                    value={value.raw}
+                    data-value={value.raw}
                     viewBox="0 0 100 100"
                 >
                     <path d={arcPath(start, arc, radius)} fill="none" stroke={pathColor} strokeLinecap="butt" strokeWidth={sliderWidth} />

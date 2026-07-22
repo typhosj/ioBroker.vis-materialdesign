@@ -37,7 +37,6 @@ interface ButtonData {
     colorizeFactor?: number;
     angleOffset?: number;
     angleArc?: number;
-    generateHtmlControl?: boolean;
     debug?: boolean;
     mdwButtonPrimaryColor?: string;
     mdwButtonSecondaryColor?: string;
@@ -120,7 +119,6 @@ const actionFields = {
     link: [
         { name: 'href', label: 'href', type: 'text' },
         { name: 'openNewWindow', label: 'openNewWindow', type: 'checkbox' },
-        { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
     ],
     state: [
         { name: 'oid', label: 'oid', type: 'id' },
@@ -128,7 +126,6 @@ const actionFields = {
     ],
     multiState: [
         { name: 'countOids', label: 'countOids', type: 'number', default: 1 },
-        { name: 'generateHtmlControl', label: 'generateHtmlControl', type: 'checkbox' },
     ],
     addition: [
         { name: 'oid', label: 'oid', type: 'id' },
@@ -537,7 +534,7 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
 
         renderWidgetBody(props: RenderProps): React.JSX.Element {
             super.renderWidgetBody(props);
-            const data = this.state.rxData as ButtonData;
+            const data = this.state.rxData as unknown as ButtonData;
             const pressState = this.state as PressState;
             const current = stateValue(this.state, data.oid || '');
             const on = isActive(def, current, data);
