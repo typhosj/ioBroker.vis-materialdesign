@@ -2,20 +2,25 @@
 
 [Anwenderhandbuch](../README.md) › [Widget-Katalog](README.md) · [English](../../en/widgets/charts.md)
 
-Vier native VIS-2-Diagramme: Balken, Kreis, JSON und Linienverlauf.
-
-Template-IDs: `tplVis2-materialdesign-Chart-Bar`, `-Pie`, `-JSON` und
-`-Line-History`.
+Vier native VIS-2-Diagramme für unterschiedliche Datenquellen.
 
 <img src="../../media/vis2_charts_runtime.png" alt="Material-Design-Diagramme in VIS 2">
 
-## Editor-Einstellungen
+## Widgets
+
+- [Balkendiagramm](chart-bar.md) – einzelne aktuelle State-Werte vergleichen.
+- [Kreisdiagramm](chart-pie.md) – Anteile einzelner aktueller State-Werte darstellen.
+- [JSON-Diagramm](chart-json.md) – mehrere Balken- und Linienreihen aus einem JSON-State kombinieren.
+- [Linienverlaufsdiagramm](chart-line-history.md) – Zeitreihen direkt aus einer History-Instanz laden.
+
+Bar und Pie können ihre Werte entweder aus indizierten Editor-Datensätzen oder
+aus einem gemeinsamen JSON-State lesen. JSON Chart erwartet ein eigenes
+Mehrreihenformat. Line History fragt historische Werte über die ausgewählte
+History-Adapterinstanz ab.
+
+## Gemeinsame Einstellungen
 
 <table>
 <tr><td><img src="../../media/vis2_charts_editor_overview.png" width="300"></td>
-<td><ul><li><b>Bar/Pie:</b> indizierte State-Datensätze, Texte und Farben.</li><li><b>JSON:</b> liest Labels und Datensätze aus einem JSON-State.</li><li><b>Line History:</b> History-Instanz, Zeitraum, Aggregation und Aktualisierung je State.</li><li>Legende, Achsen, Tooltip, Animation und Farben liegen in eigenen Gruppen.</li></ul></td></tr>
+<td><ul><li><b>Kartenlayout:</b> bettet das Diagramm mit optionalem HTML-Titel in eine Material-Design-Karte ein.</li><li><b>Farbschema:</b> verteilt eine Palette auf Datensätze ohne eigene Farbe.</li><li><b>Legendenposition:</b> oben und unten ordnen Einträge horizontal, links und rechts vertikal an.</li><li><b>Tooltip:</b> zeigt Werte beim Berühren oder Überfahren eines Diagrammelements.</li></ul></td></tr>
 </table>
-
-```json
-{ "axisLabels": ["Mo", "Di", "Mi"], "graphs": [{ "legendText": "Leistung", "color": "#44739e", "data": [2, 5, 3] }] }
-```
