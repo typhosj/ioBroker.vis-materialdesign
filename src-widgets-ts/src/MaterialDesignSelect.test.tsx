@@ -5,6 +5,8 @@ import { describe, expect, it, vi } from 'vitest';
 import MaterialDesignAutocomplete from './MaterialDesignAutocomplete';
 import MaterialDesignSelect from './MaterialDesignSelect';
 
+function fixture<T>(value: unknown): T { return value as T; }
+
 function findElement(
     node: React.ReactNode,
     predicate: (element: React.ReactElement<Record<string, unknown>>) => boolean,
@@ -17,15 +19,15 @@ function findElement(
 }
 
 function open(select: MaterialDesignSelect): React.ReactNode {
-    const tree = select.renderWidgetBody({} as never);
+    const tree = select.renderWidgetBody(fixture<Parameters<MaterialDesignSelect['renderWidgetBody']>[0]>({}));
     const field = findElement(tree, element => element.type === 'button');
     if (field?.props['aria-expanded'] === false) (field.props.onClick as () => void)();
-    return select.renderWidgetBody({} as never);
+    return select.renderWidgetBody(fixture<Parameters<MaterialDesignSelect['renderWidgetBody']>[0]>({}));
 }
 
 describe('select data sources and writes', () => {
     it('renders valid JSON items and safely ignores malformed JSON', () => {
-        const select = new MaterialDesignSelect({ context: {} } as never);
+        const select = new MaterialDesignSelect(fixture<ConstructorParameters<typeof MaterialDesignSelect>[0]>({ context: {} }));
         select.state = {
             rxData: { listDataMethod: 'jsonStringObject', jsonStringObject: '[{"value":1,"text":"One"}]' },
             values: {},
@@ -37,9 +39,9 @@ describe('select data sources and writes', () => {
     });
 
     it('reads value-list and object-state labels', () => {
-        const select = new MaterialDesignSelect({
+        const select = new MaterialDesignSelect(fixture<ConstructorParameters<typeof MaterialDesignSelect>[0]>({
             context: { objects: { 'test.0.mode': { common: { states: { off: 'Off', on: 'On' } } } } },
-        } as never);
+        }));
         select.state = {
             rxData: { oid: 'test.0.mode', listDataMethod: 'multistatesObject' },
             values: {},

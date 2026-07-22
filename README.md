@@ -97,6 +97,8 @@ supported as VIS 2 projects.
 - (typhosj) Ported button state writes, delayed multi-state writes, toggle and push-button behavior, lock overlay, click sound, vibration feedback, image/icon handling, and SVG color behavior
 - Based on the original VIS Material Design widgets version 0.5.9 by Scrounger
 
+[Older changelog entries](CHANGELOG_OLD.md)
+
 <!-- omit in toc -->
 
 ## License

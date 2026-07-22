@@ -2,6 +2,8 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { createButtonClass } from './MaterialDesignButtons';
 
+function fixture<T>(value: unknown): T { return value as T; }
+
 const definition = (kind: 'navigation' | 'state' | 'multiState' | 'addition' | 'toggle') => ({
     id: `test-${kind}`,
     name: kind,
@@ -15,7 +17,7 @@ function widget(kind: Parameters<typeof definition>[0]) {
     const setValue = vi.fn();
     const changeView = vi.fn();
     const Button = createButtonClass(definition(kind));
-    const instance = new Button({ context: { setValue, changeView } } as never) as unknown as {
+    const instance = new Button(fixture<ConstructorParameters<typeof Button>[0]>({ context: { setValue, changeView } })) as unknown as {
         activate: (data: Record<string, unknown>, current: ioBroker.StateValue | undefined) => void;
         componentWillUnmount: () => void;
     };

@@ -7,6 +7,8 @@ import MaterialDesignIconList from './MaterialDesignIconList';
 import MaterialDesignSelect from './MaterialDesignSelect';
 import { MaterialDesignViews } from './MaterialDesignViews';
 
+function fixture<T>(value: unknown): T { return value as T; }
+
 afterEach(() => {
     vi.useRealTimers();
 });
@@ -46,7 +48,7 @@ describe('widget lifecycle cleanup', () => {
         dialog.viewRef.current = { scrollHeight: 100 };
         dialog.startMeasure();
 
-        const select = new MaterialDesignSelect({} as never) as unknown as { scheduleFilterReset: () => void; componentWillUnmount: () => void };
+        const select = new MaterialDesignSelect(fixture<ConstructorParameters<typeof MaterialDesignSelect>[0]>({})) as unknown as { scheduleFilterReset: () => void; componentWillUnmount: () => void };
         select.scheduleFilterReset();
         expect(vi.getTimerCount()).toBe(2);
 
@@ -74,7 +76,7 @@ describe('widget lifecycle cleanup', () => {
     it('cancels icon-list auto-relock work on unmount', () => {
         vi.useFakeTimers();
         const setValue = vi.fn();
-        const iconList = new MaterialDesignIconList({ context: { setValue } } as never) as unknown as {
+        const iconList = new MaterialDesignIconList(fixture<ConstructorParameters<typeof MaterialDesignIconList>[0]>({ context: { setValue } })) as unknown as {
             actionProps: (item: Record<string, unknown>, index: number, current: unknown, data: Record<string, unknown>) => { onClick: () => void };
             componentWillUnmount: () => void;
         };

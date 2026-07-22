@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 
 import MaterialDesignChartLineHistory from './MaterialDesignChartLineHistory';
 
+function fixture<T>(value: unknown): T { return value as T; }
+
 type HistoryInspection = {
     series: Array<{ oid: string; points: Array<{ ts: number; val: number | null }>; error?: string }>;
 };
@@ -13,7 +15,7 @@ describe('line history loading', () => {
             { ts: 200, val: 'invalid' },
             { ts: 300, val: null },
         ]);
-        const widget = new MaterialDesignChartLineHistory({ context: { socket: { getHistory } } } as never);
+        const widget = new MaterialDesignChartLineHistory(fixture<ConstructorParameters<typeof MaterialDesignChartLineHistory>[0]>({ context: { socket: { getHistory } } }));
         const inspection = widget as unknown as HistoryInspection;
         widget.state = {
             rxData: {
@@ -45,7 +47,7 @@ describe('line history loading', () => {
     it('contains socket failures and ignores results after unmount', async () => {
         let resolve: (value: Array<{ ts: number; val: number }>) => void = () => undefined;
         const getHistory = vi.fn(() => new Promise<Array<{ ts: number; val: number }>>(done => { resolve = done; }));
-        const widget = new MaterialDesignChartLineHistory({ context: { socket: { getHistory } } } as never);
+        const widget = new MaterialDesignChartLineHistory(fixture<ConstructorParameters<typeof MaterialDesignChartLineHistory>[0]>({ context: { socket: { getHistory } } }));
         const inspection = widget as unknown as HistoryInspection;
         widget.state = {
             rxData: { historyAdapterInstance: 'history.0', refreshMethod: 'byObject', dataCount: 0, oid: 'test.0.value' },
