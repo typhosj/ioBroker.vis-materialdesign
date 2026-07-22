@@ -60,15 +60,10 @@ can still be changed afterwards.
 - [German widget catalog](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/de/widgets/README.md)
 - [English widget catalog](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/doc/en/widgets/README.md)
 
-## Support and historical examples
+## Support
 
 Report current VIS 2 problems in the
 [GitHub issue tracker](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues).
-
-The repository also contains an
-[archive of historical VIS 1 examples](https://github.com/typhosj/ioBroker.vis2-materialdesign/blob/master/examples/README.md).
-These examples are not installation instructions for this adapter and are not
-supported as VIS 2 projects.
 
 ## Changelog
 ### 0.3.0 (2026-07-22)

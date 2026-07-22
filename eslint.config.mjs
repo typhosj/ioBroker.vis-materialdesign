@@ -2,14 +2,13 @@ import config from '@iobroker/eslint-config';
 
 export default [
     {
-        // Legacy VIS1 widgets, generated VIS2/admin bundles, tests and examples are not
+        // Legacy VIS1 widgets, generated VIS2/admin bundles and tests are not
         // hand-maintained TypeScript and must not be linted (upstream-#251).
         ignores: [
             'widgets/**',
             'admin/**',
             'src-widgets-ts/build/**',
             'test/**',
-            'examples/**',
             'node_modules/**',
             'tasks.js',
             '*.config.mjs',
