@@ -3,6 +3,7 @@ import { squarePreview , RenderProps, VisWidget, createInfo, stateValue, sanitiz
 import type { RxWidgetInfo, VisRxWidgetState } from "@iobroker/types-vis-2";
 import { colorSchemes, scheme } from "./MaterialDesignColorScheme";
 import { MaterialDesignChartCanvas } from "./MaterialDesignChartCanvas";
+import { chartAxis } from "./chartAxis";
 
 type Data = Record<string, unknown> & {
   oid?: string;
@@ -522,7 +523,34 @@ export default class MaterialDesignChartBar extends VisWidget {
         : n(data.axisValueMax, 1);
     const horizontal = s(data.chartType, "vertical") === "horizontal";
     const title = s(data.title);
-    const chartjs = <MaterialDesignChartCanvas type={horizontal ? "horizontalBar" : "bar"} data={{ labels: bars.map(bar => bar.label), datasets: [{ data: bars.map(bar => bar.value), backgroundColor: bars.map(bar => bar.color), borderColor: s(data.hoverBorderColor), borderWidth: n(data.hoverBorderWidth) }] }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(data.animationDuration, 1000) }, legend: { display: false }, scales: { yAxes: horizontal ? [{ ticks: { min, max } }] : [{ ticks: { min, max } }], xAxes: horizontal ? [{ ticks: { min, max } }] : [{}] }, tooltips: { enabled: b(data.showTooltip, true), callbacks: {
+    const on = (v: unknown): number | undefined => (v === undefined || v === null || v === "" || !Number.isFinite(Number(v)) ? undefined : Number(v));
+    const axisOf = (ax: "x" | "y"): Record<string, unknown> => chartAxis({
+      type: ax === "y" ? "linear" : undefined,
+      position: s(data[`${ax}AxisPosition`]),
+      display: b(data[`${ax}AxisShowAxis`], true),
+      labelsDisplay: b(data[`${ax}AxisShowAxisLabels`], true),
+      labelColor: s(data[`${ax}AxisValueLabelColor`]),
+      labelFontFamily: s(data[`${ax}AxisValueFontFamily`]),
+      labelFontSize: on(data[`${ax}AxisValueFontSize`]),
+      labelPadding: on(data[`${ax}AxisValueDistanceToAxis`]),
+      title: s(data[`${ax}AxisTitle`]),
+      titleColor: s(data[`${ax}AxisTitleColor`]),
+      titleFontFamily: s(data[`${ax}AxisTitleFontFamily`]),
+      titleFontSize: on(data[`${ax}AxisTitleFontSize`]),
+      gridDisplay: b(data[`${ax}AxisShowGridLines`], true),
+      gridColor: s(data[`${ax}AxisGridLinesColor`]),
+      gridWidth: on(data[`${ax}AxisGridLinesWitdh`]),
+      drawTicks: b(data[`${ax}AxisShowTicks`], true),
+      tickLength: on(data[`${ax}AxisTickLength`]),
+      zeroLineColor: s(data[`${ax}AxisZeroLineColor`]),
+      zeroLineWidth: on(data[`${ax}AxisZeroLineWidth`]),
+    });
+    // value axis (numeric) carries the computed min/max; the other axis holds category labels.
+    const valueAxis = axisOf(horizontal ? "x" : "y");
+    valueAxis.ticks = { ...((valueAxis.ticks as Record<string, unknown>) || {}), min, max };
+    const catAxis = axisOf(horizontal ? "y" : "x");
+    const scales = horizontal ? { xAxes: [valueAxis], yAxes: [catAxis] } : { yAxes: [valueAxis], xAxes: [catAxis] };
+    const chartjs = <MaterialDesignChartCanvas type={horizontal ? "horizontalBar" : "bar"} data={{ labels: bars.map(bar => bar.label), datasets: [{ data: bars.map(bar => bar.value), backgroundColor: bars.map(bar => bar.color), borderColor: s(data.hoverBorderColor), borderWidth: n(data.hoverBorderWidth) }] }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(data.animationDuration, 1000) }, legend: { display: false }, scales, tooltips: { enabled: b(data.showTooltip, true), callbacks: {
       title: (items: { index?: number }[]) => { const bar = bars[n(items[0]?.index)]; return bar?.tooltipTitle ? bar.tooltipTitle.split("\\n") : s(bar?.label); },
       label: (item: { index?: number }) => { const bar = bars[n(item.index)]; return bar?.tooltipText ? bar.tooltipText.split("\\n") : `${s(bar?.valueText)}${s(bar?.appendix)}`; },
     } } }} />;

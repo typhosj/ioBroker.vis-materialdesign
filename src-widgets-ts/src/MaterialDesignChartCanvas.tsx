@@ -2,6 +2,11 @@ import React, { useEffect, useRef } from "react";
 import Chart from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
+// Default all chart text (axis ticks + axis titles) to the Material Design
+// blue instead of chart.js' grey #666, matching the widget theme. Per-axis
+// color fields still override this. Datalabels/legend set their own colors.
+Chart.defaults.global.defaultFontColor = "#44739e";
+
 type Props = { type: string; data: Chart.ChartData; options: Chart.ChartOptions };
 
 export function MaterialDesignChartCanvas({ type, data, options }: Props): React.JSX.Element {

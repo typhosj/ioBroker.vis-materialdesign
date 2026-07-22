@@ -3,6 +3,7 @@ import { squarePreview , RenderProps, VisWidget, createInfo, stateValue, sanitiz
 import type { RxWidgetInfo, VisRxWidgetState } from "@iobroker/types-vis-2";
 import { colorSchemes, scheme } from "./MaterialDesignColorScheme";
 import { MaterialDesignChartCanvas } from "./MaterialDesignChartCanvas";
+import { chartAxis } from "./chartAxis";
 
 type Graph = {
   data?: unknown[];
@@ -238,6 +239,12 @@ const attrs: RxWidgetInfo["visAttrs"] = [
       color("xAxisTitleColor"),
       color("xAxisValueLabelColor"),
       {
+        name: "xAxisShowAxis",
+        label: "xAxisShowAxis",
+        type: "checkbox",
+        default: true,
+      },
+      {
         name: "xAxisShowGridLines",
         label: "xAxisShowGridLines",
         type: "checkbox",
@@ -250,6 +257,19 @@ const attrs: RxWidgetInfo["visAttrs"] = [
     name: "yAxisLayout",
     label: "group_yAxisLayout",
     fields: [
+      {
+        name: "yAxisShowAxis",
+        label: "yAxisShowAxis",
+        type: "checkbox",
+        default: true,
+      },
+      {
+        name: "yAxisPosition",
+        label: "yAxisPosition",
+        type: "select",
+        options: ["left", "right"],
+        default: "left",
+      },
       { name: "yAxisTitle", label: "yAxisTitle", type: "text" },
       color("yAxisTitleColor"),
       color("yAxisValueLabelColor"),
@@ -323,8 +343,24 @@ export default class MaterialDesignChartJson extends VisWidget {
     // one axis config per distinct id (dedupe; else duplicate axis ids).
     const yAxes = graphs
       .filter((graph, i) => graphs.findIndex(g => axisId(g) === axisId(graph)) === i)
-      .map(graph => ({ id: axisId(graph), position: s((graph as Record<string, unknown>).yAxis_position, "left"), stacked: b(graph.barIsStacked), ticks: { min: optN((graph as Record<string, unknown>).yAxis_min), max: optN((graph as Record<string, unknown>).yAxis_max) } }));
-    const chartjs = <MaterialDesignChartCanvas type={s(data.chartType, "bar")} data={{ labels, datasets: graphs.map((graph, i) => ({ type: s(graph.type, s(data.chartType, "bar")), label: s(graph.legendText), data: (graph.data || []).map(jsonChartValue), borderColor: s(graph.color, palette[i] || s(data.globalColor, "#44739e")), backgroundColor: b(graph.line_UseFillColor) ? s(graph.line_FillColor, `${s(graph.color, palette[i] || s(data.globalColor, "#44739e"))}33`) : s(graph.color, palette[i] || s(data.globalColor, "#44739e")), borderWidth: n(graph.line_Thickness, n(graph.barBorderWidth, 2)), steppedLine: b(graph.line_steppedLine), spanGaps: b(graph.line_spanGaps, true), fill: b(graph.line_UseFillColor), yAxisID: axisId(graph), stack: b(graph.barIsStacked) ? n((graph as Record<string, unknown>).barStackId, 0) : undefined })) }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(data.animationDuration, 1000) }, legend: { display: false }, tooltips: { enabled: b(data.showTooltip, true) }, scales: { yAxes } }} />;
+      .map(graph => chartAxis({
+        id: axisId(graph), type: "linear",
+        display: b(data.yAxisShowAxis, true),
+        position: s((graph as Record<string, unknown>).yAxis_position, s(data.yAxisPosition, "left")),
+        stacked: b(graph.barIsStacked),
+        title: s(data.yAxisTitle), titleColor: s(data.yAxisTitleColor),
+        labelColor: s(data.yAxisValueLabelColor),
+        min: optN((graph as Record<string, unknown>).yAxis_min), max: optN((graph as Record<string, unknown>).yAxis_max),
+      }));
+    const xAxes = [chartAxis({
+      display: b(data.xAxisShowAxis, true),
+      position: s(data.xAxisPosition, "bottom"),
+      title: s(data.xAxisTitle), titleColor: s(data.xAxisTitleColor),
+      labelColor: s(data.xAxisValueLabelColor),
+      gridDisplay: b(data.xAxisShowGridLines, true),
+      gridColor: s(data.xAxisGridLinesColor),
+    })];
+    const chartjs = <MaterialDesignChartCanvas type={s(data.chartType, "bar")} data={{ labels, datasets: graphs.map((graph, i) => ({ type: s(graph.type, s(data.chartType, "bar")), label: s(graph.legendText), data: (graph.data || []).map(jsonChartValue), borderColor: s(graph.color, palette[i] || s(data.globalColor, "#44739e")), backgroundColor: b(graph.line_UseFillColor) ? s(graph.line_FillColor, `${s(graph.color, palette[i] || s(data.globalColor, "#44739e"))}33`) : s(graph.color, palette[i] || s(data.globalColor, "#44739e")), borderWidth: n(graph.line_Thickness, n(graph.barBorderWidth, 2)), steppedLine: b(graph.line_steppedLine), spanGaps: b(graph.line_spanGaps, true), fill: b(graph.line_UseFillColor), yAxisID: axisId(graph), stack: b(graph.barIsStacked) ? n((graph as Record<string, unknown>).barStackId, 0) : undefined })) }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(data.animationDuration, 1000) }, legend: { display: false }, tooltips: { enabled: b(data.showTooltip, true) }, scales: { xAxes, yAxes } }} />;
     // keep the canvas from eating the whole flex box (else legend spills
     // outside the widget frame); shrink chart, keep legend natural size.
     const chartBox = (

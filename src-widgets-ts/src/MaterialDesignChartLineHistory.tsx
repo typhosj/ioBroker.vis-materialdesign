@@ -3,6 +3,7 @@ import { squarePreview , RenderProps, VisWidget, createInfo, stateValue, sanitiz
 import type { RxWidgetInfo, VisRxWidgetState } from "@iobroker/types-vis-2";
 import { colorSchemes, scheme } from "./MaterialDesignColorScheme";
 import { MaterialDesignChartCanvas } from "./MaterialDesignChartCanvas";
+import { chartAxis } from "./chartAxis";
 
 type Data = Record<string, unknown>;
 type Point = { ts: number; val: number | null };
@@ -47,7 +48,11 @@ const b = (v: unknown, d = false) =>
   v === undefined || v === null || v === ""
     ? d
     : v === true || v === "true" || v === 1 || v === "1";
-const item = (d: Data, key: string, i: number) => d[`${key}${i}`];
+// vis-2 stores the first row (index 0) of an indexed group under the plain
+// base name (e.g. `yAxisTitle`), higher rows as `${name}${i}`. Prefer the
+// suffixed key, fall back to the plain name for index 0 so editor edits to
+// the first data set actually take effect.
+const item = (d: Data, key: string, i: number) => { const v = d[`${key}${i}`]; return v !== undefined ? v : (i === 0 ? d[key] : undefined); };
 const color = (name: string) => ({ name, label: name, type: "color" as const });
 const num = (name: string) => ({ name, label: name, type: "number" as const });
 const rows = (fields: RxWidgetInfo["visAttrs"][number]["fields"]) => ({
@@ -206,6 +211,7 @@ const attrs: RxWidgetInfo["visAttrs"] = [
     name: "xAxisLayout",
     label: "group_xAxisLayout",
     fields: [
+      { name: "xAxisTimeFormats", label: "xAxisTimeFormats", type: "text" },
       color("xAxisValueLabelColor"),
       {
         name: "xAxisShowGridLines",
@@ -379,15 +385,39 @@ export default class MaterialDesignChartLineHistory extends VisWidget {
       colors = s(d.colorScheme)
         ? scheme(s(d.colorScheme), this.series.length)
         : [];
+    // axes come from the configured data rows (dataCount+1), NOT the loaded
+    // series -- otherwise an empty history range yields no axis config and
+    // chart.js falls back to a default axis that ignores show/position/etc.
+    const on = (v: unknown): number | undefined => (v === undefined || v === null || v === "" || !Number.isFinite(Number(v)) ? undefined : Number(v));
+    const rowIdx = Array.from({ length: Math.max(0, Math.floor(n(d.dataCount, 1))) + 1 }, (_v, i) => i);
     // unset commonYAxis -> id 0, so series share one y-axis instead of each
     // series getting its own axis by index.
     const yAxisIdOf = (i: number) => `yAxis_id_${n(item(d, "commonYAxis", i), 0)}`;
     // one axis config per distinct id (dedupe; else duplicate axis ids).
-    const yAxes = this.series
-      .map((_series, i) => i)
-      .filter(i => this.series.findIndex((_s, j) => yAxisIdOf(j) === yAxisIdOf(i)) === i)
-      .map(i => ({ id: yAxisIdOf(i), position: s(item(d, "yAxisPosition", i), "left"), display: b(item(d, "showYAxis", i), true), ticks: { min: n(item(d, "yAxisMinValue", i), undefined as unknown as number), max: n(item(d, "yAxisMaxValue", i), undefined as unknown as number), stepSize: n(item(d, "yAxisStep", i), undefined as unknown as number), callback: (value: number) => value } }));
-    const chartjs = <MaterialDesignChartCanvas type="line" data={{ datasets: this.series.map((series, i) => ({ label: s(item(d, "legendText", i), series.oid), data: series.points.filter(point => point.val !== null).map(point => ({ t: point.ts, y: point.val })), borderColor: s(item(d, "dataColor", i), colors[i] || s(d.globalColor, "#44739e")), backgroundColor: b(item(d, "useFillColor", i)) ? s(item(d, "fillColor", i), `${s(item(d, "dataColor", i), colors[i] || s(d.globalColor, "#44739e"))}33`) : "transparent", fill: b(item(d, "useFillColor", i)), borderWidth: n(item(d, "lineThikness", i), 2), steppedLine: b(item(d, "steppedLine", i)), lineTension: 0, pointBackgroundColor: s(item(d, "pointColor", i)), pointRadius: n(d.pointSize, 3), yAxisID: yAxisIdOf(i) })) }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(d.animationDuration, 1000) }, legend: { display: false }, plugins: { datalabels: { display: false } }, tooltips: { enabled: b(d.showTooltip, true) }, scales: { xAxes: [{ type: "time", time: { tooltipFormat: "lll" } }], yAxes } }} />;
+    const yAxes = rowIdx
+      .filter(i => rowIdx.findIndex(j => yAxisIdOf(j) === yAxisIdOf(i)) === i)
+      .map(i => chartAxis({
+        id: yAxisIdOf(i), type: "linear",
+        position: s(item(d, "yAxisPosition", i), "left"),
+        display: b(item(d, "showYAxis", i), true),
+        title: s(item(d, "yAxisTitle", i)),
+        titleColor: s(d.yAxisTitleColor), titleFontFamily: s(d.yAxisTitleFontFamily), titleFontSize: on(d.yAxisTitleFontSize),
+        labelColor: s(d.yAxisValueLabelColor), labelFontFamily: s(d.yAxisValueFontFamily), labelFontSize: on(d.yAxisValueFontSize),
+        gridColor: s(item(d, "yAxisGridLinesColor", i)),
+        min: on(item(d, "yAxisMinValue", i)), max: on(item(d, "yAxisMaxValue", i)), stepSize: on(item(d, "yAxisStep", i)),
+      }));
+    // moment format for the x-axis tick labels; without it chart.js defaults
+    // to 12h (e.g. "7AM"). Applied to the sub-day units so hour/minute ticks
+    // follow the chosen format (e.g. "HH:mm" for 24h).
+    const timeFmt = s(d.xAxisTimeFormats);
+    const xAxes = [chartAxis({
+      type: "time",
+      labelColor: s(d.xAxisValueLabelColor),
+      gridDisplay: b(d.xAxisShowGridLines, true),
+      gridColor: s(d.xAxisGridLinesColor),
+      time: timeFmt ? { tooltipFormat: "lll", displayFormats: { second: timeFmt, minute: timeFmt, hour: timeFmt, day: timeFmt } } : { tooltipFormat: "lll" },
+    })];
+    const chartjs = <MaterialDesignChartCanvas type="line" data={{ datasets: this.series.map((series, i) => ({ label: s(item(d, "legendText", i), series.oid), data: series.points.filter(point => point.val !== null).map(point => ({ t: point.ts, y: point.val })), borderColor: s(item(d, "dataColor", i), colors[i] || s(d.globalColor, "#44739e")), backgroundColor: b(item(d, "useFillColor", i)) ? s(item(d, "fillColor", i), `${s(item(d, "dataColor", i), colors[i] || s(d.globalColor, "#44739e"))}33`) : "transparent", fill: b(item(d, "useFillColor", i)), borderWidth: n(item(d, "lineThikness", i), 2), steppedLine: b(item(d, "steppedLine", i)), lineTension: 0, pointBackgroundColor: s(item(d, "pointColor", i)), pointRadius: n(d.pointSize, 3), yAxisID: yAxisIdOf(i) })) }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(d.animationDuration, 1000) }, legend: { display: false }, plugins: { datalabels: { display: false } }, tooltips: { enabled: b(d.showTooltip, true) }, scales: { xAxes, yAxes } }} />;
     const legend = b(d.showLegend, true) ? (
       <div
         style={{
