@@ -92,7 +92,8 @@
         "group_viewsInColumn": "views in column",
         "group_xAxisLayout": "x axis layout",
         "group_yAxisLayout": "y axis layout",
-        "group_yAxisLayoutForData": "y-axis layout for data"
+        "group_yAxisLayoutForData": "y-axis layout for data",
+        "group_style": "Style"
     },
     "de": {
         "group_alertLayout": "Layout",
@@ -187,7 +188,8 @@
         "group_viewsInColumn": "Ansichten in der Spalte",
         "group_xAxisLayout": "x-Achsen Layout",
         "group_yAxisLayout": "y-Achsen Layout",
-        "group_yAxisLayoutForData": "y-Achsen-Layout für Datensatz"
+        "group_yAxisLayoutForData": "y-Achsen-Layout für Datensatz",
+        "group_style": "Stil"
     },
     "es": {
         "group_alertLayout": "diseño",
@@ -282,7 +284,8 @@
         "group_viewsInColumn": "vistas en columna",
         "group_xAxisLayout": "diseño del eje x",
         "group_yAxisLayout": "diseño del eje y",
-        "group_yAxisLayoutForData": "diseño del eje y para datos"
+        "group_yAxisLayoutForData": "diseño del eje y para datos",
+        "group_style": "Estilo"
     },
     "fr": {
         "group_alertLayout": "disposition",
@@ -377,7 +380,8 @@
         "group_viewsInColumn": "vues en colonne",
         "group_xAxisLayout": "disposition des axes x",
         "group_yAxisLayout": "Disposition en Y",
-        "group_yAxisLayoutForData": "disposition en ordonnée pour les données"
+        "group_yAxisLayoutForData": "disposition en ordonnée pour les données",
+        "group_style": "Style"
     },
     "it": {
         "group_alertLayout": "disposizione",
@@ -472,7 +476,8 @@
         "group_viewsInColumn": "visualizzazioni in colonna",
         "group_xAxisLayout": "layout dell'asse x",
         "group_yAxisLayout": "layout dell'asse y",
-        "group_yAxisLayoutForData": "layout dell'asse y per i dati"
+        "group_yAxisLayoutForData": "layout dell'asse y per i dati",
+        "group_style": "Stile"
     },
     "nl": {
         "group_alertLayout": "lay-out",
@@ -567,7 +572,8 @@
         "group_viewsInColumn": "weergaven in kolom",
         "group_xAxisLayout": "x asindeling",
         "group_yAxisLayout": "y-aslay-out",
-        "group_yAxisLayoutForData": "y-aslay-out voor gegevens"
+        "group_yAxisLayoutForData": "y-aslay-out voor gegevens",
+        "group_style": "Stijl"
     },
     "pl": {
         "group_alertLayout": "układ",
@@ -662,7 +668,8 @@
         "group_viewsInColumn": "widoki w kolumnie",
         "group_xAxisLayout": "układ osi x",
         "group_yAxisLayout": "układ osi y",
-        "group_yAxisLayoutForData": "Układ osi y dla danych"
+        "group_yAxisLayoutForData": "Układ osi y dla danych",
+        "group_style": "Styl"
     },
     "pt": {
         "group_alertLayout": "disposição",
@@ -757,7 +764,8 @@
         "group_viewsInColumn": "visualizações na coluna",
         "group_xAxisLayout": "layout do eixo x",
         "group_yAxisLayout": "layout do eixo y",
-        "group_yAxisLayoutForData": "layout do eixo y para dados"
+        "group_yAxisLayoutForData": "layout do eixo y para dados",
+        "group_style": "Estilo"
     },
     "ru": {
         "group_alertLayout": "расположение",
@@ -852,7 +860,8 @@
         "group_viewsInColumn": "просмотров в столбце",
         "group_xAxisLayout": "макет оси X",
         "group_yAxisLayout": "макет оси Y",
-        "group_yAxisLayoutForData": "макет оси Y для данных"
+        "group_yAxisLayoutForData": "макет оси Y для данных",
+        "group_style": "Стиль"
     },
     "uk": {
         "group_alertLayout": "Макет",
@@ -947,7 +956,8 @@
         "group_viewsInColumn": "Вигляди IN стовпець",
         "group_xAxisLayout": "X вісь макет",
         "group_yAxisLayout": "Y вісь макет",
-        "group_yAxisLayoutForData": "Y вісь макет FOR дані"
+        "group_yAxisLayoutForData": "Y вісь макет FOR дані",
+        "group_style": "Стиль"
     },
     "zh-cn": {
         "group_alertLayout": "布局",
@@ -1042,6 +1052,7 @@
         "group_viewsInColumn": "列中的视图",
         "group_xAxisLayout": "x轴布局",
         "group_yAxisLayout": "y轴布局",
-        "group_yAxisLayoutForData": "数据的Y轴布局"
+        "group_yAxisLayoutForData": "数据的Y轴布局",
+        "group_style": "样式"
     }
 }

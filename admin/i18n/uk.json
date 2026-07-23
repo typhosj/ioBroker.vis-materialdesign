@@ -1057,5 +1057,13 @@
     "yes": "Показати WHEN OPERATED",
     "yesRotate": "Так",
     "Yesterday": "Вчора",
-    "z_index": "Z INDEX"
+    "z_index": "Z INDEX",
+    "group_style": "Стиль",
+    "designStyle": "стиль оформлення",
+    "material3SeedColors": "Базові кольори Material 3 (необовʼязково)",
+    "material3SeedColorsInfo": "Перевизначає основний/вторинний/третинний колір і колір помилки Material 3 для всього проєкту (лише світлий режим). Залиште порожнім, щоб використати палітру за замовчуванням.",
+    "material3Seed_primary": "основний",
+    "material3Seed_secondary": "вторинний",
+    "material3Seed_tertiary": "третинний",
+    "material3Seed_error": "помилка"
 }

@@ -190,6 +190,10 @@
     "variableName": "myMdwTheme",
     "javascriptInstance": "",
     "sentryReport": false,
+    "md3Primary": "",
+    "md3Secondary": "",
+    "md3Tertiary": "",
+    "md3Error": "",
     "colors": [],
     "defaultcolors": [],
     "colorsDark": [],
@@ -214,6 +218,58 @@
         "read": true,
         "write": true,
         "def": false
+      },
+      "native": {}
+    },
+    {
+      "_id": "colors.md3Primary",
+      "type": "state",
+      "common": {
+        "role": "level.color.rgb",
+        "name": "Material 3 seed color: primary (optional, light mode only)",
+        "type": "string",
+        "read": true,
+        "write": true,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "colors.md3Secondary",
+      "type": "state",
+      "common": {
+        "role": "level.color.rgb",
+        "name": "Material 3 seed color: secondary (optional, light mode only)",
+        "type": "string",
+        "read": true,
+        "write": true,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "colors.md3Tertiary",
+      "type": "state",
+      "common": {
+        "role": "level.color.rgb",
+        "name": "Material 3 seed color: tertiary (optional, light mode only)",
+        "type": "string",
+        "read": true,
+        "write": true,
+        "def": ""
+      },
+      "native": {}
+    },
+    {
+      "_id": "colors.md3Error",
+      "type": "state",
+      "common": {
+        "role": "level.color.rgb",
+        "name": "Material 3 seed color: error (optional, light mode only)",
+        "type": "string",
+        "read": true,
+        "write": true,
+        "def": ""
       },
       "native": {}
     },

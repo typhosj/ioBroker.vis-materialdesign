@@ -1057,5 +1057,13 @@
     "yes": "pokaż po uruchomieniu",
     "yesRotate": "tak",
     "Yesterday": "Wczoraj",
-    "z_index": "Indeks z"
+    "z_index": "Indeks z",
+    "group_style": "Styl",
+    "designStyle": "styl projektu",
+    "material3SeedColors": "Kolory bazowe Material 3 (opcjonalnie)",
+    "material3SeedColorsInfo": "Nadpisuje kolory podstawowy/drugorzędny/trzeciorzędny/błędu Material 3 dla całego projektu (tylko tryb jasny). Pozostaw puste, aby użyć domyślnej palety.",
+    "material3Seed_primary": "podstawowy",
+    "material3Seed_secondary": "drugorzędny",
+    "material3Seed_tertiary": "trzeciorzędny",
+    "material3Seed_error": "błąd"
 }

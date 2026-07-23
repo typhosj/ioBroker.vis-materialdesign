@@ -1057,5 +1057,13 @@
     "yes": "mostra quando operato",
     "yesRotate": "sì",
     "Yesterday": "Ieri",
-    "z_index": "z-index"
+    "z_index": "z-index",
+    "group_style": "Stile",
+    "designStyle": "stile di progettazione",
+    "material3SeedColors": "Colori seme Material 3 (opzionale)",
+    "material3SeedColorsInfo": "Sovrascrive i colori primario/secondario/terziario/errore di Material 3 per l'intero progetto (solo modalità chiara). Lasciare vuoto per usare la tavolozza predefinita.",
+    "material3Seed_primary": "primario",
+    "material3Seed_secondary": "secondario",
+    "material3Seed_tertiary": "terziario",
+    "material3Seed_error": "errore"
 }

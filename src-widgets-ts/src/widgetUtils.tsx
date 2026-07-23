@@ -25,6 +25,12 @@ import './mdi-font.css';
 // keep rendering after the VIS1 legacy CSS is removed. See the file header for scope.
 import './materialdesign-mdc.css';
 import './vis2-editor-dialog.css';
+// Material 3 design-system layer (../../MATERIAL3_PLAN.md Phase 1). Both files are scoped under
+// `.materialdesign-widget.mdw-style-material3` and match nothing until a widget's own `designStyle`
+// is `material3` (see `designStyle()`/`designStyleClasses()` below) — legacy-style widgets/projects
+// ship this CSS but never match a selector in it, per "Performance priorities" in the plan.
+import './material3-tokens.css';
+import './material3-components.css';
 
 // VIS 2 resolves widget-attribute GROUP headers via the legacy `window.vis._` / `window.systemDictionary`,
 // which the component i18n does NOT populate — so custom groups (e.g. `group_theme`) render as raw keys.
@@ -323,9 +329,34 @@ export function createInfo(id: string, name: string, attrs: RxWidgetInfo['visAtt
                 name: 'theme',
                 fields: themeFields(name),
             },
+            {
+                name: 'style',
+                fields: [
+                    { name: 'designStyle', type: 'select', label: 'designStyle', options: ['legacy', 'material3'], default: 'legacy' },
+                ],
+            },
             ...attrs,
         ],
     };
+}
+
+// Material 3 style selection (../../MATERIAL3_PLAN.md Phase 1, compat rule #4: missing/unknown
+// value always means `legacy`, never an implicit opt-in). Every widget gets the `designStyle`
+// field the same way via createInfo() above; individual widgets only start reading it once their
+// own M3 render path exists (Phase 2 onward) — until then the field is present but inert.
+export type DesignStyle = 'legacy' | 'material3';
+
+export function designStyle(data: Record<string, unknown> | null | undefined): DesignStyle {
+    return data?.designStyle === 'material3' ? 'material3' : 'legacy';
+}
+
+// Ready-to-spread class string for a widget's root element once it adopts an M3 render path:
+// exactly one class in legacy mode, the M3 style class plus the shared dark flag (already
+// maintained by VisWidget, see isDarkTheme()) in M3 mode — "switching style adds only a root class
+// and semantic variables" (Phase 1 exit criterion), no per-widget dark-detection duplicated.
+export function designStyleClasses(data: Record<string, unknown> | null | undefined, isDark: boolean): string {
+    if (designStyle(data) !== 'material3') return 'mdw-style-legacy';
+    return isDark ? 'mdw-style-material3 mdw-dark' : 'mdw-style-material3';
 }
 
 // Combined icon+file picker as a `type:'custom'` field (replaces plain `type:'icon'`): lets the
@@ -525,6 +556,31 @@ export function applyThemeVariables(data: Record<string, unknown>, values: Recor
     });
 }
 
+// Optional Material 3 "seed colors" (../../MATERIAL3_PLAN.md Phase 1: "expose optional seed colors
+// only in admin configuration, not per widget"). Deliberately just 4 directly-overridable roles,
+// not a full seed→tonal-palette derivation (that needs HCT/CAM16 color math — a new runtime
+// dependency and per-render computation, against the plan's "Performance priorities"). The
+// on-*/container roles stay at the contrast-verified baseline from material3-tokens.css; only the
+// 4 "seed" roles themselves are overridable, light mode only (dark keeps the safe baseline), via
+// fixed global states declared in ../../io-package.json `instanceObjects` and set from the
+// adapter's admin settings UI (src-admin/src/main.tsx) — never a per-widget editor field.
+export const M3_SEED_ROLES = ['primary', 'secondary', 'tertiary', 'error'] as const;
+export type M3SeedRole = typeof M3_SEED_ROLES[number];
+
+export function m3SeedOid(role: M3SeedRole): string {
+    return `vis2-materialdesign.0.colors.md3${role.charAt(0).toUpperCase()}${role.slice(1)}`;
+}
+
+export function applyM3SeedVariables(values: Record<string, ioBroker.StateValue | undefined> | undefined): void {
+    if (typeof document === 'undefined' || !values) return;
+    M3_SEED_ROLES.forEach(role => {
+        const value = values[`${m3SeedOid(role)}.val`];
+        const variable = `--md-sys-color-${role}`;
+        if (typeof value === 'string' && value) document.documentElement.style.setProperty(variable, value);
+        else document.documentElement.style.removeProperty(variable);
+    });
+}
+
 const BaseVisWidget: typeof VisRxWidget<BaseRxData, WidgetState> = window.visRxWidget;
 
 export class VisWidget extends BaseVisWidget {
@@ -535,6 +591,13 @@ export class VisWidget extends BaseVisWidget {
     private darkThemeSubscribedOid?: string;
     private darkThemeValue = false;
 
+    // Only subscribed for widgets actually configured with `designStyle: material3` (checked once
+    // at mount, same limitation as the dark-theme oid above): a legacy-style widget has no M3
+    // tokens in scope, so subscribing here would just be wasted work, against the plan's
+    // "Performance priorities".
+    private m3SeedSubscribed = false;
+    private m3SeedValues: Record<string, ioBroker.StateValue | undefined> = {};
+
     private onDarkThemeChanged = (_id: string, state: ioBroker.State | null | undefined): void => {
         const next = state?.val === true || state?.val === 'true';
         if (next !== this.darkThemeValue) {
@@ -543,18 +606,37 @@ export class VisWidget extends BaseVisWidget {
         }
     };
 
+    private onM3SeedChanged = (id: string, state: ioBroker.State | null | undefined): void => {
+        const key = `${id}.val`;
+        if (this.m3SeedValues[key] !== state?.val) {
+            this.m3SeedValues = { ...this.m3SeedValues, [key]: state?.val };
+            this.forceUpdate();
+        }
+    };
+
     componentDidMount(): void {
         super.componentDidMount();
-        const oid = darkThemeOid(this.state?.rxData as unknown as Record<string, unknown> | undefined);
+        const rxData = this.state?.rxData as unknown as Record<string, unknown> | undefined;
+        const oid = darkThemeOid(rxData);
         if (oid) {
             this.darkThemeSubscribedOid = oid;
             this.props.context.socket.subscribeState(oid, this.onDarkThemeChanged).catch((e: unknown) => console.error(`Cannot subscribe on ${oid}: ${String(e)}`));
+        }
+        if (designStyle(rxData) === 'material3') {
+            this.m3SeedSubscribed = true;
+            M3_SEED_ROLES.forEach(role => {
+                const seedOid = m3SeedOid(role);
+                this.props.context.socket.subscribeState(seedOid, this.onM3SeedChanged).catch((e: unknown) => console.error(`Cannot subscribe on ${seedOid}: ${String(e)}`));
+            });
         }
     }
 
     componentWillUnmount(): void {
         if (this.darkThemeSubscribedOid) {
             this.props.context.socket.unsubscribeState(this.darkThemeSubscribedOid, this.onDarkThemeChanged);
+        }
+        if (this.m3SeedSubscribed) {
+            M3_SEED_ROLES.forEach(role => this.props.context.socket.unsubscribeState(m3SeedOid(role), this.onM3SeedChanged));
         }
         super.componentWillUnmount?.();
     }
@@ -566,6 +648,7 @@ export class VisWidget extends BaseVisWidget {
     render(): React.JSX.Element | null {
         const rxData = { ...this.state.rxData };
         applyThemeVariables(rxData, { ...this.state.values, [`${darkThemeOid(rxData)}.val`]: this.darkThemeValue });
+        if (this.m3SeedSubscribed) applyM3SeedVariables(this.m3SeedValues);
         return super.render();
     }
 }

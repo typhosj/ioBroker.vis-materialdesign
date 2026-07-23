@@ -15,6 +15,14 @@ import fonts from '../../admin/lib/fonts.json';
 import '../../fonts.css';
 import './style.css';
 
+// Kept in sync by hand with `M3_SEED_ROLES` in src-widgets-ts/src/widgetUtils.tsx (not imported —
+// that module pulls in the whole widget runtime/CSS, which does not belong in the admin bundle).
+const M3_SEED_ROLES = ['primary', 'secondary', 'tertiary', 'error'] as const;
+function md3Key(role: (typeof M3_SEED_ROLES)[number]): string { return `md3${role.charAt(0).toUpperCase()}${role.slice(1)}`; }
+// `props.config`/`config` are `Record<string, unknown>`; a bare String(value) on an unconstrained
+// unknown would satisfy the compiler but risk "[object Object]" if a value is ever malformed.
+function str(value: unknown): string { return typeof value === 'string' || typeof value === 'number' ? String(value) : ''; }
+
 type ThemeName = 'colors' | 'colorsDark' | 'fonts' | 'fontSizes';
 type ThemeEntry = { id: string; desc: string; widget: string; defaultValue?: number; value?: string | number };
 type NativeConfig = Record<string, unknown> & { scriptName?: string; variableName?: string; javascriptInstance?: string; sentryReport?: boolean };
@@ -114,7 +122,7 @@ function Config(props: { common: Record<string, unknown>; config: NativeConfig; 
     return <Box component="main" sx={{ height: { xs: 'calc(100% - 56px)', sm: 'calc(100% - 64px)' }, overflowY: 'auto' }}>
         <Box sx={{ minHeight: 72, position: 'relative', px: 1, py: 1 }}><Logo common={props.common} instance={props.instance} native={props.config} onError={props.onError} onLoad={props.onLoad} /><Typography component="h1" variant="h6" sx={{ fontWeight: 700, position: 'absolute', top: 18, left: 84 }}>Material Design Widgets</Typography></Box>
         <Tabs value={tab} onChange={(_event, next: number) => setTab(next)} sx={{ borderBottom: 1, borderColor: 'divider' }}><Tab icon={<SettingsIcon />} iconPosition="start" label={t('config_general')} /><Tab icon={<PaletteIcon />} iconPosition="start" label={t('Theme Editor for your Widgets')} /></Tabs>
-        {tab === 0 ? <Box sx={{ p: 1, py: 2, display: 'grid', gap: 2 }}><Card><CardContent><Typography variant="h6" gutterBottom>{t('Generate global script')}</Typography><TextField fullWidth label={t('script name')} value={String(props.config.scriptName ?? 'Theme')} variant="standard" onChange={event => props.update('scriptName', event.target.value)} /><TextField fullWidth label={t('name of the variable')} value={String(props.config.variableName ?? 'myMdwTheme')} sx={{ mt: 2 }} variant="standard" onChange={event => props.update('variableName', event.target.value)} /><TextField fullWidth label={t('SelectJavascriptInstance')} value={String(props.config.javascriptInstance ?? '')} sx={{ mt: 2 }} variant="standard" onChange={event => props.update('javascriptInstance', event.target.value)} /><Button variant="contained" sx={{ mt: 2 }} onClick={props.onGenerate}>{t('generate script')}</Button></CardContent></Card><Card><CardContent><Typography variant="h6">{t('Sentry - automatic error reporting')}</Typography><FormGroup sx={{ pt: 1 }}><FormControlLabel control={<Checkbox checked={props.config.sentryReport === true} onChange={event => props.update('sentryReport', event.target.checked)} />} label={t('send Widget error reports')} /><FormHelperText sx={{ ml: 4, mt: -0.5 }}>{t('sentryInfo')}</FormHelperText></FormGroup></CardContent></Card></Box> : <ThemeEditor config={props.config} update={props.update} />}
+        {tab === 0 ? <Box sx={{ p: 1, py: 2, display: 'grid', gap: 2 }}><Card><CardContent><Typography variant="h6" gutterBottom>{t('Generate global script')}</Typography><TextField fullWidth label={t('script name')} value={String(props.config.scriptName ?? 'Theme')} variant="standard" onChange={event => props.update('scriptName', event.target.value)} /><TextField fullWidth label={t('name of the variable')} value={String(props.config.variableName ?? 'myMdwTheme')} sx={{ mt: 2 }} variant="standard" onChange={event => props.update('variableName', event.target.value)} /><TextField fullWidth label={t('SelectJavascriptInstance')} value={String(props.config.javascriptInstance ?? '')} sx={{ mt: 2 }} variant="standard" onChange={event => props.update('javascriptInstance', event.target.value)} /><Button variant="contained" sx={{ mt: 2 }} onClick={props.onGenerate}>{t('generate script')}</Button></CardContent></Card><Card><CardContent><Typography variant="h6">{t('Sentry - automatic error reporting')}</Typography><FormGroup sx={{ pt: 1 }}><FormControlLabel control={<Checkbox checked={props.config.sentryReport === true} onChange={event => props.update('sentryReport', event.target.checked)} />} label={t('send Widget error reports')} /><FormHelperText sx={{ ml: 4, mt: -0.5 }}>{t('sentryInfo')}</FormHelperText></FormGroup></CardContent></Card><Card><CardContent><Typography variant="h6" gutterBottom>{t('material3SeedColors')}</Typography><FormHelperText sx={{ mb: 1 }}>{t('material3SeedColorsInfo')}</FormHelperText><Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 2 }}>{M3_SEED_ROLES.map(role => <TextField key={role} fullWidth label={t(`material3Seed_${role}`)} placeholder="#6750a4" value={str(props.config[md3Key(role)])} variant="standard" onChange={event => props.update(md3Key(role), event.target.value)} />)}</Box></CardContent></Card></Box> : <ThemeEditor config={props.config} update={props.update} />}
     </Box>;
 }
 
@@ -142,6 +150,9 @@ class MaterialDesignAdmin extends GenericApp<GenericAppProps, GenericAppState> {
         const config = this.state.native as NativeConfig;
         const namespace = `${this.adapterName}.${this.instance}`;
         await this.socket.setState(`${namespace}.sentry`, config.sentryReport === true, true);
+        for (const role of M3_SEED_ROLES) {
+            await this.socket.setState(`${namespace}.colors.${md3Key(role)}`, str(config[md3Key(role)]), true);
+        }
         for (const theme of ['colors', 'colorsDark', 'fonts', 'fontSizes'] as ThemeName[]) {
             const defaults = readDefaults(config, theme);
             const entries = readEntries(config, theme, defaults);

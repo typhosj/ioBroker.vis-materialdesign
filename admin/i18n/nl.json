@@ -1057,5 +1057,13 @@
     "yes": "tonen wanneer bediend",
     "yesRotate": "Ja",
     "Yesterday": "Gisteren",
-    "z_index": "z-index"
+    "z_index": "z-index",
+    "group_style": "Stijl",
+    "designStyle": "ontwerpstijl",
+    "material3SeedColors": "Material 3 basiskleuren (optioneel)",
+    "material3SeedColorsInfo": "Overschrijft de primaire/secundaire/tertiaire/foutkleur van Material 3 voor het hele project (alleen lichte modus). Leeg laten om het standaardpalet te gebruiken.",
+    "material3Seed_primary": "primair",
+    "material3Seed_secondary": "secundair",
+    "material3Seed_tertiary": "tertiair",
+    "material3Seed_error": "fout"
 }

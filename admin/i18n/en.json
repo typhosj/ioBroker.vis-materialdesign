@@ -1057,5 +1057,13 @@
     "yes": "show when operated",
     "yesRotate": "yes",
     "Yesterday": "Yesterday",
-    "z_index": "z-Index"
+    "z_index": "z-Index",
+    "group_style": "Style",
+    "designStyle": "design style",
+    "material3SeedColors": "Material 3 seed colors (optional)",
+    "material3SeedColorsInfo": "Override the Material 3 primary/secondary/tertiary/error colors project-wide (light mode only). Leave blank to use the default Material 3 palette.",
+    "material3Seed_primary": "primary",
+    "material3Seed_secondary": "secondary",
+    "material3Seed_tertiary": "tertiary",
+    "material3Seed_error": "error"
 }

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { VisRxWidgetState } from '@iobroker/types-vis-2';
 import { pickerValueName } from './IconFilePicker';
-import { DEFAULT_DARK_THEME_OID, MAX_DYNAMIC_ITEMS, VisWidget, accessibleText, applyThemeVariables, boundedCount, createInfo, darkThemeOid, editorDialogPalette, formatDurationTokens, formatMoment, humanizeDuration, iconFieldDataKey, parseActionValue, safeWidgetUrl, sanitizeHtml, setStateValue, stateValue, stringValue } from './widgetUtils';
+import { DEFAULT_DARK_THEME_OID, M3_SEED_ROLES, MAX_DYNAMIC_ITEMS, VisWidget, accessibleText, applyM3SeedVariables, applyThemeVariables, boundedCount, createInfo, darkThemeOid, designStyle, designStyleClasses, editorDialogPalette, formatDurationTokens, formatMoment, humanizeDuration, iconFieldDataKey, m3SeedOid, parseActionValue, safeWidgetUrl, sanitizeHtml, setStateValue, stateValue, stringValue } from './widgetUtils';
 
 function fixture<T>(value: unknown): T { return value as T; }
 
@@ -98,6 +98,66 @@ describe('widget utilities', () => {
 
         widget.componentDidMount();
         expect(subscribeState).toHaveBeenCalledWith('custom.0.dark', expect.any(Function));
+    });
+
+    it('every widget receives the same designStyle field via createInfo(), strictly defaulting to legacy', () => {
+        const info = createInfo('test-widget', 'Calendar', []);
+        const styleGroup = info.visAttrs?.find(group => group.name === 'style');
+        const field = styleGroup?.fields.find(candidate => candidate.name === 'designStyle') as { options?: string[]; default?: string } | undefined;
+        expect(field).toBeDefined();
+        expect(field?.options).toEqual(['legacy', 'material3']);
+        expect(field?.default).toBe('legacy');
+
+        // Compat rule #4: missing/unknown value always means legacy, never an implicit opt-in.
+        expect(designStyle(undefined)).toBe('legacy');
+        expect(designStyle({})).toBe('legacy');
+        expect(designStyle({ designStyle: 'material3' })).toBe('material3');
+        expect(designStyle({ designStyle: 'not-a-real-style' })).toBe('legacy');
+    });
+
+    it('designStyleClasses adds only a root class (plus the shared dark flag) in M3 mode', () => {
+        expect(designStyleClasses(undefined, false)).toBe('mdw-style-legacy');
+        expect(designStyleClasses({ designStyle: 'material3' }, false)).toBe('mdw-style-material3');
+        expect(designStyleClasses({ designStyle: 'material3' }, true)).toBe('mdw-style-material3 mdw-dark');
+        // Dark flag is irrelevant in legacy mode - never leaks an M3 class.
+        expect(designStyleClasses({ designStyle: 'legacy' }, true)).toBe('mdw-style-legacy');
+    });
+
+    it('maps M3 seed roles to their fixed global state ids', () => {
+        expect(M3_SEED_ROLES).toEqual(['primary', 'secondary', 'tertiary', 'error']);
+        expect(m3SeedOid('primary')).toBe('vis2-materialdesign.0.colors.md3Primary');
+        expect(m3SeedOid('error')).toBe('vis2-materialdesign.0.colors.md3Error');
+    });
+
+    it('applies optional M3 seed-color overrides as CSS variables, falling back to the token default when unset', () => {
+        applyM3SeedVariables({ [`${m3SeedOid('primary')}.val`]: '#123456' });
+        expect(document.documentElement.style.getPropertyValue('--md-sys-color-primary')).toBe('#123456');
+
+        // Unset (or explicitly cleared): the property is removed so the material3-tokens.css
+        // baseline value shows through the cascade again, instead of pinning a stale override.
+        applyM3SeedVariables({ [`${m3SeedOid('primary')}.val`]: '' });
+        expect(document.documentElement.style.getPropertyValue('--md-sys-color-primary')).toBe('');
+
+        applyM3SeedVariables(undefined);
+        applyM3SeedVariables({});
+    });
+
+    it('VisWidget only subscribes to the optional M3 seed-color oids for widgets actually using material3', () => {
+        const subscribeState = vi.fn().mockResolvedValue(undefined);
+        const unsubscribeState = vi.fn();
+        const legacyWidget = new VisWidget(fixture<ConstructorParameters<typeof VisWidget>[0]>({ context: { socket: { subscribeState, unsubscribeState } } }));
+        legacyWidget.state = fixture<typeof legacyWidget.state>({ rxData: {}, values: {} });
+        legacyWidget.componentDidMount();
+        expect(subscribeState).not.toHaveBeenCalledWith(m3SeedOid('primary'), expect.any(Function));
+
+        subscribeState.mockClear();
+        const m3Widget = new VisWidget(fixture<ConstructorParameters<typeof VisWidget>[0]>({ context: { socket: { subscribeState, unsubscribeState } } }));
+        m3Widget.state = fixture<typeof m3Widget.state>({ rxData: { designStyle: 'material3' }, values: {} });
+        m3Widget.componentDidMount();
+        M3_SEED_ROLES.forEach(role => expect(subscribeState).toHaveBeenCalledWith(m3SeedOid(role), expect.any(Function)));
+
+        m3Widget.componentWillUnmount();
+        M3_SEED_ROLES.forEach(role => expect(unsubscribeState).toHaveBeenCalledWith(m3SeedOid(role), expect.any(Function)));
     });
 
     it('derives editor dialog colors from the surrounding VIS2 surface', () => {

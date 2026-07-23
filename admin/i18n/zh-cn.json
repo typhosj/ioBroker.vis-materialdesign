@@ -1057,5 +1057,13 @@
     "yes": "在操作时显示",
     "yesRotate": "是的",
     "Yesterday": "昨天",
-    "z_index": "索引"
+    "z_index": "索引",
+    "group_style": "样式",
+    "designStyle": "设计风格",
+    "material3SeedColors": "Material 3 种子颜色（可选）",
+    "material3SeedColorsInfo": "覆盖整个项目的 Material 3 主色/次色/第三色/错误色（仅浅色模式）。留空则使用默认调色板。",
+    "material3Seed_primary": "主色",
+    "material3Seed_secondary": "次色",
+    "material3Seed_tertiary": "第三色",
+    "material3Seed_error": "错误色"
 }

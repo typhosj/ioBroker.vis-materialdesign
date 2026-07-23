@@ -1,0 +1,71 @@
+/*
+ * Material 3 shared component states (Phase 1, ../../MATERIAL3_PLAN.md).
+ *
+ * A single reusable "state layer" pattern (hover/focus/pressed/dragged as an overlay behind the
+ * content, selected/disabled as direct style changes, per the M3 spec) that Phase 2+ widgets opt
+ * into by adding `mdw-state-layer` to an interactive element already positioned (or made
+ * `position: relative` here) — no per-widget CSS duplication. Everything is plain CSS
+ * (custom-property-driven opacity, `currentColor` overlay): no JS-computed styles, no added
+ * runtime cost for widgets that stay on `legacy`, per ../../MATERIAL3_PLAN.md "Performance
+ * priorities". Scoped the same way as the tokens file, so it is inert until a widget both opts
+ * into `mdw-style-material3` AND adds these classes.
+ */
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer {
+    position: relative;
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer::before {
+    background-color: currentColor;
+    border-radius: inherit;
+    content: '';
+    inset: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    transition: opacity var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer:hover::before {
+    opacity: var(--md-sys-state-hover-opacity);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer:focus-visible::before {
+    opacity: var(--md-sys-state-focus-opacity);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer:active::before,
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer[aria-pressed='true']::before {
+    opacity: var(--md-sys-state-pressed-opacity);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer.mdw-dragged::before {
+    opacity: var(--md-sys-state-dragged-opacity);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer[aria-selected='true'],
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer.mdw-selected {
+    background-color: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+
+/* Disabled is a direct style change, not a state layer (an inert element has no hover/press to
+   show) — 38% content opacity is the M3 baseline for disabled controls. Plain `opacity` (not
+   `color-mix()`, unsupported before Chrome 111) keeps this within the project's Chrome 89 target. */
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer:disabled,
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer[aria-disabled='true'] {
+    cursor: not-allowed;
+    opacity: .38;
+    pointer-events: none;
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer:disabled::before,
+.materialdesign-widget.mdw-style-material3 .mdw-state-layer[aria-disabled='true']::before {
+    opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .materialdesign-widget.mdw-style-material3 .mdw-state-layer::before {
+        transition-duration: 0ms;
+    }
+}

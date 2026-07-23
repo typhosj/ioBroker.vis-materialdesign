@@ -1057,5 +1057,13 @@
     "yes": "anzeigen bei Bedienung",
     "yesRotate": "Ja",
     "Yesterday": "Gestern",
-    "z_index": "z-Index"
+    "z_index": "z-Index",
+    "group_style": "Stil",
+    "designStyle": "Gestaltungsstil",
+    "material3SeedColors": "Material 3 Startfarben (optional)",
+    "material3SeedColorsInfo": "Überschreibt die primäre/sekundäre/tertiäre/Fehlerfarbe von Material 3 projektweit (nur im hellen Modus). Leer lassen, um die Standardpalette zu verwenden.",
+    "material3Seed_primary": "primär",
+    "material3Seed_secondary": "sekundär",
+    "material3Seed_tertiary": "tertiär",
+    "material3Seed_error": "Fehler"
 }
