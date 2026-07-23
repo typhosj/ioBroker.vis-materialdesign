@@ -41,3 +41,10 @@ The **Input layout** group (outlined / filled / solo, rounded / shaped) matches 
 [Input](input.md) widget. Labels, clear / collapse icons and colors live in their
 own optional groups. JSON entries can use `value`, `text`, `subText`, `icon` and
 `iconColor`.
+
+**Icons**
+
+For the clear, collapse (menu arrow), prepend, inner-prepend and outer-append icons
+you can select an icon or an image.
+
+<img src="../../media/vis2_select_editor_icons.png" width="340" alt="Select icon fields">

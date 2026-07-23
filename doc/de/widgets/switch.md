@@ -30,4 +30,7 @@ selbsterklärend.
 - **Beschriftungs-Klick aktivieren** – ein Klick auf die Beschriftung schaltet den Wert um, nicht nur der Schalter.
 
 **Farben** steuert Thumb, Track, Aktiv- und Hoverfarben. **Verriegeln** ergänzt
-Entsperren und eine automatische Wiederverriegelung.
+Entsperren und eine automatische Wiederverriegelung; für das **Symbol** lässt
+sich ein Icon oder ein Bild auswählen.
+
+<img src="../../media/vis2_switch_editor_lock.png" width="340" alt="Symbolfeld der Gruppe Verriegeln">

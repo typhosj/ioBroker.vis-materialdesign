@@ -4,7 +4,7 @@ import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
 import { renderIcon } from './MaterialDesignButtons';
 import { cleanColor, num } from './MaterialDesignProgress';
-import { squarePreview, RenderProps, VisWidget, createInfo, setStateValue, sizeCss, stateValue } from './widgetUtils';
+import { squarePreview, RenderProps, VisWidget, createInfo, iconField, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 interface InputData {
     oid?: string;
@@ -220,19 +220,19 @@ const attrs: RxWidgetInfo['visAttrs'] = [
         label: 'group_icons',
         fields: [
             { name: 'clearIconShow', label: 'clearIconShow', type: 'checkbox', default: true },
-            { name: 'clearIcon', label: 'clearIcon', type: 'icon', default: 'close' },
+            iconField('clearIcon', 'clearIcon', 'close'),
             { name: 'clearIconSize', label: 'clearIconSize', type: 'number' },
             { name: 'clearIconColor', label: 'clearIconColor', type: 'color' },
-            { name: 'prepandIcon', label: 'prepandIcon', type: 'icon' },
+            iconField('prepandIcon', 'prepandIcon'),
             { name: 'prepandIconSize', label: 'prepandIconSize', type: 'number' },
             { name: 'prepandIconColor', label: 'prepandIconColor', type: 'color' },
-            { name: 'prepandInnerIcon', label: 'prepandInnerIcon', type: 'icon' },
+            iconField('prepandInnerIcon', 'prepandInnerIcon'),
             { name: 'prepandInnerIconSize', label: 'prepandInnerIconSize', type: 'number' },
             { name: 'prepandInnerIconColor', label: 'prepandInnerIconColor', type: 'color' },
-            { name: 'appendIcon', label: 'appendIcon', type: 'icon' },
+            iconField('appendIcon', 'appendIcon'),
             { name: 'appendIconSize', label: 'appendIconSize', type: 'number' },
             { name: 'appendIconColor', label: 'appendIconColor', type: 'color' },
-            { name: 'appendOuterIcon', label: 'appendOuterIcon', type: 'icon' },
+            iconField('appendOuterIcon', 'appendOuterIcon'),
             { name: 'appendOuterIconSize', label: 'appendOuterIconSize', type: 'number' },
             { name: 'appendOuterIconColor', label: 'appendOuterIconColor', type: 'color' },
         ],

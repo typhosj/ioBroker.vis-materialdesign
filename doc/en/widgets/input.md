@@ -28,4 +28,11 @@ ioBroker system language, so the screenshots are German.
 Character counter and clear icon (**Counter layout**), and labels, hints,
 prefix/suffix, inner icons and colors live in their own optional groups.
 
+**Icons**
+
+For the clear, prepend, inner-prepend, append and outer-append icons you can select
+an icon or an image.
+
+<img src="../../media/vis2_input_editor_icons.png" width="340" alt="Input icon fields">
+
 To choose from a list of values use the [Select](select.md) widget instead.

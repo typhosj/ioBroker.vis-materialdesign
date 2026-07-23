@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
-import { MAX_DYNAMIC_ITEMS, squarePreview, PressState, RenderProps, VisWidget, boundedCount, createInfo, parseActionValue, safeWidgetUrl, setStateValue, sizeCss, stateValue, sanitizeHtml, stringValue } from './widgetUtils';
+import { MAX_DYNAMIC_ITEMS, squarePreview, PressState, RenderProps, VisWidget, boundedCount, createInfo, iconField, parseActionValue, safeWidgetUrl, setStateValue, sizeCss, stateValue, sanitizeHtml, stringValue } from './widgetUtils';
 
 type ButtonKind = 'navigation' | 'link' | 'state' | 'multiState' | 'addition' | 'toggle' | 'slider';
 type ButtonLayout = 'default' | 'vertical' | 'icon';
@@ -96,12 +96,10 @@ const previewGlyph: Partial<Record<ButtonKind, string>> = {
     slider: 'F1543', // tune-vertical-variant
 };
 
-const imageIconField = (name: string, defaultValue?: string): Record<string, unknown> => ({
-    name,
-    label: name,
-    type: 'icon',
-    default: defaultValue,
-});
+// Combined MDI-icon + ioBroker-file picker for the image/imageTrue/lockIcon fields; renderIcon()
+// already handles both value kinds, so runtime is unchanged.
+const imageIconField = (name: string, defaultValue?: string): Record<string, unknown> =>
+    iconField(name, name, defaultValue);
 
 const styleFields = [
     { name: 'buttonStyle', label: 'buttonStyle', type: 'select', options: ['text', 'raised', 'unelevated', 'outlined'], default: 'raised' },

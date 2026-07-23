@@ -31,4 +31,7 @@ selbsterklärend.
 - **Beschriftungs-Klick aktivieren** – ein Klick auf die Beschriftung schaltet den Wert um, nicht nur die Box.
 
 **Farben** steuert Box, Rahmen, Hover- und Labelfarben. **Verriegeln** ergänzt
-Entsperren und eine automatische Wiederverriegelung.
+Entsperren und eine automatische Wiederverriegelung; für das **Symbol** lässt
+sich ein Icon oder ein Bild auswählen.
+
+<img src="../../media/vis2_checkbox_editor_lock.png" width="340" alt="Symbolfeld der Gruppe Verriegeln">

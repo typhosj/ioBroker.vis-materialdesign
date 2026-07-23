@@ -30,4 +30,7 @@ the ioBroker system language, so the screenshots are German.
 - **enable label click** – lets a click on the label toggle the value, not only the box.
 
 The optional **Colors** group controls box, border, hover and label colors.
-**Locking** adds an unlock overlay and an automatic re-lock delay.
+**Locking** adds an unlock overlay and an automatic re-lock delay; for its **icon**
+you can select an icon or an image.
+
+<img src="../../media/vis2_checkbox_editor_lock.png" width="340" alt="Locking group icon field">

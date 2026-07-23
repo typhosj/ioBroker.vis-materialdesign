@@ -30,4 +30,7 @@ ioBroker system language, so the screenshots are German.
 - **enable label click** – lets a click on the label toggle the value, not only the switch.
 
 The optional **Colors** group controls thumb, track, active and hover colors.
-**Locking** adds an unlock overlay and an automatic re-lock delay.
+**Locking** adds an unlock overlay and an automatic re-lock delay; for its **icon**
+you can select an icon or an image.
+
+<img src="../../media/vis2_switch_editor_lock.png" width="340" alt="Locking group icon field">

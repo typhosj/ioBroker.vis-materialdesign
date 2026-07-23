@@ -1,7 +1,7 @@
 import React from 'react';
 import type { RxWidgetInfo } from '@iobroker/types-vis-2';
 import { renderIcon } from './MaterialDesignButtons';
-import { MAX_DYNAMIC_ITEMS, squarePreview, RenderProps, VisWidget, boundedCount, createInfo, setStateValue, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
+import { MAX_DYNAMIC_ITEMS, squarePreview, RenderProps, VisWidget, boundedCount, createInfo, iconField, setStateValue, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
 
 type Alert = { text?: string; icon?: string; backgroundColor?: string; borderColor?: string; iconColor?: string; fontColor?: string };
 type Data = Record<string, unknown> & { oid?: string };
@@ -39,7 +39,7 @@ const ELEV = ['none',
 const elevation = (value: unknown): string | undefined => { const level = Math.max(0, Math.min(24, Math.round(Number(value) || 0))); return level ? ELEV[level] : undefined; };
 const attrs: RxWidgetInfo['visAttrs'] = [
     { name: 'common', fields: [{ name: 'oid', label: 'oid', type: 'id' }, { name: 'showMaxAlerts', label: 'showMaxAlerts', type: 'number', default: 3 }, { name: 'minScreenResolution', label: 'minScreenResolution', type: 'number' }, { name: 'debug', label: 'debug', type: 'checkbox' }] },
-    { name: 'alertLayout', label: 'group_alertLayout', fields: [{ name: 'alertLayouts', label: 'alertLayouts', type: 'select', options: ['normal', 'outlined', 'tile'], default: 'normal' }, { name: 'alertDense', label: 'alertDense', type: 'checkbox', default: true }, { name: 'alertElevation', label: 'alertElevation', type: 'slider', min: 0, max: 24, step: 1, default: 1 }, { name: 'alertMarginBottom', label: 'alertMarginBottom', type: 'number', default: 16 }, { name: 'alertBorderLayout', label: 'alertBorderLayout', type: 'select', options: ['none', 'top', 'right', 'left', 'bottom'], default: 'none' }, { name: 'alertFontSize', label: 'alertFontSize', type: 'number' }, { name: 'alertFontFamily', label: 'alertFontFamily', type: 'fontname' }, { name: 'alertIconSize', label: 'alertIconSize', type: 'number' }, { name: 'closeIcon', label: 'closeIcon', type: 'icon', default: 'close-circle-outline' }, { name: 'closeIconColor', label: 'closeIconColor', type: 'color' }, { name: 'closeIconPressColor', label: 'closeIconPressColor', type: 'color' }] },
+    { name: 'alertLayout', label: 'group_alertLayout', fields: [{ name: 'alertLayouts', label: 'alertLayouts', type: 'select', options: ['normal', 'outlined', 'tile'], default: 'normal' }, { name: 'alertDense', label: 'alertDense', type: 'checkbox', default: true }, { name: 'alertElevation', label: 'alertElevation', type: 'slider', min: 0, max: 24, step: 1, default: 1 }, { name: 'alertMarginBottom', label: 'alertMarginBottom', type: 'number', default: 16 }, { name: 'alertBorderLayout', label: 'alertBorderLayout', type: 'select', options: ['none', 'top', 'right', 'left', 'bottom'], default: 'none' }, { name: 'alertFontSize', label: 'alertFontSize', type: 'number' }, { name: 'alertFontFamily', label: 'alertFontFamily', type: 'fontname' }, { name: 'alertIconSize', label: 'alertIconSize', type: 'number' }, iconField('closeIcon', 'closeIcon', 'close-circle-outline'), { name: 'closeIconColor', label: 'closeIconColor', type: 'color' }, { name: 'closeIconPressColor', label: 'closeIconPressColor', type: 'color' }] },
 ];
 export default class MaterialDesignAlerts extends VisWidget {
     static getWidgetInfo(): RxWidgetInfo { return { ...createInfo('tplVis2-materialdesign-Alerts', 'Alerts', attrs), visPrev: squarePreview('F0026'), visDefaultStyle: { width: 150, height: 38 } }; }

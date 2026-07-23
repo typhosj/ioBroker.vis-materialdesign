@@ -2,7 +2,8 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
-import { squarePreview, RenderProps, VisWidget, createInfo, parseActionValue, setStateValue, sizeCss, stateValue, stringValue } from './widgetUtils';
+import { renderIcon } from './MaterialDesignButtons';
+import { squarePreview, RenderProps, VisWidget, createInfo, iconField, parseActionValue, setStateValue, sizeCss, stateValue, stringValue } from './widgetUtils';
 
 export interface ToggleControlData {
     oid?: string;
@@ -73,7 +74,7 @@ const labelFields = [
 const lockFields = [
     { name: 'lockEnabled', label: 'lockEnabled', type: 'checkbox' },
     { name: 'autoLockAfter', label: 'autoLockAfter', type: 'number', default: 10 },
-    { name: 'lockIcon', label: 'lockIcon', type: 'icon', default: 'lock-outline' },
+    iconField('lockIcon', 'lockIcon', 'lock-outline'),
     { name: 'lockIconTop', label: 'lockIconTop', type: 'slider', min: 0, max: 100, step: 1, default: 5 },
     { name: 'lockIconLeft', label: 'lockIconLeft', type: 'slider', min: 0, max: 100, step: 1, default: 5 },
     { name: 'lockIconSize', label: 'lockIconSize', type: 'number' },
@@ -418,15 +419,19 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
                     {labelElement}
                     {locked ? (
                         <span
-                            className={`mdi mdi-${data.lockIcon || 'lock-outline'}`}
                             style={{
-                                color: color(data.lockIconColor, '#B22222'),
-                                fontSize: data.lockIconSize ? `${data.lockIconSize}px` : undefined,
                                 left: `${asNumber(data.lockIconLeft, 5)}%`,
                                 position: 'absolute',
                                 top: `${asNumber(data.lockIconTop, 5)}%`,
                             }}
-                        />
+                        >
+                            {renderIcon(
+                                data.lockIcon || 'lock-outline',
+                                color(data.lockIconColor, '#B22222'),
+                                asNumber(data.lockIconSize, 0),
+                                !!data.lockIconColor,
+                            )}
+                        </span>
                     ) : null}
                 </div>
             );

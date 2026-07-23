@@ -28,4 +28,11 @@ Zeichenzähler und Löschen-Icon (**Zählerlayout**) sowie Beschriftungen,
 Hinweise, Prefix/Suffix, innere Icons und Farben liegen in eigenen optionalen
 Gruppen.
 
+**Symbole**
+
+Für das Löschen-, das vorangestellte, das innere vorangestellte, das angehängte
+und das äußere angehängte Symbol lässt sich ein Icon oder ein Bild auswählen.
+
+<img src="../../media/vis2_input_editor_icons.png" width="340" alt="Eingabe-Symbolfelder">
+
 Für die Auswahl aus einer Werteliste nutze stattdessen das [Select](select.md)-Widget.

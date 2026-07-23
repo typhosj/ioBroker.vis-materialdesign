@@ -40,3 +40,11 @@ Die Gruppe **Layout Eingabe** (outlined / filled / solo, rounded / shaped)
 entspricht dem [Eingabe](input.md)-Widget. Beschriftungen, Löschen-/Aufklapp-Icons
 und Farben liegen in eigenen optionalen Gruppen. JSON-Einträge können `value`,
 `text`, `subText`, `icon` und `iconColor` nutzen.
+
+**Symbole**
+
+Für das Löschen-, das Aufklapp- (Menüpfeil), das vorangestellte, das innere
+vorangestellte und das äußere angehängte Symbol lässt sich ein Icon oder ein
+Bild auswählen.
+
+<img src="../../media/vis2_select_editor_icons.png" width="340" alt="Select-Symbolfelder">
