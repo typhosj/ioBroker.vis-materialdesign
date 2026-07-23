@@ -52,7 +52,20 @@ const b = (v: unknown, d = false) =>
 // base name (e.g. `yAxisTitle`), higher rows as `${name}${i}`. Prefer the
 // suffixed key, fall back to the plain name for index 0 so editor edits to
 // the first data set actually take effect.
-const item = (d: Data, key: string, i: number) => { const v = d[`${key}${i}`]; return v !== undefined ? v : (i === 0 ? d[key] : undefined); };
+export const item = (d: Data, key: string, i: number): unknown => { const v = d[`${key}${i}`]; return v !== undefined ? v : (i === 0 ? d[key] : undefined); };
+export function seriesColor(d: Data, i: number, colors: string[], globalColor: unknown): string {
+  return s(item(d, "dataColor", i), colors[i] || s(globalColor, "#44739e"));
+}
+// unset commonYAxis -> id 0, so series share one y-axis instead of each series getting its own axis by index.
+export function rowAxisId(d: Data, i: number): string {
+  return `yAxis_id_${n(item(d, "commonYAxis", i), 0)}`;
+}
+// one axis config per distinct id (dedupe; else duplicate axis ids). Relies on rowIdx being the identity
+// sequence [0..n-1] (built by Array.from({length}, (_v, i) => i)): rowIdx[i] === i lets the findIndex
+// result be compared directly against the row index i.
+export function distinctAxisRows(rowIdx: number[], d: Data): number[] {
+  return rowIdx.filter(i => rowIdx.findIndex(j => rowAxisId(d, j) === rowAxisId(d, i)) === i);
+}
 const color = (name: string) => ({ name, label: name, type: "color" as const });
 const num = (name: string) => ({ name, label: name, type: "number" as const });
 const rows = (fields: RxWidgetInfo["visAttrs"][number]["fields"]) => ({
@@ -390,12 +403,8 @@ export default class MaterialDesignChartLineHistory extends VisWidget {
     // chart.js falls back to a default axis that ignores show/position/etc.
     const on = (v: unknown): number | undefined => (v === undefined || v === null || v === "" || !Number.isFinite(Number(v)) ? undefined : Number(v));
     const rowIdx = Array.from({ length: boundedCount(d.dataCount, 1, MAX_DYNAMIC_ITEMS - 1) + 1 }, (_v, i) => i);
-    // unset commonYAxis -> id 0, so series share one y-axis instead of each
-    // series getting its own axis by index.
-    const yAxisIdOf = (i: number) => `yAxis_id_${n(item(d, "commonYAxis", i), 0)}`;
-    // one axis config per distinct id (dedupe; else duplicate axis ids).
-    const yAxes = rowIdx
-      .filter(i => rowIdx.findIndex(j => yAxisIdOf(j) === yAxisIdOf(i)) === i)
+    const yAxisIdOf = (i: number) => rowAxisId(d, i);
+    const yAxes = distinctAxisRows(rowIdx, d)
       .map(i => chartAxis({
         id: yAxisIdOf(i), type: "linear",
         position: s(item(d, "yAxisPosition", i), "left"),
@@ -417,7 +426,7 @@ export default class MaterialDesignChartLineHistory extends VisWidget {
       gridColor: s(d.xAxisGridLinesColor),
       time: timeFmt ? { tooltipFormat: "lll", displayFormats: { second: timeFmt, minute: timeFmt, hour: timeFmt, day: timeFmt } } : { tooltipFormat: "lll" },
     })];
-    const chartjs = <MaterialDesignChartCanvas type="line" data={{ datasets: this.series.map((series, i) => ({ label: s(item(d, "legendText", i), series.oid), data: series.points.filter(point => point.val !== null).map(point => ({ t: point.ts, y: point.val })), borderColor: s(item(d, "dataColor", i), colors[i] || s(d.globalColor, "#44739e")), backgroundColor: b(item(d, "useFillColor", i)) ? s(item(d, "fillColor", i), `${s(item(d, "dataColor", i), colors[i] || s(d.globalColor, "#44739e"))}33`) : "transparent", fill: b(item(d, "useFillColor", i)), borderWidth: n(item(d, "lineThikness", i), 2), steppedLine: b(item(d, "steppedLine", i)), lineTension: 0, pointBackgroundColor: s(item(d, "pointColor", i)), pointRadius: n(d.pointSize, 3), yAxisID: yAxisIdOf(i) })) }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(d.animationDuration, 1000) }, legend: { display: false }, plugins: { datalabels: { display: false } }, tooltips: { enabled: b(d.showTooltip, true) }, scales: { xAxes, yAxes } }} />;
+    const chartjs = <MaterialDesignChartCanvas type="line" data={{ datasets: this.series.map((series, i) => { const seriesColorValue = seriesColor(d, i, colors, d.globalColor); return { label: s(item(d, "legendText", i), series.oid), data: series.points.filter(point => point.val !== null).map(point => ({ t: point.ts, y: point.val })), borderColor: seriesColorValue, backgroundColor: b(item(d, "useFillColor", i)) ? s(item(d, "fillColor", i), `${seriesColorValue}33`) : "transparent", fill: b(item(d, "useFillColor", i)), borderWidth: n(item(d, "lineThikness", i), 2), steppedLine: b(item(d, "steppedLine", i)), lineTension: 0, pointBackgroundColor: s(item(d, "pointColor", i)), pointRadius: n(d.pointSize, 3), yAxisID: yAxisIdOf(i) }; }) }} options={{ responsive: true, maintainAspectRatio: false, animation: { duration: n(d.animationDuration, 1000) }, legend: { display: false }, plugins: { datalabels: { display: false } }, tooltips: { enabled: b(d.showTooltip, true) }, scales: { xAxes, yAxes } }} />;
     const legend = b(d.showLegend, true) ? (
       <div
         style={{
@@ -431,10 +440,7 @@ export default class MaterialDesignChartLineHistory extends VisWidget {
           <span key={series.oid} style={{ display: "block" }}>
             <i
               style={{
-                background: s(
-                  item(d, "dataColor", i),
-                  colors[i] || s(d.globalColor, "#44739e"),
-                ),
+                background: seriesColor(d, i, colors, d.globalColor),
                 display: "inline-block",
                 height: n(d.legendBoxWidth, 10),
                 marginRight: 4,

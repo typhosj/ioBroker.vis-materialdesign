@@ -32,13 +32,65 @@ const b = (v: unknown, d = false): boolean =>
     : v === true || v === "true" || v === 1 || v === "1";
 const indexed = (data: Data, key: string, i: number): unknown =>
   data[`${key}${i}`];
-function json(value: unknown): Record<string, unknown>[] | null {
+export function json(value: unknown): Record<string, unknown>[] | null {
   try {
     const result: unknown = JSON.parse(s(value));
     return Array.isArray(result) ? (result as Record<string, unknown>[]) : null;
   } catch {
     return null;
   }
+}
+
+export function barCount(data: Data, source: Record<string, unknown>[] | null): number {
+  return source ? Math.min(source.length, MAX_DYNAMIC_ITEMS) : boundedCount(data.dataCount, 1, MAX_DYNAMIC_ITEMS - 1) + 1;
+}
+
+export function buildBars(data: Data, source: Record<string, unknown>[] | null, count: number, colors: string[], valueForIndex: (index: number) => number): Bar[] {
+  return Array.from({ length: count }, (_, i) => {
+    const row = source?.[i];
+    const value = n(row?.value, valueForIndex(i));
+    const decimals = Math.max(0, n(data.valuesMaxDecimals, 0));
+    return {
+      label: s(row?.label, s(indexed(data, "label", i))),
+      value,
+      color: s(
+        row?.dataColor,
+        s(
+          indexed(data, "dataColor", i),
+          colors[i] || s(data.globalColor, "#44739e"),
+        ),
+      ),
+      valueText: s(
+        row?.valueText,
+        s(indexed(data, "valueText", i), value.toLocaleString(undefined, { minimumFractionDigits: Math.max(0, n(data.valuesMinDecimals)), maximumFractionDigits: decimals })),
+      ),
+      valueColor: s(
+        row?.valueColor,
+        s(
+          indexed(data, "valueTextColor", i),
+          s(data.valuesFontColor, "#000"),
+        ),
+      ),
+      appendix: s(
+        row?.valueAppendix,
+        s(indexed(data, "labelValueAppend", i), s(data.valuesAppendText)),
+      ),
+      tooltipTitle: s(row?.tooltipTitle, s(indexed(data, "tooltipTitle", i))),
+      tooltipText: s(row?.tooltipText, s(indexed(data, "tooltipText", i))),
+    };
+  });
+}
+
+export function barAxisRange(data: Data, bars: Bar[]): { min: number; max: number } {
+  const min =
+    data.axisValueMin === "" || data.axisValueMin === undefined
+      ? Math.min(0, ...bars.map((bar) => bar.value))
+      : n(data.axisValueMin);
+  const max =
+    data.axisValueMax === "" || data.axisValueMax === undefined
+      ? Math.max(1, ...bars.map((bar) => bar.value))
+      : n(data.axisValueMax, 1);
+  return { min, max };
 }
 const chartFields = [
   { name: "backgroundColor", label: "backgroundColor", type: "color" as const },
@@ -466,61 +518,12 @@ export default class MaterialDesignChartBar extends VisWidget {
     const source = fromJson
       ? json(stateValue(this.state, s(data.oid)))
       : null;
-    const count = source
-      ? Math.min(source.length, MAX_DYNAMIC_ITEMS)
-      : boundedCount(data.dataCount, 1, MAX_DYNAMIC_ITEMS - 1) + 1;
+    const count = barCount(data, source);
     const colors = s(data.colorScheme)
       ? scheme(s(data.colorScheme), count)
       : [];
-    const bars: Bar[] = Array.from({ length: count }, (_, i) => {
-      const row = source?.[i];
-      const value = n(
-        row?.value,
-        n(
-          stateValue(
-            this.state,
-            s(indexed(data, "oid", i)),
-          ),
-        ),
-      );
-      const decimals = Math.max(0, n(data.valuesMaxDecimals, 0));
-      return {
-        label: s(row?.label, s(indexed(data, "label", i))),
-        value,
-        color: s(
-          row?.dataColor,
-          s(
-            indexed(data, "dataColor", i),
-            colors[i] || s(data.globalColor, "#44739e"),
-          ),
-        ),
-        valueText: s(
-          row?.valueText,
-          s(indexed(data, "valueText", i), value.toLocaleString(undefined, { minimumFractionDigits: Math.max(0, n(data.valuesMinDecimals)), maximumFractionDigits: decimals })),
-        ),
-        valueColor: s(
-          row?.valueColor,
-          s(
-            indexed(data, "valueTextColor", i),
-            s(data.valuesFontColor, "#000"),
-          ),
-        ),
-        appendix: s(
-          row?.valueAppendix,
-          s(indexed(data, "labelValueAppend", i), s(data.valuesAppendText)),
-        ),
-        tooltipTitle: s(row?.tooltipTitle, s(indexed(data, "tooltipTitle", i))),
-        tooltipText: s(row?.tooltipText, s(indexed(data, "tooltipText", i))),
-      };
-    });
-    const min =
-      data.axisValueMin === "" || data.axisValueMin === undefined
-        ? Math.min(0, ...bars.map((bar) => bar.value))
-        : n(data.axisValueMin);
-    const max =
-      data.axisValueMax === "" || data.axisValueMax === undefined
-        ? Math.max(1, ...bars.map((bar) => bar.value))
-        : n(data.axisValueMax, 1);
+    const bars: Bar[] = buildBars(data, source, count, colors, i => n(stateValue(this.state, s(indexed(data, "oid", i)))));
+    const { min, max } = barAxisRange(data, bars);
     const horizontal = s(data.chartType, "vertical") === "horizontal";
     const title = s(data.title);
     const on = (v: unknown): number | undefined => (v === undefined || v === null || v === "" || !Number.isFinite(Number(v)) ? undefined : Number(v));

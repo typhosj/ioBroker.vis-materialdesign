@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import MaterialDesignCalendar, { calendarEventHasTime, calendarEventOccursOnDate, formatCalendarTime, formatMoment } from './MaterialDesignCalendar';
+import MaterialDesignCalendar, { calendarDayCount, calendarEventHasTime, calendarEventOccursOnDate, calendarEventSlot, calendarGridStart, eventMinutes, formatCalendarTime, formatMoment, isoDate, weekNumber } from './MaterialDesignCalendar';
 
 describe('MaterialDesignCalendar time format', () => {
     it('formats explicit 24-hour and 12-hour times independently from locale', () => {
@@ -59,5 +59,88 @@ describe('formatMoment (calendar custom date-format tokens)', () => {
             'calendarWeekViewHeaderFormat', 'calendarWeekViewDayFormat',
             'calendarDayViewHeaderFormat', 'calendarDayViewDayFormat',
         ]));
+    });
+});
+
+describe('isoDate (local date, not UTC)', () => {
+    it('formats year-month-day with zero padding, using local getters', () => {
+        expect(isoDate(new Date(2026, 0, 5))).toBe('2026-01-05');
+        expect(isoDate(new Date(2026, 11, 31))).toBe('2026-12-31');
+    });
+});
+
+describe('eventMinutes', () => {
+    it('parses HH:MM from a T-separated or space-separated timestamp', () => {
+        expect(eventMinutes('2026-07-19T05:30:00')).toBe(330);
+        expect(eventMinutes('2026-07-19 23:59:00')).toBe(1439);
+    });
+    it('falls back to the given fallback for an all-day (time-less) value', () => {
+        expect(eventMinutes('2026-07-19', 120)).toBe(120);
+    });
+    it('clamps to 23:59 for an out-of-range time', () => {
+        expect(eventMinutes('2026-07-19T25:30')).toBe(1439);
+    });
+});
+
+describe('weekNumber (ISO 8601)', () => {
+    it('returns week 1 for the first Monday-containing week of the year', () => {
+        expect(weekNumber(new Date(2024, 0, 1))).toBe(1); // Mon 2024-01-01
+    });
+    it('rolls a late-December date into week 1 of the following year', () => {
+        expect(weekNumber(new Date(2025, 11, 29))).toBe(1); // Mon 2025-12-29 -> ISO week 1 of 2026
+    });
+});
+
+describe('calendarGridStart', () => {
+    it('backs the month grid up to the configured first weekday on/before the 1st', () => {
+        // July 2026: the 1st is a Wednesday (day 3); first weekday Monday (1) -> grid starts Mon 2026-06-29.
+        const start = calendarGridStart(new Date(2026, 6, 15), 'month', 1);
+        expect(isoDate(start)).toBe('2026-06-29');
+    });
+    it('backs the week grid up to the configured first weekday on/before the reference day', () => {
+        // Thu 2026-07-23 with week starting Monday -> Mon 2026-07-20.
+        const start = calendarGridStart(new Date(2026, 6, 23), 'week', 1);
+        expect(isoDate(start)).toBe('2026-07-20');
+    });
+    it('leaves the day grid on the reference date at midnight', () => {
+        const start = calendarGridStart(new Date(2026, 6, 23, 14, 30), 'day', 1);
+        expect(isoDate(start)).toBe('2026-07-23');
+        expect(start.getHours()).toBe(0);
+    });
+});
+
+describe('calendarDayCount', () => {
+    it('always returns a multiple of 7 for month view (full leading+trailing weeks)', () => {
+        // July 2026 starts on Wednesday; with Monday-first weeks needs 5 weeks = 35 cells.
+        expect(calendarDayCount(new Date(2026, 6, 15), 'month', 1)).toBe(35);
+    });
+    it('returns 7 for week view and 1 for day view regardless of the reference date', () => {
+        expect(calendarDayCount(new Date(2026, 6, 15), 'week', 1)).toBe(7);
+        expect(calendarDayCount(new Date(2026, 6, 15), 'day', 1)).toBe(1);
+    });
+});
+
+describe('calendarEventSlot', () => {
+    const window_ = { firstMinute: 8 * 60, endMinute: 18 * 60, intervalMinutes: 60 };
+
+    it('returns null when the event ends before or starts after the visible window', () => {
+        expect(calendarEventSlot({ start: '2026-07-23T05:00', end: '2026-07-23T06:00' }, window_.firstMinute, window_.endMinute, window_.intervalMinutes)).toBeNull();
+        expect(calendarEventSlot({ start: '2026-07-23T19:00', end: '2026-07-23T20:00' }, window_.firstMinute, window_.endMinute, window_.intervalMinutes)).toBeNull();
+    });
+
+    it('computes row/span for an event fully inside the window', () => {
+        // 09:00-11:00 inside an 08:00-18:00 window at 60-minute intervals -> row 1 (1h after 08:00), span 2.
+        const slot = calendarEventSlot({ start: '2026-07-23T09:00', end: '2026-07-23T11:00' }, window_.firstMinute, window_.endMinute, window_.intervalMinutes);
+        expect(slot).toEqual({ row: 1, span: 2, startMinute: 9 * 60 });
+    });
+
+    it('clips row/span to the visible window for an event that starts before it', () => {
+        const slot = calendarEventSlot({ start: '2026-07-23T06:00', end: '2026-07-23T09:00' }, window_.firstMinute, window_.endMinute, window_.intervalMinutes);
+        expect(slot).toEqual({ row: 0, span: 1, startMinute: 6 * 60 });
+    });
+
+    it('gives a zero-length (all-day/missing-end) event at least a one-slot span', () => {
+        const slot = calendarEventSlot({ start: '2026-07-23T09:00' }, window_.firstMinute, window_.endMinute, window_.intervalMinutes);
+        expect(slot).toEqual({ row: 1, span: 1, startMinute: 9 * 60 });
     });
 });

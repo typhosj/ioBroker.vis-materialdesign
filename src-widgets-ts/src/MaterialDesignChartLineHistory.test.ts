@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import MaterialDesignChartLineHistory from './MaterialDesignChartLineHistory';
+import MaterialDesignChartLineHistory, { distinctAxisRows, item, rowAxisId, seriesColor } from './MaterialDesignChartLineHistory';
 
 function fixture<T>(value: unknown): T { return value as T; }
 
@@ -59,5 +59,50 @@ describe('line history loading', () => {
         await Promise.resolve();
         await Promise.resolve();
         expect(inspection.series).toEqual([]);
+    });
+});
+
+describe('item (indexed-row fallback)', () => {
+    it('reads the suffixed key for a row index', () => {
+        expect(item({ oid1: 'b' }, 'oid', 1)).toBe('b');
+    });
+    it('falls back to the plain base key only for row index 0', () => {
+        expect(item({ oid: 'a' }, 'oid', 0)).toBe('a');
+        expect(item({ oid: 'a' }, 'oid', 1)).toBeUndefined();
+    });
+    it('prefers the suffixed key over the plain key at index 0', () => {
+        expect(item({ oid: 'a', oid0: 'b' }, 'oid', 0)).toBe('b');
+    });
+});
+
+describe('seriesColor', () => {
+    it('prefers the row explicit dataColor', () => {
+        expect(seriesColor({ dataColor0: '#ff0000' }, 0, ['#123456'], undefined)).toBe('#ff0000');
+    });
+    it('falls back to the palette entry for the row index', () => {
+        expect(seriesColor({}, 1, ['#111111', '#222222'], undefined)).toBe('#222222');
+    });
+    it('falls back to globalColor, then the default blue', () => {
+        expect(seriesColor({}, 0, [], '#abcdef')).toBe('#abcdef');
+        expect(seriesColor({}, 0, [], undefined)).toBe('#44739e');
+    });
+});
+
+describe('rowAxisId', () => {
+    it('defaults to yAxis_id 0 when unset', () => {
+        expect(rowAxisId({}, 0)).toBe('yAxis_id_0');
+    });
+    it('uses the row-specific commonYAxis when set', () => {
+        expect(rowAxisId({ commonYAxis1: 2 }, 1)).toBe('yAxis_id_2');
+    });
+});
+
+describe('distinctAxisRows', () => {
+    it('keeps only the first row per distinct axis id', () => {
+        const d = { commonYAxis0: 0, commonYAxis1: 1, commonYAxis2: 0 };
+        expect(distinctAxisRows([0, 1, 2], d)).toEqual([0, 1]);
+    });
+    it('collapses rows with no explicit commonYAxis onto the shared default axis', () => {
+        expect(distinctAxisRows([0, 1, 2], {})).toEqual([0]);
     });
 });

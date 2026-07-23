@@ -52,6 +52,19 @@ const attrs: RxWidgetInfo['visAttrs'] = [
     },
 ];
 
+export function circularGeometry(
+    data: Pick<ProgressData, 'progressCircularSize' | 'progressCircularWidth' | 'progressIndeterminate'>,
+    percent: number,
+    fallbackSize: { width?: number; height?: number },
+): { size: number; stroke: number; radius: number; circumference: number; dashOffset: number } {
+    const size = num(data.progressCircularSize, 0) || Math.min(num(fallbackSize.width, 70), num(fallbackSize.height, 70));
+    const stroke = num(data.progressCircularWidth, 4);
+    const radius = Math.max(1, size / 2 - stroke / 2);
+    const circumference = 2 * Math.PI * radius;
+    const dashOffset = data.progressIndeterminate ? circumference * 0.25 : circumference * (1 - percent / 100);
+    return { size, stroke, radius, circumference, dashOffset };
+}
+
 export default class MaterialDesignProgressCircular extends VisWidget {
     constructor(props: VisRxWidgetProps) {
         super(props);
@@ -74,11 +87,8 @@ export default class MaterialDesignProgressCircular extends VisWidget {
         const data = this.state.rxData as ProgressData;
         const value = stateValue(this.state, data.oid);
         const progress = progressState(value, data);
-        const size = num(data.progressCircularSize, 0) || Math.min(num((this.props as unknown as { style?: { width?: number; height?: number } }).style?.width, 70), num((this.props as unknown as { style?: { width?: number; height?: number } }).style?.height, 70));
-        const stroke = num(data.progressCircularWidth, 4);
-        const radius = Math.max(1, size / 2 - stroke / 2);
-        const circumference = 2 * Math.PI * radius;
-        const dashOffset = data.progressIndeterminate ? circumference * 0.25 : circumference * (1 - progress.percent / 100);
+        const { style } = this.props as unknown as { style?: { width?: number; height?: number } };
+        const { size, stroke, radius, circumference, dashOffset } = circularGeometry(data, progress.percent, style || {});
 
         return (
             <div className="materialdesign-widget materialdesign-progress" style={{ height: '100%', padding: 0, width: '100%' }}>

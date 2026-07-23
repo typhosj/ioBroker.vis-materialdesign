@@ -19,13 +19,52 @@ const b = (v: unknown, d = false): boolean =>
   v === undefined || v === null || v === ""
     ? d
     : v === true || v === "true" || v === 1 || v === "1";
-function readJson(value: unknown): Record<string, unknown>[] | null {
+export function readJson(value: unknown): Record<string, unknown>[] | null {
   try {
     const result: unknown = JSON.parse(s(value));
     return Array.isArray(result) ? (result as Record<string, unknown>[]) : null;
   } catch {
     return null;
   }
+}
+
+export interface PieValue {
+  label: string;
+  value: number;
+  color: string;
+  textColor: string;
+  appendix: string;
+  tooltipTitle: string;
+  tooltipText: string;
+}
+
+export function pieCount(data: Data, source: Record<string, unknown>[] | null): number {
+  return source ? Math.min(source.length, MAX_DYNAMIC_ITEMS) : boundedCount(data.dataCount, 1, MAX_DYNAMIC_ITEMS - 1) + 1;
+}
+
+export function buildPieValues(data: Data, source: Record<string, unknown>[] | null, count: number, colors: string[], valueForIndex: (index: number) => number): PieValue[] {
+  return Array.from({ length: count }, (_, i) => {
+    const item = source?.[i];
+    const value = n(item?.value, valueForIndex(i));
+    return {
+      label: s(item?.label, s(data[`label${i}`])),
+      value: Math.max(0, value),
+      color: s(
+        item?.dataColor,
+        s(data[`dataColor${i}`], colors[i] || s(data.globalColor, "#44739e")),
+      ),
+      textColor: s(
+        item?.valueColor,
+        s(data[`valueTextColor${i}`], s(data.valuesFontColor, "#000")),
+      ),
+      appendix: s(
+        item?.valueAppendix,
+        s(data[`labelValueAppend${i}`], s(data.valuesAppendText)),
+      ),
+      tooltipTitle: s(item?.tooltipTitle, s(data[`tooltipTitle${i}`])),
+      tooltipText: s(item?.tooltipText, s(data[`tooltipText${i}`])),
+    };
+  });
 }
 const color = (name: string) => ({ name, label: name, type: "color" as const });
 const number = (name: string) => ({
@@ -286,37 +325,11 @@ export default class MaterialDesignChartPie extends VisWidget {
       s(data.chartDataMethod) === "jsonStringObject"
         ? readJson(stateValue(this.state, s(data.oid)))
         : null;
-    const count = json
-      ? Math.min(json.length, MAX_DYNAMIC_ITEMS)
-      : boundedCount(data.dataCount, 1, MAX_DYNAMIC_ITEMS - 1) + 1;
+    const count = pieCount(data, json);
     const colors = s(data.colorScheme)
       ? scheme(s(data.colorScheme), count)
       : [];
-    const values = Array.from({ length: count }, (_, i) => {
-      const item = json?.[i];
-      const value = n(
-        item?.value,
-        n(stateValue(this.state, s(data[`oid${i}`]))),
-      );
-      return {
-        label: s(item?.label, s(data[`label${i}`])),
-        value: Math.max(0, value),
-        color: s(
-          item?.dataColor,
-          s(data[`dataColor${i}`], colors[i] || s(data.globalColor, "#44739e")),
-        ),
-        textColor: s(
-          item?.valueColor,
-          s(data[`valueTextColor${i}`], s(data.valuesFontColor, "#000")),
-        ),
-        appendix: s(
-          item?.valueAppendix,
-          s(data[`labelValueAppend${i}`], s(data.valuesAppendText)),
-        ),
-        tooltipTitle: s(item?.tooltipTitle, s(data[`tooltipTitle${i}`])),
-        tooltipText: s(item?.tooltipText, s(data[`tooltipText${i}`])),
-      };
-    });
+    const values = buildPieValues(data, json, count, colors, i => n(stateValue(this.state, s(data[`oid${i}`]))));
     const legend = b(data.showLegend) ? (
       <div
         style={{

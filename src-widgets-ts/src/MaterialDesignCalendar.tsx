@@ -16,11 +16,44 @@ const n = (v: unknown, d = 0): number => Number.isFinite(Number(v)) ? Number(v) 
 const px = (v: unknown, d: number): string => sizeCss(v, d);
 const events = (v: unknown): Event[] => { try { const value = JSON.parse(s(v)); return Array.isArray(value) ? value : []; } catch { return []; } };
 // Local YYYY-MM-DD (toISOString() shifts to UTC and misplaces events by a day in +offset zones)
-const isoDate = (day: Date): string => `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
-const eventMinutes = (value: unknown, fallback = 0): number => {
+export const isoDate = (day: Date): string => `${day.getFullYear()}-${String(day.getMonth() + 1).padStart(2, '0')}-${String(day.getDate()).padStart(2, '0')}`;
+export const eventMinutes = (value: unknown, fallback = 0): number => {
     const match = s(value).match(/(?:T|\s)(\d{1,2}):(\d{2})/);
     return match ? Math.min(1439, Number(match[1]) * 60 + Number(match[2])) : fallback;
 };
+// month/week grid start: the Monday/Sunday/etc.-aligned first cell before or on the 1st (month) or the reference day (week).
+export function calendarGridStart(reference: Date, view: string, firstWeekday: number): Date {
+    const start = new Date(reference);
+    start.setHours(0, 0, 0, 0);
+    if (view === 'month') {
+        start.setDate(1);
+        start.setDate(1 - ((start.getDay() - firstWeekday + 7) % 7));
+    } else if (view === 'week') {
+        start.setDate(start.getDate() - ((start.getDay() - firstWeekday + 7) % 7));
+    }
+    return start;
+}
+// month view always renders full weeks (leading days from the previous month + trailing days into the next).
+export function calendarDayCount(reference: Date, view: string, firstWeekday: number): number {
+    if (view === 'month') {
+        const lastDay = new Date(reference.getFullYear(), reference.getMonth() + 1, 0);
+        const leadingDays = (new Date(reference.getFullYear(), reference.getMonth(), 1).getDay() - firstWeekday + 7) % 7;
+        return Math.ceil((lastDay.getDate() + leadingDays) / 7) * 7;
+    }
+    return view === 'week' ? 7 : 1;
+}
+// time-grid geometry for one event: its row (offset from firstMinute) and row-span, clipped to the visible
+// [firstMinute, endMinute) window; null when the event falls entirely outside that window.
+export function calendarEventSlot(event: Event, firstMinute: number, endMinute: number, intervalMinutes: number): { row: number; span: number; startMinute: number } | null {
+    const startMinute = eventMinutes(event.start, firstMinute);
+    const finishMinute = Math.max(startMinute + intervalMinutes, eventMinutes(event.end, startMinute + intervalMinutes));
+    if (finishMinute <= firstMinute || startMinute >= endMinute) return null;
+    const visibleStart = Math.max(startMinute, firstMinute);
+    const visibleFinish = Math.min(finishMinute, endMinute);
+    const row = Math.max(0, Math.floor((visibleStart - firstMinute) / intervalMinutes));
+    const span = Math.max(1, Math.ceil((visibleFinish - visibleStart) / intervalMinutes));
+    return { row, span, startMinute };
+}
 export const calendarEventHasTime = (value: unknown): boolean => /(?:T|\s)\d{1,2}:\d{2}/.test(s(value));
 export const calendarEventOccursOnDate = (event: Event, date: string): boolean => {
     const start = s(event.start).slice(0, 10);
@@ -53,7 +86,7 @@ const attrs: RxWidgetInfo['visAttrs'] = [
     { name: 'calendarCustomFormats', label: 'group_calendarCustomFormats', fields: [{ name: 'calendarMonthViewHeaderFormat', label: 'calendarMonthViewHeaderFormat', type: 'text' }, { name: 'calendarMonthViewDayFormat', label: 'calendarMonthViewDayFormat', type: 'text' }, { name: 'calendarWeekViewHeaderFormat', label: 'calendarWeekViewHeaderFormat', type: 'text' }, { name: 'calendarWeekViewDayFormat', label: 'calendarWeekViewDayFormat', type: 'text' }, { name: 'calendarDayViewHeaderFormat', label: 'calendarDayViewHeaderFormat', type: 'text' }, { name: 'calendarDayViewDayFormat', label: 'calendarDayViewDayFormat', type: 'text' }] },
 ];
 
-function weekNumber(day: Date): number { const date = new Date(Date.UTC(day.getFullYear(), day.getMonth(), day.getDate())); date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7)); const year = new Date(Date.UTC(date.getUTCFullYear(), 0, 1)); return Math.ceil((((date.getTime() - year.getTime()) / 86400000) + 1) / 7); }
+export function weekNumber(day: Date): number { const date = new Date(Date.UTC(day.getFullYear(), day.getMonth(), day.getDate())); date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay() || 7)); const year = new Date(Date.UTC(date.getUTCFullYear(), 0, 1)); return Math.ceil((((date.getTime() - year.getTime()) / 86400000) + 1) / 7); }
 
 export default class MaterialDesignCalendar extends VisWidget {
     private date = new Date();
@@ -69,10 +102,8 @@ export default class MaterialDesignCalendar extends VisWidget {
         const source = events(stateValue(this.state, s(d.oid)));
         const weekdays = s(d.calendarWeekdays, '1,2,3,4,5,6,0').split(',').map(Number).filter(day => day >= 0 && day < 7);
         const order = weekdays.length === 7 ? weekdays : [1, 2, 3, 4, 5, 6, 0];
-        const start = new Date(this.date); start.setHours(0, 0, 0, 0);
-        if (view === 'month') { start.setDate(1); start.setDate(1 - ((start.getDay() - order[0] + 7) % 7)); } else if (view === 'week') start.setDate(start.getDate() - ((start.getDay() - order[0] + 7) % 7));
-        const lastDay = new Date(this.date.getFullYear(), this.date.getMonth() + 1, 0);
-        const dayCount = view === 'month' ? Math.ceil((lastDay.getDate() + ((new Date(this.date.getFullYear(), this.date.getMonth(), 1).getDay() - order[0] + 7) % 7)) / 7) * 7 : view === 'week' ? 7 : 1;
+        const start = calendarGridStart(this.date, view, order[0]);
+        const dayCount = calendarDayCount(this.date, view, order[0]);
         const today = new Date(); today.setHours(0, 0, 0, 0);
         const navLocale = typeof window !== 'undefined' ? window.navigator.language : undefined;
         // Weekday/month text must follow the ioBroker system language (like the legacy widget), not the browser locale.
@@ -107,13 +138,9 @@ export default class MaterialDesignCalendar extends VisWidget {
                 return <React.Fragment key={`slot-${minute}`}><div style={{ alignItems: 'flex-end', background: s(d.calendarTimeAxisBackgroundColor, 'transparent'), boxSizing: 'border-box', display: 'flex', gridColumn: 1, gridRow: slot + 1, justifyContent: 'flex-end' }}>{showLabel ? <div className="v-calendar-daily__interval-text" style={{ boxSizing: 'border-box', color: s(d.calendarTimeAxisFontColor, isDark ? '#fff' : '#000'), fontFamily: s(d.calendarTimeAxisFont, 'inherit'), fontSize: px(d.calendarTimeAxisFontSize, 12), paddingRight: 4, textAlign: 'right', transform: 'translateY(50%)', width: timeAxisWidth - 8 }}>{formatCalendarTime(labelMinute, timeFormat, timeLocale)}</div> : null}</div>{gridDays.map(({ iso }, dayIndex) => <div className="v-calendar-daily__day-interval" key={`${iso}-${minute}`} style={{ background: s(d.calendarDayBackgroundColor, 'transparent'), borderLeft: dayIndex === 0 ? 0 : undefined, borderRight: `1px solid ${s(d.calendarBorderColor, '#e0e0e0')}`, borderTop: `1px solid ${s(d.calendarBorderColor, '#e0e0e0')}`, gridColumn: dayIndex + 2, gridRow: slot + 1 }} />)}</React.Fragment>;
             })}
             {gridDays.flatMap(({ iso }, dayIndex) => source.filter(event => calendarEventOccursOnDate(event, iso)).map((event, eventIndex) => {
-                const startMinute = eventMinutes(event.start, firstMinute);
-                const finishMinute = Math.max(startMinute + intervalMinutes, eventMinutes(event.end, startMinute + intervalMinutes));
-                if (finishMinute <= firstMinute || startMinute >= endMinute) return null;
-                const visibleStart = Math.max(startMinute, firstMinute);
-                const visibleFinish = Math.min(finishMinute, endMinute);
-                const row = Math.max(0, Math.floor((visibleStart - firstMinute) / intervalMinutes));
-                const span = Math.max(1, Math.ceil((visibleFinish - visibleStart) / intervalMinutes));
+                const slot = calendarEventSlot(event, firstMinute, endMinute, intervalMinutes);
+                if (!slot) return null;
+                const { row, span, startMinute } = slot;
                 return <div className="v-event" key={`event-${iso}-${eventIndex}`} style={{ alignSelf: 'stretch', backgroundColor: s(event.color, '#44739e'), color: s(event.colorText, '#fff'), fontFamily: s(d.calendarEventFont, 'inherit'), fontSize: px(d.calendarEventFontSize, 12), gridColumn: dayIndex + 2, gridRow: `${row + 1} / span ${Math.min(span, slotCount - row)}`, lineHeight: 1.3, margin: 1, minHeight: 0, overflow: 'hidden', padding: '4px 8px', zIndex: 1 }}>{calendarEventHasTime(event.start) ? <div style={{ fontWeight: 700, marginBottom: 2 }}>{formatCalendarTime(startMinute, timeFormat, timeLocale)}</div> : null}<div style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{s(event.name)}</div></div>;
             }))}
         </div></div>;
