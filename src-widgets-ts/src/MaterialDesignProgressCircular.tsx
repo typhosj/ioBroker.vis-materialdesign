@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
-import { squarePreview, RenderProps, VisWidget, createInfo, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
+import { squarePreview, RenderProps, VisWidget, createInfo, designStyle, designStyleClasses, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
 import { ProgressData, cleanColor, num, progressState } from './MaterialDesignProgress';
 
 
@@ -85,13 +85,14 @@ export default class MaterialDesignProgressCircular extends VisWidget {
     renderWidgetBody(props: RenderProps): React.JSX.Element {
         super.renderWidgetBody(props);
         const data = this.state.rxData as ProgressData;
+        const isM3 = designStyle(data as unknown as Record<string, unknown>) === 'material3';
         const value = stateValue(this.state, data.oid);
-        const progress = progressState(value, data);
+        const progress = progressState(value, data, isM3);
         const { style } = this.props as unknown as { style?: { width?: number; height?: number } };
         const { size, stroke, radius, circumference, dashOffset } = circularGeometry(data, progress.percent, style || {});
 
         return (
-            <div className="materialdesign-widget materialdesign-progress" style={{ height: '100%', padding: 0, width: '100%' }}>
+            <div className={`materialdesign-widget materialdesign-progress${isM3 ? ` ${designStyleClasses(data as unknown as Record<string, unknown>, this.isDarkTheme())}` : ''}`} style={{ height: '100%', padding: 0, width: '100%' }}>
                 <div className="materialdesign-vuetify-progress-circular" style={{ alignItems: 'center', display: 'flex', height: '100%', justifyContent: 'center', width: '100%' }}>
                     <div
                         aria-valuemax={100}
@@ -104,7 +105,7 @@ export default class MaterialDesignProgressCircular extends VisWidget {
                         <svg viewBox={`0 0 ${size} ${size}`} style={{ height: '100%', transform: `rotate(${num(data.progressCircularRotate, 0)}deg)`, width: '100%' }}>
                             {/* stroke/fill via inline style, not SVG attrs: ambient legacy vuetify CSS
                                 (.v-progress-circular__underlay/__overlay{stroke:...}) overrides the attribute otherwise */}
-                            <circle className="v-progress-circular__underlay" cx={size / 2} cy={size / 2} r={radius} strokeWidth={stroke} style={{ fill: cleanColor(data.innerColor, 'transparent'), stroke: cleanColor(data.colorProgressBackground, 'rgba(161, 161, 161, 0.26)') }} />
+                            <circle className="v-progress-circular__underlay" cx={size / 2} cy={size / 2} r={radius} strokeWidth={stroke} style={{ fill: cleanColor(data.innerColor, 'transparent'), stroke: cleanColor(data.colorProgressBackground, isM3 ? 'var(--md-sys-color-surface-container-high)' : 'rgba(161, 161, 161, 0.26)') }} />
                             <circle
                                 className="v-progress-circular__overlay"
                                 cx={size / 2}
@@ -121,7 +122,7 @@ export default class MaterialDesignProgressCircular extends VisWidget {
                                 className="v-progress-circular__info"
                                 style={{
                                     alignItems: 'center',
-                                    color: cleanColor(data.textColor, '#44739e'),
+                                    color: cleanColor(data.textColor, isM3 ? 'var(--md-sys-color-on-surface)' : '#44739e'),
                                     display: 'flex',
                                     fontFamily: data.textFontFamily || undefined,
                                     fontSize: data.textFontSize ? sizeCss(data.textFontSize, 12) : 12,

@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { RxWidgetInfo, RxWidgetInfoAttributesField, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
-import { squarePreview, BaseRxData, RenderProps, VisWidget, createInfo, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
+import { squarePreview, BaseRxData, RenderProps, VisWidget, createInfo, designStyle, designStyleClasses, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
 
 export interface ProgressData extends BaseRxData {
     min?: number;
@@ -124,7 +124,10 @@ export function cleanColor(value: unknown, fallback: string): string {
     return raw && !raw.startsWith('#mdwTheme:') ? raw : fallback;
 }
 
-export function progressState(value: ioBroker.StateValue | undefined, data: ProgressData): { percent: number; raw: number; color: string; label: string } {
+// Material 3 (Phase 5, ../../MATERIAL3_PLAN.md): with isM3 the unset progress color falls back to the
+// primary token instead of the legacy blue; an explicit saved color (incl. colorOne/colorTwo) still
+// wins. Default isM3=false keeps the exported behavior — and its unit tests — unchanged.
+export function progressState(value: ioBroker.StateValue | undefined, data: ProgressData, isM3 = false): { percent: number; raw: number; color: string; label: string } {
     const min = num(data.min, 0);
     const max = num(data.max, 100);
     let raw = value === true || value === 'true' ? max : value === false || value === 'false' ? min : num(value, min);
@@ -133,7 +136,7 @@ export function progressState(value: ioBroker.StateValue | undefined, data: Prog
     const percent = Math.floor(((raw - min) * 100) / range);
     const oneCondition = num(data.colorOneCondition, 1000);
     const twoCondition = num(data.colorTwoCondition, 1000);
-    const baseColor = cleanColor(data.colorProgress, '#44739e');
+    const baseColor = cleanColor(data.colorProgress, isM3 ? 'var(--md-sys-color-primary)' : '#44739e');
     const color =
         percent > oneCondition && percent <= twoCondition
             ? cleanColor(data.colorOne, baseColor)
@@ -172,16 +175,17 @@ export default class MaterialDesignProgress extends VisWidget {
     renderWidgetBody(props: RenderProps): React.JSX.Element {
         super.renderWidgetBody(props);
         const data = this.state.rxData as ProgressData;
+        const isM3 = designStyle(data as unknown as Record<string, unknown>) === 'material3';
         const value = stateValue(this.state, data.oid);
-        const progress = progressState(value, data);
-        const background = cleanColor(data.colorProgressBackground, 'rgba(161, 161, 161, 0.26)');
+        const progress = progressState(value, data, isM3);
+        const background = cleanColor(data.colorProgressBackground, isM3 ? 'var(--md-sys-color-surface-container-high)' : 'rgba(161, 161, 161, 0.26)');
         const striped = data.progressStriped;
         const stripeColor = cleanColor(data.progressStripedColor, 'rgba(255, 255, 255, 0.25)');
         const displayedPercent = data.progressIndeterminate ? 100 : progress.percent;
         const reverse = data.reverse && !data.progressIndeterminate;
 
         return (
-            <div className="materialdesign-widget materialdesign-progress" style={{ height: '100%', padding: 0, width: '100%' }}>
+            <div className={`materialdesign-widget materialdesign-progress${isM3 ? ` ${designStyleClasses(data as unknown as Record<string, unknown>, this.isDarkTheme())}` : ''}`} style={{ height: '100%', padding: 0, width: '100%' }}>
                 <div className="materialdesign-vuetify-progress" style={{ alignItems: 'center', display: 'flex', height: '100%', justifyContent: 'center', width: '100%' }}>
                     <div
                         aria-valuemax={100}
@@ -216,7 +220,7 @@ export default class MaterialDesignProgress extends VisWidget {
                                 className="v-progress-linear__content"
                                 style={{
                                     alignItems: 'center',
-                                    color: cleanColor(data.textColor, '#44739e'),
+                                    color: cleanColor(data.textColor, isM3 ? 'var(--md-sys-color-on-surface)' : '#44739e'),
                                     display: 'flex',
                                     fontFamily: data.textFontFamily || undefined,
                                     fontSize: data.textFontSize ? sizeCss(data.textFontSize, 12) : 12,
