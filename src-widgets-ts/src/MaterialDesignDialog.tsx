@@ -3,6 +3,8 @@ import { squarePreview ,
   RenderProps,
   VisWidget,
   createInfo,
+  designStyle,
+  designStyleClasses,
   setStateValue,
   sizeCss,
   stateValue, sanitizeHtml, iconField } from './widgetUtils';
@@ -350,6 +352,10 @@ export class MaterialDesignDialog extends VisWidget {
   renderWidgetBody(props: RenderProps): React.JSX.Element {
     super.renderWidgetBody(props);
     const d = this.state.rxData as unknown as Data;
+    // Material 3 (Phase 5, ../../MATERIAL3_PLAN.md): dialog surface/scrim/trigger colors from semantic
+    // tokens when unset (container = surface-container-high, scrim, primary trigger/close); an explicit
+    // saved color still wins. Modality, measure/poll lifecycle, fullscreen and behavior unchanged.
+    const isM3 = designStyle(d) === "material3";
     const byState = s(d.showDialogMethod) === "datapoint";
     const stateOpen = b(
       stateValue(this.state, s(d.showDialogOid)),
@@ -420,7 +426,7 @@ export class MaterialDesignDialog extends VisWidget {
       );
     return (
       <div
-        className="materialdesign-widget materialdesign-vuetify-dialog"
+        className={`materialdesign-widget materialdesign-vuetify-dialog${isM3 ? ` ${designStyleClasses(d, this.isDarkTheme())}` : ""}`}
         style={{ height: "100%", width: "100%" }}
       >
         {!byState ? (
@@ -428,9 +434,9 @@ export class MaterialDesignDialog extends VisWidget {
             className={`materialdesign-${s(d.buttonStyle) === "icon" ? "icon-" : ""}button`}
             onClick={show}
             style={{
-              background: s(d.mdwButtonPrimaryColor, "#44739e"),
+              background: s(d.mdwButtonPrimaryColor, isM3 ? "var(--md-sys-color-primary)" : "#44739e"),
               border: 0,
-              color: s(d.mdwButtonSecondaryColor, "#fff"),
+              color: s(d.mdwButtonSecondaryColor, isM3 ? "var(--md-sys-color-on-primary)" : "#fff"),
               fontFamily: s(d.textFontFamily),
               fontSize: d.textFontSize ? sizeCss(d.textFontSize, 14) : undefined,
               height: "100%",
@@ -440,7 +446,7 @@ export class MaterialDesignDialog extends VisWidget {
             {s(d.iconPosition, "left") === "left"
               ? renderIcon(
                   s(d.image),
-                  s(d.imageColor),
+                  s(d.imageColor, isM3 ? "var(--md-sys-color-on-primary)" : ""),
                   n(d.iconHeight, 18),
                   !!d.imageColor,
                 )
@@ -449,7 +455,7 @@ export class MaterialDesignDialog extends VisWidget {
             {s(d.iconPosition) === "right"
               ? renderIcon(
                   s(d.image),
-                  s(d.imageColor),
+                  s(d.imageColor, isM3 ? "var(--md-sys-color-on-primary)" : ""),
                   n(d.iconHeight, 18),
                   !!d.imageColor,
                 )
@@ -462,7 +468,7 @@ export class MaterialDesignDialog extends VisWidget {
             onClick={() => b(d.closingClickOutside, true) && close()}
             style={{
               alignItems: fullscreen ? "stretch" : "center",
-              background: s(d.overlayColor, "rgba(0,0,0,.5)"),
+              background: s(d.overlayColor, isM3 ? "var(--md-sys-color-scrim)" : "rgba(0,0,0,.5)"),
               display: "flex",
               inset: 0,
               justifyContent: "center",
@@ -475,7 +481,7 @@ export class MaterialDesignDialog extends VisWidget {
               className="v-dialog v-card"
               onClick={(e) => e.stopPropagation()}
               style={{
-                background: s(d.backgroundColor, "#fff"),
+                background: s(d.backgroundColor, isM3 ? "var(--md-sys-color-surface-container-high)" : "#fff"),
                 borderRadius: 4,
                 boxShadow:
                   "0 11px 15px -7px rgba(0,0,0,.2),0 24px 38px 3px rgba(0,0,0,.14),0 9px 46px 8px rgba(0,0,0,.12)",
@@ -493,7 +499,7 @@ export class MaterialDesignDialog extends VisWidget {
                   style={{
                     alignItems: "center",
                     background: s(d.headerBackgroundColor),
-                    color: s(d.titleColor, "#44739e"),
+                    color: s(d.titleColor, isM3 ? "var(--md-sys-color-on-surface)" : "#44739e"),
                     display: "flex",
                     fontFamily: s(d.titleFont),
                     fontSize: sizeCss(d.titleFontSize, 16),
@@ -519,7 +525,7 @@ export class MaterialDesignDialog extends VisWidget {
               >
                 {b(d.showDivider) ? (
                   <hr
-                    style={{ borderColor: s(d.dividerColor), width: "100%" }}
+                    style={{ borderColor: s(d.dividerColor, isM3 ? "var(--md-sys-color-outline-variant)" : ""), width: "100%" }}
                   />
                 ) : null}
                 <button
@@ -531,7 +537,7 @@ export class MaterialDesignDialog extends VisWidget {
                     background: "transparent",
                     border: 0,
                     borderRadius: 4,
-                    color: s(d.buttonFontColor, "#44739e"),
+                    color: s(d.buttonFontColor, isM3 ? "var(--md-sys-color-primary)" : "#44739e"),
                     cursor: "pointer",
                     fontFamily: s(d.buttonFont),
                     fontSize: sizeCss(d.buttonFontSize, 16),
@@ -553,7 +559,7 @@ export class MaterialDesignDialog extends VisWidget {
                         s(d.fullscreenCloseIcon, "close"),
                         this.pressClose && s(d.fullscreenCloseIconPressColor)
                           ? s(d.fullscreenCloseIconPressColor)
-                          : s(d.fullscreenCloseIconColor),
+                          : s(d.fullscreenCloseIconColor, isM3 ? "var(--md-sys-color-on-surface-variant)" : ""),
                         20,
                         this.pressClose && s(d.fullscreenCloseIconPressColor)
                           ? true
