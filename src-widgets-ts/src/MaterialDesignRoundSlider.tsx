@@ -3,7 +3,8 @@ import React from 'react';
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
 import { cleanColor, num, snapToStep } from './MaterialDesignProgress';
-import { squarePreview, RenderProps, VisWidget, createInfo, setStateValue, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
+import { m3ColorExplicit } from './MaterialDesignButtons';
+import { squarePreview, RenderProps, VisWidget, createInfo, designStyle, designStyleClasses, setStateValue, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
 
 export interface RoundSliderData {
     oid?: string;
@@ -215,9 +216,12 @@ export default class MaterialDesignRoundSlider extends VisWidget {
         const progress = (data.rtl ? 100 - value.percent : value.percent) / 100;
         const progressArc = arc * progress;
         const handle = polar(start + progressArc, radius);
-        const pathColor = cleanColor(data.colorAfterThumb, 'rgba(161, 161, 161, 0.26)');
-        const barColor = cleanColor(data.colorBeforeThumb, '#44739e');
-        const handleColor = cleanColor(data.colorThumb, barColor);
+        // Material 3 (Phase 3): recolor arc/handle from tokens (bar=primary, path=surface-container-high,
+        // handle=primary), geometry and behavior unchanged; explicit saved color still wins.
+        const isM3 = designStyle(data as Record<string, unknown>) === 'material3';
+        const pathColor = isM3 && !m3ColorExplicit(data.colorAfterThumb) ? 'var(--md-sys-color-surface-container-high)' : cleanColor(data.colorAfterThumb, 'rgba(161, 161, 161, 0.26)');
+        const barColor = isM3 && !m3ColorExplicit(data.colorBeforeThumb) ? 'var(--md-sys-color-primary)' : cleanColor(data.colorBeforeThumb, '#44739e');
+        const handleColor = isM3 && !m3ColorExplicit(data.colorThumb) ? 'var(--md-sys-color-primary)' : cleanColor(data.colorThumb, barColor);
 
         const write = (event: React.PointerEvent<SVGSVGElement>): void => {
             if (!disabled) {
@@ -231,7 +235,7 @@ export default class MaterialDesignRoundSlider extends VisWidget {
         };
 
         return (
-            <div className="materialdesign-widget materialdesign-slider-round" style={{ height: '100%', position: 'relative', width: '100%' }}>
+            <div className={`materialdesign-widget materialdesign-slider-round${isM3 ? ` ${designStyleClasses(data as Record<string, unknown>, this.isDarkTheme())}` : ''}`} style={{ height: '100%', position: 'relative', width: '100%' }}>
                 <svg
                     className="materialdesign-round-slider-element"
                     max={max}
@@ -282,7 +286,7 @@ export default class MaterialDesignRoundSlider extends VisWidget {
                         className="labelValue"
                         dangerouslySetInnerHTML={{ __html: sanitizeHtml(label(value.raw, value.percent, data)) }}
                         style={{
-                            color: cleanColor(data.valueLabelColor, '#44739e'),
+                            color: isM3 && !m3ColorExplicit(data.valueLabelColor) ? 'var(--md-sys-color-on-surface)' : cleanColor(data.valueLabelColor, '#44739e'),
                             display: 'flex',
                             fontFamily: data.valueFontFamily || undefined,
                             fontSize: data.valueFontSize ? sizeCss(data.valueFontSize, 16) : 16,

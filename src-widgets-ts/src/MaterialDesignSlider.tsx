@@ -3,7 +3,8 @@ import React from 'react';
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
 import { cleanColor, num, snapToStep } from './MaterialDesignProgress';
-import { squarePreview, RenderProps, VisWidget, boundedCount, createInfo, setStateValue, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
+import { m3ColorExplicit } from './MaterialDesignButtons';
+import { squarePreview, RenderProps, VisWidget, boundedCount, createInfo, designStyle, designStyleClasses, setStateValue, sizeCss, stateValue, sanitizeHtml } from './widgetUtils';
 
 // Self-contained layout for the Vuetify-style slider DOM. The old widget relied on ambient
 // legacy Vuetify CSS (v-slider*) for track/thumb geometry and for hiding the raw value <input>;
@@ -288,9 +289,14 @@ export default class MaterialDesignSlider extends VisWidget {
         const current = sliderValue(this.optimisticValue ?? rawState, data);
         const orientation = data.orientation || 'horizontal';
         const visualPercent = data.reverseSlider ? 100 - current.percent : current.percent;
-        const before = cleanColor(data.colorBeforeThumb, '#44739e');
-        const thumb = cleanColor(data.colorThumb, before);
-        const after = cleanColor(data.colorAfterThumb, 'rgba(161, 161, 161, 0.26)');
+        // Material 3 (Phase 3, ../../MATERIAL3_PLAN.md): recolor the active/inactive track and handle
+        // from semantic tokens (active=primary, inactive=surface-container-high, handle=primary) while
+        // keeping the existing geometry and all behavior. An explicit saved color still wins per the
+        // token-precedence rule (m3ColorExplicit); a state-layer halo is added behind the handle.
+        const isM3 = designStyle(data as Record<string, unknown>) === 'material3';
+        const before = isM3 && !m3ColorExplicit(data.colorBeforeThumb) ? 'var(--md-sys-color-primary)' : cleanColor(data.colorBeforeThumb, '#44739e');
+        const thumb = isM3 && !m3ColorExplicit(data.colorThumb) ? 'var(--md-sys-color-primary)' : cleanColor(data.colorThumb, before);
+        const after = isM3 && !m3ColorExplicit(data.colorAfterThumb) ? 'var(--md-sys-color-surface-container-high)' : cleanColor(data.colorAfterThumb, 'rgba(161, 161, 161, 0.26)');
         const disabled = !!data.readOnly || isWorking(stateValue(this.state, data['oid-working'] || ''));
         const showThumbLabel = data.showThumbLabel === 'yes' || data.showThumbLabel === 'always';
         const tickLabels = (data.tickLabels || '').split(',').map(label => label.trim());
@@ -301,14 +307,14 @@ export default class MaterialDesignSlider extends VisWidget {
         const thumbLabel = labelFor(current.raw, current.percent, data, !!data.useLabelRules);
 
         return (
-            <div className="materialdesign-widget materialdesign-slider-vertical" style={{ alignItems: 'center', display: 'flex', height: '100%', overflow: 'visible', width: '100%', ...cssVars(data) }}>
+            <div className={`materialdesign-widget materialdesign-slider-vertical${isM3 ? ` ${designStyleClasses(data as Record<string, unknown>, this.isDarkTheme())}` : ''}`} style={{ alignItems: 'center', display: 'flex', height: '100%', overflow: 'visible', width: '100%', ...cssVars(data) }}>
                 <style>{SLIDER_CSS}</style>
                 <div className="materialdesign-vuetifySlider" style={{ height: '100%', width: '100%' }}>
                     <div className="v-row" style={{ alignItems: 'center', display: 'flex', height: '100%', width: '100%' }}>
                         {data.prepandText ? (
                             <div
                                 style={{
-                                    color: cleanColor(data.prepandTextColor, '#44739e'),
+                                    color: isM3 && !m3ColorExplicit(data.prepandTextColor) ? 'var(--md-sys-color-on-surface)' : cleanColor(data.prepandTextColor, '#44739e'),
                                     flex: data.prepandTextWidth ? `0 0 ${num(data.prepandTextWidth, 0)}px` : '0 0 auto',
                                     fontFamily: data.prepandTextFontFamily || undefined,
                                     fontSize: sizeCss(data.prepandTextFontSize, 16),
@@ -424,7 +430,7 @@ export default class MaterialDesignSlider extends VisWidget {
                                 className="materialdesign-vuetifySlider-value-label"
                                 dangerouslySetInnerHTML={{ __html: sanitizeHtml(valueLabel) }}
                                 style={{
-                                    color: cleanColor(data.valueLabelColor, '#44739e'),
+                                    color: isM3 && !m3ColorExplicit(data.valueLabelColor) ? 'var(--md-sys-color-on-surface)' : cleanColor(data.valueLabelColor, '#44739e'),
                                     flex: `0 0 ${num(data.valueLabelWidth, 50)}px`,
                                     fontFamily: data.valueFontFamily || undefined,
                                     fontSize: sizeCss(data.valueFontSize, 16),
