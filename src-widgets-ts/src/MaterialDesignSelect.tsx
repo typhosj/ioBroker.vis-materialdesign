@@ -2,9 +2,9 @@ import React from 'react';
 
 import type { RxWidgetInfo } from '@iobroker/types-vis-2';
 
-import { renderIcon } from './MaterialDesignButtons';
+import { m3ColorExplicit, renderIcon } from './MaterialDesignButtons';
 import { cleanColor, num } from './MaterialDesignProgress';
-import { MAX_DYNAMIC_ITEMS, squarePreview, RenderProps, VisWidget, boundedCount, createInfo, iconField, setStateValue, sizeCss, stateValue, stringValue } from './widgetUtils';
+import { MAX_DYNAMIC_ITEMS, squarePreview, RenderProps, VisWidget, boundedCount, createInfo, designStyle, designStyleClasses, iconField, setStateValue, sizeCss, stateValue, stringValue } from './widgetUtils';
 
 interface SelectData {
     oid?: string;
@@ -491,17 +491,26 @@ export default class MaterialDesignSelect extends VisWidget {
         const filter = this.isAutocomplete ? this.filterText : undefined;
         const visibleList = filter ? list.filter(item => item.text.toLowerCase().includes(filter.toLowerCase())) : list;
         const active = this.open || (current !== undefined && current !== null && current !== '');
-        const border = color(
-            this.open ? data.inputLayoutBorderColorSelected : data.inputLayoutBorderColor,
-            this.open ? '#44739e' : 'rgba(0, 0, 0, 0.54)',
-        );
+        // Material 3 (Phase 3, ../../MATERIAL3_PLAN.md): recolor the select/autocomplete chrome and
+        // dropdown from semantic tokens (outline/primary border, on-surface text, on-surface-variant
+        // label, filled container, surface-container menu, secondary-container selected item) while
+        // keeping geometry and all behavior. An explicit saved color still wins per the token-precedence
+        // rule; m3c() emits the token only when the saved value is unset. The legacy `#000000` text
+        // default counts as unset so the M3 token applies (dark mode needs this).
+        const isM3 = designStyle(data) === 'material3';
+        const m3c = (saved: unknown, token: string, legacyFallback: string): string =>
+            isM3 && !m3ColorExplicit(saved) ? token : color(saved, legacyFallback);
+        const border = this.open
+            ? m3c(data.inputLayoutBorderColorSelected, 'var(--md-sys-color-primary)', '#44739e')
+            : m3c(data.inputLayoutBorderColor, 'var(--md-sys-color-outline)', 'rgba(0, 0, 0, 0.54)');
         // Outlined box uses a lighter resting border to match the old widget (0.2), not the darker underline default (0.54).
-        const outlinedBorder = color(
-            this.open ? data.inputLayoutBorderColorSelected : data.inputLayoutBorderColor,
-            this.open ? '#44739e' : 'rgba(0, 0, 0, 0.24)',
-        );
+        const outlinedBorder = this.open
+            ? m3c(data.inputLayoutBorderColorSelected, 'var(--md-sys-color-primary)', '#44739e')
+            : m3c(data.inputLayoutBorderColor, 'var(--md-sys-color-outline)', 'rgba(0, 0, 0, 0.24)');
         const activeLabelFontSize = Math.max(10, num(data.inputLabelFontSize, 16) * 0.75);
-        const textColor = color(data.inputTextColor, '#000000');
+        const textDefault =
+            data.inputTextColor === undefined || data.inputTextColor === '' || data.inputTextColor === '#000000';
+        const textColor = isM3 && textDefault ? 'var(--md-sys-color-on-surface)' : color(data.inputTextColor, '#000000');
         const isTop = data.listPosition === 'top';
         const lay = data.inputLayout || 'regular';
         const outlined = lay.includes('outlined');
@@ -533,7 +542,10 @@ export default class MaterialDesignSelect extends VisWidget {
                 ? null
                 : renderIcon(
                       configuredIcon || selected?.icon || '',
-                      color(configuredColor || selected?.selectedImageColor || selected?.imageColor, '#44739e'),
+                      color(
+                          configuredColor || selected?.selectedImageColor || selected?.imageColor,
+                          isM3 ? 'var(--md-sys-color-on-surface-variant)' : '#44739e',
+                      ),
                       num(configuredSize, num(data.listIconSize, 20)),
                       !!(configuredColor || selected?.selectedImageColor || selected?.imageColor),
                   );
@@ -549,7 +561,7 @@ export default class MaterialDesignSelect extends VisWidget {
         const FieldTag = this.isAutocomplete ? 'div' : 'button';
         return (
             <div
-                className="materialdesign-widget materialdesign-select"
+                className={`materialdesign-widget materialdesign-select${isM3 ? ` ${designStyleClasses(data, this.isDarkTheme())}` : ''}`}
                 ref={this.rootRef}
                 style={{ height: '100%', overflow: 'visible', position: 'relative', width: '100%' }}
             >
@@ -566,10 +578,12 @@ export default class MaterialDesignSelect extends VisWidget {
                         }}
                         style={{
                             alignItems: 'center',
-                            background: color(
-                                data.inputLayoutBackgroundColor,
-                                filled ? 'rgba(0, 0, 0, 0.06)' : 'transparent',
-                            ),
+                            background:
+                                isM3 && !m3ColorExplicit(data.inputLayoutBackgroundColor)
+                                    ? filled
+                                        ? 'var(--md-sys-color-surface-container-high)'
+                                        : 'transparent'
+                                    : color(data.inputLayoutBackgroundColor, filled ? 'rgba(0, 0, 0, 0.06)' : 'transparent'),
                             border: 0,
                             borderBottom: enclosed ? 0 : `1px solid ${border}`,
                             borderRadius: rounded ? 28 : enclosed ? 4 : filled ? '4px 4px 0 0' : undefined,
@@ -637,7 +651,7 @@ export default class MaterialDesignSelect extends VisWidget {
                             <span style={{ flex: '0 0 auto', marginRight: 4 }}>
                                 {renderIcon(
                                     data.prepandIcon,
-                                    color(data.prepandIconColor, '#44739e'),
+                                    m3c(data.prepandIconColor, 'var(--md-sys-color-on-surface-variant)', '#44739e'),
                                     num(data.prepandIconSize, 16),
                                     !!data.prepandIconColor,
                                 )}
@@ -646,7 +660,7 @@ export default class MaterialDesignSelect extends VisWidget {
                         {data.inputPrefix ? (
                             <span
                                 style={{
-                                    color: color(data.inputAppendixColor, textColor),
+                                    color: m3c(data.inputAppendixColor, 'var(--md-sys-color-on-surface-variant)', textColor),
                                     fontFamily: data.inputAppendixFontFamily || undefined,
                                     fontSize: sizeCss(data.inputAppendixFontSize, 14),
                                     marginRight: 4,
@@ -667,10 +681,9 @@ export default class MaterialDesignSelect extends VisWidget {
                             {data.inputLabelText ? (
                                 <span
                                     style={{
-                                        color: color(
-                                            this.open ? data.inputLabelColorSelected : data.inputLabelColor,
-                                            'rgba(0, 0, 0, 0.54)',
-                                        ),
+                                        color: this.open
+                                            ? m3c(data.inputLabelColorSelected, 'var(--md-sys-color-primary)', 'rgba(0, 0, 0, 0.54)')
+                                            : m3c(data.inputLabelColor, 'var(--md-sys-color-on-surface-variant)', 'rgba(0, 0, 0, 0.54)'),
                                         fontFamily: data.inputLabelFontFamily || 'inherit',
                                         fontSize: active ? activeLabelFontSize : sizeCss(data.inputLabelFontSize, 16),
                                         left: 12,
@@ -744,7 +757,7 @@ export default class MaterialDesignSelect extends VisWidget {
                         {data.inputSuffix ? (
                             <span
                                 style={{
-                                    color: color(data.inputAppendixColor, textColor),
+                                    color: m3c(data.inputAppendixColor, 'var(--md-sys-color-on-surface-variant)', textColor),
                                     fontFamily: data.inputAppendixFontFamily || undefined,
                                     fontSize: sizeCss(data.inputAppendixFontSize, 14),
                                     marginLeft: 4,
@@ -776,7 +789,7 @@ export default class MaterialDesignSelect extends VisWidget {
                             >
                                 {renderIcon(
                                     data.clearIcon || 'close',
-                                    color(data.clearIconColor, '#44739e'),
+                                    m3c(data.clearIconColor, 'var(--md-sys-color-on-surface-variant)', '#44739e'),
                                     num(data.clearIconSize, 16),
                                     !!data.clearIconColor,
                                 )}
@@ -785,7 +798,7 @@ export default class MaterialDesignSelect extends VisWidget {
                         <span style={{ flex: '0 0 auto', marginLeft: 6 }}>
                             {renderIcon(
                                 data.collapseIcon || 'menu-down',
-                                color(data.collapseIconColor, '#44739e'),
+                                m3c(data.collapseIconColor, 'var(--md-sys-color-on-surface-variant)', '#44739e'),
                                 num(data.collapseIconSize, 16),
                                 !!data.collapseIconColor,
                             )}
@@ -798,7 +811,7 @@ export default class MaterialDesignSelect extends VisWidget {
                         <div
                             className="v-menu__content v-select-list"
                             style={{
-                                background: color(data.listItemBackgroundColor, '#FFFFFF'),
+                                background: m3c(data.listItemBackgroundColor, 'var(--md-sys-color-surface-container)', '#FFFFFF'),
                                 bottom: openUp ? (data.listPositionOffset ? '100%' : 'calc(100% + 4px)') : undefined,
                                 boxShadow: '0 4px 6px rgba(32, 33, 36, 0.28)',
                                 left: 0,
@@ -814,16 +827,17 @@ export default class MaterialDesignSelect extends VisWidget {
                                 const isSelected = String(item.value) === String(current);
                                 const isHovered = this.hoveredValue === String(item.value);
                                 const itemColor = isSelected
-                                    ? color(data.listItemFontSelectedColor, '#44739e')
-                                    : color(
+                                    ? m3c(data.listItemFontSelectedColor, 'var(--md-sys-color-on-secondary-container)', '#44739e')
+                                    : m3c(
                                           isHovered ? data.listItemFontHoverColor : data.listItemFontColor,
+                                          'var(--md-sys-color-on-surface)',
                                           textColor,
                                       );
                                 const background = isSelected
-                                    ? color(data.listItemBackgroundSelectedColor, 'rgba(68, 115, 158, 0.12)')
+                                    ? m3c(data.listItemBackgroundSelectedColor, 'var(--md-sys-color-secondary-container)', 'rgba(68, 115, 158, 0.12)')
                                     : isHovered
-                                      ? color(data.listItemBackgroundHoverColor, 'rgba(0, 0, 0, 0.04)')
-                                      : color(data.listItemBackgroundColor, '#FFFFFF');
+                                      ? m3c(data.listItemBackgroundHoverColor, 'var(--md-sys-color-surface-container-high)', 'rgba(0, 0, 0, 0.04)')
+                                      : m3c(data.listItemBackgroundColor, 'var(--md-sys-color-surface-container)', '#FFFFFF');
                                 return (
                                     <button
                                         key={String(item.value)}
@@ -867,7 +881,7 @@ export default class MaterialDesignSelect extends VisWidget {
                                                             : isHovered
                                                               ? data.listIconHoverColor
                                                               : item.imageColor,
-                                                        color(data.listIconColor, '#44739e'),
+                                                        color(data.listIconColor, isM3 ? 'var(--md-sys-color-on-surface-variant)' : '#44739e'),
                                                     ),
                                                     num(data.listIconSize, 20),
                                                     !!item.imageColor,

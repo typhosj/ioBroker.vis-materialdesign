@@ -2,9 +2,9 @@ import React from 'react';
 
 import type { RxWidgetInfo, VisRxWidgetProps } from '@iobroker/types-vis-2';
 
-import { renderIcon } from './MaterialDesignButtons';
+import { m3ColorExplicit, renderIcon } from './MaterialDesignButtons';
 import { cleanColor, num } from './MaterialDesignProgress';
-import { squarePreview, RenderProps, VisWidget, createInfo, iconField, setStateValue, sizeCss, stateValue } from './widgetUtils';
+import { squarePreview, RenderProps, VisWidget, createInfo, designStyle, designStyleClasses, iconField, setStateValue, sizeCss, stateValue } from './widgetUtils';
 
 interface InputData {
     oid?: string;
@@ -425,23 +425,54 @@ export default class MaterialDesignInput extends VisWidget {
         const value = this.localValue ?? String(state ?? '');
         const active = this.focused || value !== '';
         const layout = layoutClass(data.inputLayout);
-        const inactiveBorderColor = plainColor(
-            data.inputLayoutBorderColor,
-            layout.includes('outlined') ? 'rgba(0, 0, 0, 0.24)' : 'rgba(0, 0, 0, 0.54)',
-        );
-        const activeBorderColor = themeColor(data.inputLayoutBorderColorSelected, '#44739e');
+        // Material 3 (Phase 3, ../../MATERIAL3_PLAN.md): recolor the text-field chrome from semantic
+        // tokens (outline/primary border, on-surface text, on-surface-variant label/appendix, filled
+        // container) while keeping geometry and all behavior. An explicit saved color still wins per
+        // the token-precedence rule (m3ColorExplicit); the legacy `#000000` text default and legacy
+        // `#mdwTheme:` theme tokens count as unset so the M3 token applies (dark mode needs this).
+        const isM3 = designStyle(data as Record<string, unknown>) === 'material3';
+        const textDefault =
+            data.inputTextColor === undefined ||
+            data.inputTextColor === '' ||
+            data.inputTextColor === '#000000' ||
+            (typeof data.inputTextColor === 'string' && data.inputTextColor.startsWith('#mdwTheme:'));
+        const inactiveBorderColor =
+            isM3 && !m3ColorExplicit(data.inputLayoutBorderColor)
+                ? 'var(--md-sys-color-outline)'
+                : plainColor(
+                      data.inputLayoutBorderColor,
+                      layout.includes('outlined') ? 'rgba(0, 0, 0, 0.24)' : 'rgba(0, 0, 0, 0.54)',
+                  );
+        const activeBorderColor =
+            isM3 && !m3ColorExplicit(data.inputLayoutBorderColorSelected)
+                ? 'var(--md-sys-color-primary)'
+                : themeColor(data.inputLayoutBorderColorSelected, '#44739e');
         const borderColor = this.focused ? activeBorderColor : inactiveBorderColor;
+        const m3FilledBg = layout.includes('filled') ? 'var(--md-sys-color-surface-container-high)' : 'transparent';
         const bg = this.focused
-            ? cleanColor(data.inputLayoutBackgroundColorSelected, 'transparent')
-            : cleanColor(data.inputLayoutBackgroundColor, 'transparent');
+            ? isM3 && !m3ColorExplicit(data.inputLayoutBackgroundColorSelected)
+                ? m3FilledBg
+                : cleanColor(data.inputLayoutBackgroundColorSelected, 'transparent')
+            : isM3 && !m3ColorExplicit(data.inputLayoutBackgroundColor)
+              ? m3FilledBg
+              : cleanColor(data.inputLayoutBackgroundColor, 'transparent');
         const labelColor = this.focused
-            ? themeColor(data.inputLabelColorSelected, '#44739e')
-            : themeColor(data.inputLabelColor, 'rgba(0, 0, 0, 0.54)');
+            ? isM3 && !m3ColorExplicit(data.inputLabelColorSelected)
+                ? 'var(--md-sys-color-primary)'
+                : themeColor(data.inputLabelColorSelected, '#44739e')
+            : isM3 && !m3ColorExplicit(data.inputLabelColor)
+              ? 'var(--md-sys-color-on-surface-variant)'
+              : themeColor(data.inputLabelColor, 'rgba(0, 0, 0, 0.54)');
         const textColor =
-            typeof data.inputTextColor === 'string' && data.inputTextColor.startsWith('#mdwTheme:')
-                ? '#000000'
-                : themeColor(data.inputTextColor, '#000000');
-        const appendixColor = themeColor(data.inputAppendixColor, 'rgba(0, 0, 0, 0.6)');
+            isM3 && textDefault
+                ? 'var(--md-sys-color-on-surface)'
+                : typeof data.inputTextColor === 'string' && data.inputTextColor.startsWith('#mdwTheme:')
+                  ? '#000000'
+                  : themeColor(data.inputTextColor, '#000000');
+        const appendixColor =
+            isM3 && !m3ColorExplicit(data.inputAppendixColor)
+                ? 'var(--md-sys-color-on-surface-variant)'
+                : themeColor(data.inputAppendixColor, 'rgba(0, 0, 0, 0.6)');
         const enclosed = layout.includes('outlined') || layout.includes('solo');
         const filled = layout.includes('filled');
         const hasDetails = !!data.inputMessage || !!data.showInputCounter;
@@ -460,7 +491,7 @@ export default class MaterialDesignInput extends VisWidget {
 
         return (
             <div
-                className="materialdesign-widget materialdesign-input"
+                className={`materialdesign-widget materialdesign-input${isM3 ? ` ${designStyleClasses(data as Record<string, unknown>, this.isDarkTheme())}` : ''}`}
                 ref={this.rootRef}
                 style={{ alignItems: 'center', display: 'flex', height: '100%', overflow: 'visible', width: '100%' }}
             >
@@ -753,7 +784,9 @@ export default class MaterialDesignInput extends VisWidget {
                                         >
                                             {renderIcon(
                                                 data.clearIcon || 'close',
-                                                plainColor(data.clearIconColor, '#44739e'),
+                                                isM3 && !m3ColorExplicit(data.clearIconColor)
+                                                    ? 'var(--md-sys-color-on-surface-variant)'
+                                                    : plainColor(data.clearIconColor, '#44739e'),
                                                 num(data.clearIconSize, 16),
                                                 !!data.clearIconColor,
                                             )}
@@ -783,7 +816,10 @@ export default class MaterialDesignInput extends VisWidget {
                                     {data.inputMessage ? (
                                         <div
                                             style={{
-                                                color: themeColor(data.inputMessageColor, 'rgba(0, 0, 0, 0.54)'),
+                                                color:
+                                                    isM3 && !m3ColorExplicit(data.inputMessageColor)
+                                                        ? 'var(--md-sys-color-on-surface-variant)'
+                                                        : themeColor(data.inputMessageColor, 'rgba(0, 0, 0, 0.54)'),
                                                 flex: 1,
                                                 fontFamily: data.inputMessageFontFamily || undefined,
                                                 fontSize: fontSize(data.inputMessageFontSize, 14),
@@ -796,7 +832,10 @@ export default class MaterialDesignInput extends VisWidget {
                                         <div
                                             className="v-counter"
                                             style={{
-                                                color: plainColor(data.inputCounterColor, 'rgba(0, 0, 0, 0.54)'),
+                                                color:
+                                                    isM3 && !m3ColorExplicit(data.inputCounterColor)
+                                                        ? 'var(--md-sys-color-on-surface-variant)'
+                                                        : plainColor(data.inputCounterColor, 'rgba(0, 0, 0, 0.54)'),
                                                 flex: '0 1 auto',
                                                 fontFamily: data.inputCounterFontFamily || undefined,
                                                 fontSize: fontSize(data.inputCounterFontSize, 14),
