@@ -211,11 +211,11 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
             super.renderWidgetBody(props);
             const data = this.state.rxData as ToggleControlData;
             const on = isOn(stateValue(this.state, data.oid || ''), data);
-            // Material 3 presentation (Phase 2, ../../MATERIAL3_PLAN.md). Behavior/geometry unchanged:
-            // only the control's colors are re-sourced from semantic tokens (resolved against the
-            // mdw-style-material3 root), and a shared state layer is added. An explicit saved color
-            // still wins (token-precedence rule). The larger M3 switch track/handle geometry is
-            // deferred to a later polish — noted as a known approximation in ../PORTING.md.
+            // Material 3 presentation (Phase 2, ../../MATERIAL3_PLAN.md). Toggle behavior and on-state
+            // are unchanged; only shape and colors differ in M3. The checkbox keeps its geometry
+            // (already M3-shaped) and re-sources colors from semantic tokens; the switch uses a full
+            // M3 track/handle geometry (see its branch below). An explicit saved color still wins
+            // (token-precedence rule); the shared .mdw-state-layer supplies hover/focus/pressed.
             const isM3 = designStyle(data as Record<string, unknown>) === 'material3';
             const m3 = (explicitValue: unknown, token: string): string => (m3ColorExplicit(explicitValue) ? String(explicitValue) : token);
             const locked = !!data.lockEnabled && !this.unlocked;
@@ -260,94 +260,145 @@ export function createToggleControlClass(def: ControlDefinition): typeof VisWidg
             const controlFilter = locked ? `grayscale(${asNumber(data.lockFilterGrayscale, 0)}%)` : undefined;
             const control =
                 def.kind === 'switch' ? (
-                    <div
-                        aria-checked={on}
-                        className={`mdc-switch${on ? ' mdc-switch--checked' : ''}`}
-                        role="switch"
-                        style={{
-                            filter: controlFilter,
-                            marginLeft: switchMargin,
-                            marginRight: switchMargin,
-                            overflow: 'visible',
-                            position: 'relative',
-                            width: 32,
-                            height: 20,
-                            flex: '0 0 auto',
-                            ['--materialdesign-color-switch-on' as string]: color(data.colorSwitchTrue, '#44739e'),
-                            ['--materialdesign-color-switch-on-hover' as string]: color(data.colorSwitchHoverTrue, color(data.colorSwitchTrue, '#44739e')),
-                            ['--materialdesign-color-switch-off' as string]: color(data.colorSwitchThumb, '#FFFFFF'),
-                            ['--materialdesign-color-switch-track' as string]: color(data.colorSwitchTrack, '#000000'),
-                            ['--materialdesign-color-switch-off-hover' as string]: color(data.colorSwitchHover, '#44739e'),
-                        }}
-                    >
+                    isM3 ? (
+                        // Material 3 switch geometry: 52x32 full-radius track, handle that grows
+                        // 16 -> 24 on selection, 40px state layer around the handle. Same toggle
+                        // behavior and on-state as legacy; only shape/tokens differ. An explicit
+                        // saved color still wins per token precedence.
                         <div
-                            className="mdc-switch__track"
+                            aria-checked={on}
+                            className="materialdesign-md3-switch"
+                            role="switch"
                             style={{
-                                background: isM3
-                                    ? on
-                                        ? m3(data.colorSwitchTrue, 'var(--md-sys-color-primary)')
-                                        : m3(data.colorSwitchTrack, 'var(--md-sys-color-surface-container-high)')
-                                    : on
-                                      ? color(data.colorSwitchTrue, '#44739e')
-                                      : color(data.colorSwitchTrack, '#000000'),
-                                border: isM3 && !on ? '2px solid var(--md-sys-color-outline)' : undefined,
-                                borderRadius: 7,
-                                boxSizing: isM3 ? 'border-box' : undefined,
-                                height: 14,
-                                left: 0,
-                                opacity: isM3 ? 1 : on ? 0.54 : 0.38,
-                                position: 'absolute',
-                                top: 3,
-                                width: 32,
-                            }}
-                        />
-                        <div
-                            className={`mdc-switch__thumb-underlay mdc-ripple-upgraded mdc-ripple-upgraded--unbounded${isM3 ? ' mdw-state-layer' : ''}`}
-                            style={{
-                                borderRadius: isM3 ? '50%' : undefined,
-                                color: isM3 ? (on ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-on-surface)') : undefined,
-                                height: 28,
-                                left: on ? 12 : -8,
-                                position: 'absolute',
-                                top: -4,
-                                // Neutralize the ambient VIS1 `.mdc-switch--checked` translateX(20px); we drive the
-                                // thumb travel via `left` so it works with or without the legacy stylesheet loaded.
-                                transform: 'none',
-                                transition: 'left 120ms ease',
-                                width: 28,
+                                filter: controlFilter,
+                                flex: '0 0 auto',
+                                height: 32,
+                                marginLeft: switchMargin,
+                                marginRight: switchMargin,
+                                opacity: data.readOnly ? 0.38 : undefined,
+                                overflow: 'visible',
+                                position: 'relative',
+                                width: 52,
                             }}
                         >
                             <div
-                                className="mdc-switch__thumb"
                                 style={{
-                                    background: isM3
-                                        ? on
-                                            ? m3(data.colorSwitchTrue, 'var(--md-sys-color-on-primary)')
-                                            : m3(data.colorSwitchThumb, 'var(--md-sys-color-outline)')
-                                        : on
-                                          ? color(data.colorSwitchTrue, '#44739e')
-                                          : color(data.colorSwitchThumb, '#FFFFFF'),
-                                    borderRadius: '50%',
-                                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
-                                    height: 20,
-                                    left: 4,
+                                    background: on ? m3(data.colorSwitchTrue, 'var(--md-sys-color-primary)') : m3(data.colorSwitchTrack, 'var(--md-sys-color-surface-container-high)'),
+                                    border: on ? undefined : '2px solid var(--md-sys-color-outline)',
+                                    borderRadius: 16,
+                                    boxSizing: 'border-box',
+                                    inset: 0,
                                     position: 'absolute',
-                                    top: 4,
-                                    width: 20,
+                                }}
+                            />
+                            <div
+                                className="mdw-state-layer"
+                                style={{
+                                    borderRadius: '50%',
+                                    color: on ? 'var(--md-sys-color-primary)' : 'var(--md-sys-color-on-surface)',
+                                    height: 40,
+                                    left: on ? 16 : -4,
+                                    position: 'absolute',
+                                    top: -4,
+                                    width: 40,
+                                }}
+                            />
+                            <div
+                                style={{
+                                    background: on ? m3(data.colorSwitchTrue, 'var(--md-sys-color-on-primary)') : m3(data.colorSwitchThumb, 'var(--md-sys-color-outline)'),
+                                    borderRadius: '50%',
+                                    height: on ? 24 : 16,
+                                    left: on ? 24 : 8,
+                                    position: 'absolute',
+                                    top: on ? 4 : 8,
+                                    transition: 'left var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard), width var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard), height var(--md-sys-motion-duration-short2) var(--md-sys-motion-easing-standard)',
+                                    width: on ? 24 : 16,
                                 }}
                             >
                                 <input
                                     checked={on}
-                                    className="mdc-switch__native-control"
                                     disabled={!!data.readOnly}
                                     onChange={() => undefined}
                                     role="switch"
-                                    style={{ opacity: 0 }}
+                                    style={{ inset: 0, margin: 0, opacity: 0, position: 'absolute' }}
                                     type="checkbox"
                                 />
                             </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div
+                            aria-checked={on}
+                            className={`mdc-switch${on ? ' mdc-switch--checked' : ''}`}
+                            role="switch"
+                            style={{
+                                filter: controlFilter,
+                                marginLeft: switchMargin,
+                                marginRight: switchMargin,
+                                overflow: 'visible',
+                                position: 'relative',
+                                width: 32,
+                                height: 20,
+                                flex: '0 0 auto',
+                                ['--materialdesign-color-switch-on' as string]: color(data.colorSwitchTrue, '#44739e'),
+                                ['--materialdesign-color-switch-on-hover' as string]: color(data.colorSwitchHoverTrue, color(data.colorSwitchTrue, '#44739e')),
+                                ['--materialdesign-color-switch-off' as string]: color(data.colorSwitchThumb, '#FFFFFF'),
+                                ['--materialdesign-color-switch-track' as string]: color(data.colorSwitchTrack, '#000000'),
+                                ['--materialdesign-color-switch-off-hover' as string]: color(data.colorSwitchHover, '#44739e'),
+                            }}
+                        >
+                            <div
+                                className="mdc-switch__track"
+                                style={{
+                                    background: on ? color(data.colorSwitchTrue, '#44739e') : color(data.colorSwitchTrack, '#000000'),
+                                    borderRadius: 7,
+                                    height: 14,
+                                    left: 0,
+                                    opacity: on ? 0.54 : 0.38,
+                                    position: 'absolute',
+                                    top: 3,
+                                    width: 32,
+                                }}
+                            />
+                            <div
+                                className="mdc-switch__thumb-underlay mdc-ripple-upgraded mdc-ripple-upgraded--unbounded"
+                                style={{
+                                    height: 28,
+                                    left: on ? 12 : -8,
+                                    position: 'absolute',
+                                    top: -4,
+                                    // Neutralize the ambient VIS1 `.mdc-switch--checked` translateX(20px); we drive the
+                                    // thumb travel via `left` so it works with or without the legacy stylesheet loaded.
+                                    transform: 'none',
+                                    transition: 'left 120ms ease',
+                                    width: 28,
+                                }}
+                            >
+                                <div
+                                    className="mdc-switch__thumb"
+                                    style={{
+                                        background: on ? color(data.colorSwitchTrue, '#44739e') : color(data.colorSwitchThumb, '#FFFFFF'),
+                                        borderRadius: '50%',
+                                        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.4)',
+                                        height: 20,
+                                        left: 4,
+                                        position: 'absolute',
+                                        top: 4,
+                                        width: 20,
+                                    }}
+                                >
+                                    <input
+                                        checked={on}
+                                        className="mdc-switch__native-control"
+                                        disabled={!!data.readOnly}
+                                        onChange={() => undefined}
+                                        role="switch"
+                                        style={{ opacity: 0 }}
+                                        type="checkbox"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    )
                 ) : (
                     <div
                         aria-checked={on}
