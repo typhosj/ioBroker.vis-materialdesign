@@ -115,3 +115,31 @@
     background: transparent;
     color: var(--md-sys-color-primary);
 }
+
+/*
+ * M3 icon-button variants (Phase 2). Round (`border-radius:50%` supplied inline by the widget so the
+ * legacy hit-area geometry is preserved), four M3 kinds: standard (transparent, on-surface-variant
+ * icon), filled (primary), tonal (secondary-container), outlined (outline ring). Same token
+ * precedence and shared `.mdw-state-layer` as the common buttons above.
+ */
+.materialdesign-widget.mdw-style-material3 .mdw-md3-icon-button {
+    background: transparent;
+    border: 0;
+    color: var(--md-sys-color-on-surface-variant);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-md3-icon-button--filled {
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-md3-icon-button--tonal {
+    background: var(--md-sys-color-secondary-container);
+    color: var(--md-sys-color-on-secondary-container);
+}
+
+.materialdesign-widget.mdw-style-material3 .mdw-md3-icon-button--outlined {
+    background: transparent;
+    border: 1px solid var(--md-sys-color-outline);
+    color: var(--md-sys-color-on-surface-variant);
+}

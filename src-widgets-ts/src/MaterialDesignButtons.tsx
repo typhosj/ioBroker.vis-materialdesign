@@ -109,6 +109,13 @@ const styleFields = [
     { name: 'md3ButtonVariant', label: 'md3ButtonVariant', type: 'select', options: ['filled', 'tonal', 'elevated', 'outlined', 'text'], default: 'filled', hidden: (data: Record<string, unknown>) => designStyle(data) !== 'material3' },
 ];
 
+// Icon buttons carry no legacy style field; in M3 mode they gain only the round-icon-button variant
+// selector. Default `standard` (transparent, icon-colored) is the closest M3 shape to the legacy
+// transparent icon button, so switching an existing icon button to M3 does not suddenly fill it.
+const iconStyleFields = [
+    { name: 'md3IconButtonVariant', label: 'md3IconButtonVariant', type: 'select', options: ['standard', 'filled', 'tonal', 'outlined'], default: 'standard', hidden: (data: Record<string, unknown>) => designStyle(data) !== 'material3' },
+];
+
 const feedbackFields = [
     { name: 'vibrateOnMobilDevices', label: 'vibrateOnMobilDevices', type: 'number' },
     { name: 'clickSoundPlay', label: 'clickSoundPlay', type: 'checkbox' },
@@ -200,7 +207,7 @@ function attrs(def: ButtonDefinition): RxWidgetInfo['visAttrs'] {
     return [
         {
             name: 'common',
-            fields: [...(isIcon ? [] : styleFields), ...actionFields[def.kind], ...feedbackFields],
+            fields: [...(isIcon ? iconStyleFields : styleFields), ...actionFields[def.kind], ...feedbackFields],
         },
         ...multiStateGroups,
         {
@@ -598,18 +605,21 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
             const sliderDash = `${sliderArcLength * sliderRatio} ${sliderCircumference}`;
             const sliderTrackDash = `${sliderArcLength} ${sliderCircumference}`;
             const sliderRotation = numeric(data.angleOffset, 0) - 90;
-            // Material 3 presentation (Phase 2, ../../MATERIAL3_PLAN.md) — applies to the common
-            // (non-icon) button layouts here; icon buttons/sliders keep the legacy path for now.
-            // Behavior (handlers, push, slider, lock) is untouched: only presentational style is
-            // gated. Per the token-precedence rule an explicit saved color still wins (emitted
-            // inline below); when none is set, the color is left off so the scoped M3 CSS drives it.
+            // Material 3 presentation (Phase 2, ../../MATERIAL3_PLAN.md) — common (non-icon) buttons
+            // use md3ButtonVariant; icon buttons (incl. the icon-button slider) use the round
+            // md3IconButtonVariant. Behavior (handlers, push, slider, lock) is untouched: only
+            // presentational style is gated. Per the token-precedence rule an explicit saved color
+            // still wins (emitted inline below); when none is set the color is left off so the
+            // scoped M3 CSS drives it.
             const isM3 = designStyle(data) === 'material3';
             const m3Standard = isM3 && !isIcon;
             const m3Variant = stringValue(data.md3ButtonVariant) || 'filled';
+            const m3IconVariant = stringValue(data.md3IconButtonVariant) || 'standard';
+            const m3Outlined = isM3 && (isIcon ? m3IconVariant === 'outlined' : m3Variant === 'outlined');
             const bgExplicit = on ? m3ColorExplicit(data.colorBgTrue) : m3ColorExplicit(data.mdwButtonPrimaryColor) || m3ColorExplicit(data.colorBgFalse);
             const fgExplicit = on ? m3ColorExplicit(data.imageTrueColor) || m3ColorExplicit(data.mdwButtonSecondaryColor) : m3ColorExplicit(data.mdwButtonSecondaryColor) || m3ColorExplicit(data.imageColor);
             const labelExplicit = m3ColorExplicit(on ? data.labelColorTrue : data.labelColorFalse);
-            const iconColor = m3Standard && !fgExplicit ? 'currentColor' : secondary;
+            const iconColor = isM3 && !fgExplicit ? 'currentColor' : secondary;
             const content = (
                 <>
                     {renderIcon(image, iconColor, iconSize, imageColorSet)}
@@ -632,14 +642,14 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
                     <button
                         type="button"
                         aria-pressed={on}
-                        className={m3Standard ? `mdw-md3-button mdw-md3-button--${m3Variant} mdw-state-layer` : undefined}
+                        className={isM3 ? (isIcon ? `mdw-md3-icon-button mdw-md3-icon-button--${m3IconVariant} mdw-state-layer` : `mdw-md3-button mdw-md3-button--${m3Variant} mdw-state-layer`) : undefined}
                         style={{
                             width: '100%',
                             height: '100%',
-                            border: m3Standard ? (fgExplicit && m3Variant === 'outlined' ? `1px solid ${secondary}` : undefined) : data.buttonStyle === 'outlined' ? `1px solid ${secondary}` : 0,
-                            borderRadius: m3Standard ? undefined : isIcon ? '50%' : 4,
-                            background: m3Standard ? (bgExplicit ? primary : undefined) : data.buttonStyle === 'text' || data.buttonStyle === 'outlined' ? 'transparent' : background,
-                            color: m3Standard ? (fgExplicit ? secondary : undefined) : secondary,
+                            border: isM3 ? (m3Outlined && fgExplicit ? `1px solid ${secondary}` : undefined) : data.buttonStyle === 'outlined' ? `1px solid ${secondary}` : 0,
+                            borderRadius: isIcon ? '50%' : isM3 ? undefined : 4,
+                            background: isM3 ? (bgExplicit ? primary : undefined) : data.buttonStyle === 'text' || data.buttonStyle === 'outlined' ? 'transparent' : background,
+                            color: isM3 ? (fgExplicit ? secondary : undefined) : secondary,
                             cursor: data.readOnly ? 'default' : 'pointer',
                             padding: isIcon ? 0 : '0 8px',
                             display: 'flex',
@@ -647,8 +657,8 @@ export function createButtonClass(def: ButtonDefinition): typeof VisWidget {
                             alignItems: isVertical ? data.alignment || 'center' : 'center',
                             justifyContent: 'center',
                             gap,
-                            transform: m3Standard ? undefined : pressState.active ? 'translateY(1px)' : 'none',
-                            transition: m3Standard ? undefined : 'background 120ms ease, transform 80ms ease',
+                            transform: isM3 ? undefined : pressState.active ? 'translateY(1px)' : 'none',
+                            transition: isM3 ? undefined : 'background 120ms ease, transform 80ms ease',
                             position: 'relative',
                         }}
                         onMouseEnter={() => this.setState({ hovered: true })}

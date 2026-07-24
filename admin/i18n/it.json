@@ -1062,6 +1062,7 @@
     "group_style": "Stile",
     "designStyle": "stile di progettazione",
     "md3ButtonVariant": "Variante pulsante Material 3",
+    "md3IconButtonVariant": "Variante pulsante icona Material 3",
     "material3SeedColors": "Colori seme Material 3 (opzionale)",
     "material3SeedColorsInfo": "Sovrascrive i colori primario/secondario/terziario/errore di Material 3 per l'intero progetto (solo modalità chiara). Lasciare vuoto per usare la tavolozza predefinita.",
     "material3Seed_primary": "primario",
