@@ -66,6 +66,11 @@ Report current VIS 2 problems in the
 [GitHub issue tracker](https://github.com/typhosj/ioBroker.vis2-materialdesign/issues).
 
 ## Changelog
+### 0.3.3 (2026-07-24)
+
+- (typhosj) Fixed the Theme Editor's runtime state sync: it never created the intermediate channel objects for nested color/font states, used the "value" role (number-only) for string values, and could leave font-size states with a stale string/number type mismatch
+- (typhosj) Removed the "mocha" devDependency; it is already provided by `@iobroker/testing`
+
 ### 0.3.2 (2026-07-24)
 
 - (typhosj) Fixed the "npm run test:package" CI check to run the standard `@iobroker/testing` package-file validation again (it was shadowed by a project-specific script of the same name)
